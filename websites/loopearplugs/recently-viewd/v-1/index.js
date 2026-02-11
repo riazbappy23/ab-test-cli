@@ -2,6 +2,7 @@
     // Mobile only
     if (!window.matchMedia("(max-width: 767px)").matches) return;
 
+    // Test on spcecific products only
     const allowedProducts = ["switch", "dream", "quiet", "engage", "experience", "mclaren"];
     if (!allowedProducts.some((p) => location?.pathname?.includes(p))) return;
 
@@ -211,6 +212,7 @@
         localStorage?.setItem(STORAGE_KEY, JSON.stringify(ids));
     };
 
+    // Save currently viewing product to localStorage
     const saveCurrentProduct = () => {
         if (!window.meta?.product) return;
         const {id, handle} = window?.meta?.product;
@@ -219,13 +221,13 @@
         setStoredIds(items?.slice(0, MAX_ITEMS));
     };
 
-    // Fetches product data from the Shopify endpoint based on the product handle
+    // Fetches product from the Shopify end point by product handle
     const fetchProduct = async (handle) => {
         const r = await fetch(`/products/${handle}.js`);
         return r.ok ? r.json() : null;
     };
 
-    // Generates the HTML for color swatches based on product variants
+    // Generates the HTML for color swatches from product variants
     const generateColorSwatches = (variants) => {
         return variants
             .map((variant, index) => {
@@ -341,7 +343,7 @@
 
             await response.json();
 
-            btn.textContent = "Added ✓";
+            btn.textContent = "Added";
             setTimeout(() => {
                 btn.textContent = originalText;
                 btn.disabled = false;
