@@ -1,0 +1,13 @@
+{
+  "id": "1769697675357_737_loopearplugs_reviews",
+  "name": "loopearplugs-reviews",
+  "type": "A/B",
+  "website": "loopearplugs",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-01-29T14:41:15.357Z",
+  "createdAtReadable": "1/29/2026, 8:41:15 PM",
+  "lastUpdated": "2026-01-29T14:41:15.547Z"
+}

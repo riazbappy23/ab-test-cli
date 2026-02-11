@@ -1,0 +1,13 @@
+{
+  "id": "1769698297400_4447_test_1",
+  "name": "test-1",
+  "type": "A/B",
+  "website": "dior",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-01-29T14:51:37.401Z",
+  "createdAtReadable": "1/29/2026, 8:51:37 PM",
+  "lastUpdated": "2026-01-29T14:51:37.515Z"
+}

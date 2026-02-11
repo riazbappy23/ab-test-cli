@@ -1,0 +1,13 @@
+{
+  "id": "1770630658194_7538_recently_viewd",
+  "name": "recently-viewd",
+  "type": "A/B",
+  "website": "loopearplugs",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-02-09T09:50:58.194Z",
+  "createdAtReadable": "2/9/2026, 3:50:58 PM",
+  "lastUpdated": "2026-02-09T09:50:58.356Z"
+}

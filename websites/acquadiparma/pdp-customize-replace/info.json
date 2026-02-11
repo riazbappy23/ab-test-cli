@@ -1,0 +1,13 @@
+{
+  "id": "1770127435906_1557_pdp_customize_replace",
+  "name": "pdp-customize-replace",
+  "type": "A/B",
+  "website": "acquadiparma",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-02-03T14:03:55.906Z",
+  "createdAtReadable": "2/3/2026, 8:03:55 PM",
+  "lastUpdated": "2026-02-03T14:03:56.226Z"
+}

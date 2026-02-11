@@ -1,0 +1,13 @@
+{
+  "id": "1770283870118_7291_mini_cart_info",
+  "name": "mini-cart-info",
+  "type": "A/B",
+  "website": "loopearplugs",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-02-05T09:31:10.118Z",
+  "createdAtReadable": "2/5/2026, 3:31:10 PM",
+  "lastUpdated": "2026-02-05T09:31:10.331Z"
+}
