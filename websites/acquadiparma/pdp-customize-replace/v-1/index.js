@@ -12,25 +12,6 @@
 
     // Helpers
     const modalSelector = "#engravingModal";
-    const backdropSelector = ".modal-backdrop";
-
-    const addBackdrop = () => {
-        waitForElem("body", (body) => {
-            if (document.querySelector(backdropSelector)) return;
-
-            const backdrop = document.createElement("div");
-            backdrop.className = "modal-backdrop fade show";
-            body.appendChild(backdrop);
-
-            waitForElem(backdropSelector, (b) => {
-                b.addEventListener("click", closeModal);
-            });
-        });
-    };
-
-    const removeBackdrop = () => {
-        waitForElem(backdropSelector, (b) => b.remove());
-    };
 
     // Set default option in modal
     const setFrontAsDefault = () => {
@@ -42,59 +23,15 @@
         });
     };
 
-    // Open modal
+    // Open modal using website's default trigger
     const openModal = () => {
-        waitForElem(modalSelector, (m) => {
-            document.body.classList.add("modal-open");
-
-            m.classList.add("show");
-            m.style.display = "block";
-            m.removeAttribute("aria-hidden");
-
-            addBackdrop();
+        if (window.$ && $(modalSelector).length) {
+            $(modalSelector).modal('show');
+            
+            // Set defaults immediately after triggering
             setFrontAsDefault();
-
             waitForElem("#engravingLabel", (label) => (label.textContent = "TEST TEXT"));
-
-            bindClose();
-            bindOutsideClick();
-        });
-    };
-
-    // Close modal
-    const closeModal = () => {
-        waitForElem(modalSelector, (m) => {
-            m.classList.remove("show");
-            m.style.display = "none";
-            m.setAttribute("aria-hidden", "true");
-
-            document.body.classList.remove("modal-open");
-            removeBackdrop();
-        });
-    };
-
-    // Close bindings
-    const bindClose = () => {
-        waitForElem("#engravingModal .close", (btn) => {
-            if (btn.dataset.bound) return;
-
-            btn.dataset.bound = "true";
-            btn.addEventListener("click", closeModal);
-        });
-    };
-
-    // Close on outside click
-    const bindOutsideClick = () => {
-        waitForElem(modalSelector, (m) => {
-            if (m.dataset.outsideBound) return;
-
-            m.dataset.outsideBound = "true";
-            m.addEventListener("click", (e) => {
-                if (e.target === m) {
-                    closeModal();
-                }
-            });
-        });
+        }
     };
 
     // Replace CTA
@@ -116,9 +53,35 @@
         container.querySelector(".engraving-block__button")?.addEventListener("click", openModal);
     };
 
+    // Setup MutationObserver
+    const setupObserver = () => {
+        waitForElem('.product-options-wrapper', (productOptionsWrapper) => {
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'childList') {
+                        const ctaWrapper = productOptionsWrapper.querySelector('.product-options .product-option .engraving-cta-wrapper');
+                        const hasCustomBlock = ctaWrapper?.querySelector('.engraving-block');
+                        
+                        if (ctaWrapper && !hasCustomBlock) {
+                            replaceWithCustomContent(ctaWrapper);
+                        }
+                    }
+                });
+            });
+
+            observer.observe(productOptionsWrapper, {
+                childList: true,
+                subtree: true
+            });
+
+            // Initial replacement
+            const ctaWrapper = productOptionsWrapper.querySelector('.product-options .product-option .engraving-cta-wrapper');
+            if (ctaWrapper) {
+                replaceWithCustomContent(ctaWrapper);
+            }
+        });
+    };
+
     // Init
-    waitForElem(
-        ".product-options-wrapper .product-options .product-option .engraving-cta-wrapper",
-        replaceWithCustomContent
-    );
+    setupObserver();
 })();
