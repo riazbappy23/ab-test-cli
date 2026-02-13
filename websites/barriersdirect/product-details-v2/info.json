@@ -1,0 +1,13 @@
+{
+  "id": "1770965202537_9285_product_details_v2",
+  "name": "product-details-v2",
+  "type": "A/B",
+  "website": "barriersdirect",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-02-13T06:46:42.537Z",
+  "createdAtReadable": "2/13/2026, 12:46:42 PM",
+  "lastUpdated": "2026-02-13T06:46:42.657Z"
+}
