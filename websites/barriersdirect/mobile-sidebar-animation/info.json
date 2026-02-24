@@ -1,0 +1,13 @@
+{
+  "id": "1771602440549_8322_mobile_sidebar_animation",
+  "name": "mobile-sidebar-animation",
+  "type": "A/B",
+  "website": "barriersdirect",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-02-20T15:47:20.550Z",
+  "createdAtReadable": "2/20/2026, 9:47:20 PM",
+  "lastUpdated": "2026-02-20T15:47:20.665Z"
+}
