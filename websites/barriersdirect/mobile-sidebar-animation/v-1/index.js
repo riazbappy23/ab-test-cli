@@ -3,7 +3,6 @@
     [x-ref="mobileMenuNavLinks"] {
         display: flex !important;
         flex-direction: column;
-        visibility: hidden;
         transform: translateX(-100%);
         transition: transform 0.3s ease-in-out;
         position: fixed;
@@ -11,11 +10,10 @@
         left: 0;
         width: 16rem;
         height: 100%;
-        z-index: 999 !important;
+        z-index: 99999 !important;
     }
 
     [x-ref="mobileMenuNavLinks"][data-open="true"] {
-        visibility: visible;
         transform: translateX(0);
     }
 
@@ -66,7 +64,7 @@
         right: 0;
         bottom: 0;
         background: rgba(0, 0, 0, 0.5);
-        z-index: 998;
+        z-index: 99998;
         opacity: 0;
         transition: opacity 0.3s ease-in-out;
     }
@@ -87,6 +85,17 @@
         document.head.appendChild(style);
     }
 
+    //  ALL SELECTORS
+    const SELECTORS = {
+        sidebar: document.querySelector("[x-ref='mobileMenuNavLinks']"),
+        triggerBtn: document.querySelector("[x-ref='mobileMenuTrigger']"),
+        main: document.querySelector("main"),
+        stickyFooter: document.querySelector(".pdp-sticky-footer-new"),
+        breadcrumbs: document.querySelector(".breadcrumbs-wrapper"),
+        uspHeader: document.querySelector("#usp-header"),
+    };
+    const {sidebar, triggerBtn, main, stickyFooter, breadcrumbs, uspHeader} = SELECTORS || {};
+
     // ─── BACKDROP
     function createBackdrop() {
         if (document.getElementById("sidebar-backdrop")) return;
@@ -100,7 +109,9 @@
         const backdrop = document.getElementById("sidebar-backdrop");
         if (!backdrop) return;
         backdrop.classList.add("visible");
-        backdrop.classList.add("active");
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => backdrop.classList.add("active"));
+        });
     }
 
     function hideBackdrop() {
@@ -114,58 +125,23 @@
     }
 
     // ─── LAYOUT SHIFT
-    function shiftLayout() {
-        const main = document.querySelector("main");
-        const stickyFooter = document.querySelector(".pdp-sticky-footer-new");
-        const breadcrumbs = document.querySelector(".breadcrumbs-wrapper");
-        const uspHeader = document.querySelector("#usp-header");
+    function setMenuState(isOpen) {
+        if (!sidebar) return;
 
-        if (main) main.classList.add("sidebar-open");
-        if (stickyFooter) stickyFooter.classList.add("hidden");
-        if (breadcrumbs) breadcrumbs.classList.add("sidebar-open");
-        if (uspHeader) uspHeader.classList.add("sidebar-open");
-        document.body.classList.add("sidebar-is-open");
-    }
+        sidebar.dataset.open = String(isOpen);
 
-    function resetLayout() {
-        const main = document.querySelector("main");
-        const stickyFooter = document.querySelector(".pdp-sticky-footer-new");
-        const breadcrumbs = document.querySelector(".breadcrumbs-wrapper");
-        const uspHeader = document.querySelector("#usp-header");
+        main?.classList.toggle("sidebar-open", isOpen);
+        stickyFooter?.classList.toggle("hidden", isOpen);
+        breadcrumbs?.classList.toggle("sidebar-open", isOpen);
+        uspHeader?.classList.toggle("sidebar-open", isOpen);
+        document.body.classList.toggle("sidebar-is-open", isOpen);
 
-        if (main) main.classList.remove("sidebar-open");
-        if (stickyFooter) stickyFooter.classList.remove("hidden");
-        if (breadcrumbs) breadcrumbs.classList.remove("sidebar-open");
-        if (uspHeader) uspHeader.classList.remove("sidebar-open");
-        document.body.classList.remove("sidebar-is-open");
+        isOpen ? showBackdrop() : hideBackdrop();
     }
 
     // ─── OPEN / CLOSE
-    function openMenu() {
-        const sidebar = document.querySelector("[x-ref='mobileMenuNavLinks']");
-        if (!sidebar) return;
-        sidebar.dataset.open = "true";
-        showBackdrop();
-        shiftLayout();
-    }
-
-    function closeMenu() {
-        const sidebar = document.querySelector("[x-ref='mobileMenuNavLinks']");
-        if (!sidebar) return;
-        sidebar.dataset.open = "false";
-        hideBackdrop();
-        resetLayout();
-    }
-
-    // ─── OBSERVER
-    function setupObserver(sidebar) {
-        const observer = new MutationObserver(() => {
-            if (sidebar.classList.contains("hidden")) {
-                sidebar.classList.remove("hidden");
-            }
-        });
-        observer.observe(sidebar, {attributes: true, attributeFilter: ["class"]});
-    }
+    const openMenu = () => setMenuState(true);
+    const closeMenu = () => setMenuState(false);
 
     // ─── BUTTON BINDINGS
     function bindTriggerButton(triggerBtn) {
@@ -187,18 +163,17 @@
 
     // ─── INIT
     function mainJs() {
-        const sidebar = document.querySelector("[x-ref='mobileMenuNavLinks']");
-        const triggerBtn = document.querySelector("[x-ref='mobileMenuTrigger']");
-
         if (!sidebar || sidebar.dataset.initialized) return;
 
         sidebar.dataset.initialized = "true";
         sidebar.dataset.open = "false";
 
+        if (sidebar.classList.contains("hidden")) {
+            sidebar.classList.remove("hidden");
+        }
+
         injectStyles();
         createBackdrop();
-        setupObserver(sidebar);
-        animationToSidebarMenu();
         bindTriggerButton(triggerBtn);
         bindCloseButton();
     }
