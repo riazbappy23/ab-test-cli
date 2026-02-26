@@ -499,7 +499,8 @@
 
     // HOOK TRIGGER BUTTON
     function hookTriggerButton() {
-        if (!triggerBtn) return false;
+       const newSidebar = document.getElementById("bd-mobile-sidebar");
+        if (!triggerBtn && !newSidebar) return false;
 
         const clone = triggerBtn.cloneNode(true);
         triggerBtn.parentNode.removeAttribute("style");
