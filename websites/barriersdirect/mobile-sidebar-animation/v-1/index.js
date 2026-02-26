@@ -44,7 +44,6 @@
         z-index: 99998;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1);
       }
       #bd-mobile-sidebar-overlay.bd-mobile-visible {
         opacity: 1;
@@ -61,7 +60,6 @@
         z-index: 99999;
         display: flex;
         flex-direction: column;
-        box-shadow: 4px 0 24px rgba(0,0,0,0.18);
         transform: translateX(-100%);
         transition: transform 0.35s cubic-bezier(0.4,0,0.2,1);
         overflow: hidden;
