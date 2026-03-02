@@ -1,0 +1,13 @@
+{
+  "id": "1772186154226_9251_menu_mobile_slider",
+  "name": "menu-mobile-slider",
+  "type": "A/B",
+  "website": "devsfcc",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-02-27T09:55:54.226Z",
+  "createdAtReadable": "2/27/2026, 3:55:54 PM",
+  "lastUpdated": "2026-02-27T09:55:54.398Z"
+}
