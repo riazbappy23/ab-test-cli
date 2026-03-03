@@ -1,0 +1,13 @@
+{
+  "id": "1772526526908_5045_usp_on_pdp_for_mobile",
+  "name": "usp on pdp for mobile",
+  "type": "A/B",
+  "website": "domyown",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-03T08:28:46.908Z",
+  "createdAtReadable": "3/3/2026, 2:28:46 PM",
+  "lastUpdated": "2026-03-03T08:28:47.043Z"
+}
