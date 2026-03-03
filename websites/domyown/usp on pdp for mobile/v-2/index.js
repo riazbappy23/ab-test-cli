@@ -108,7 +108,7 @@
     // USP bar buttons
     const USP_BUTTONS = [
         {key: "shipping", text: "Fast Free Shipping*", svg: vanSvg},
-        {key: "returns", text: "90 Day Returns*", svg: calendarSvg},
+        {key: "pro", text: "Pro Grade Products*", svg: roundedCheckSvg},
         {key: "expert", text: "Free Expert Advice*", svg: capSvg},
     ];
 
