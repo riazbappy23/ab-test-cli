@@ -1,10 +1,36 @@
 (() => {
+    const css = `
+.express-pay-section-container{
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  justify-content:end
+  background:green;
+}
+
+@media (max-width: 767px){
+  .express-pay-section-container{
+    align-items: start;
+    justify-content:start
+  }
+}
+`;
+
+    // UTILITIES
+    function injectStyles(css) {
+        const style = document.createElement("style");
+        style.innerHTML = css;
+        document.head.appendChild(style);
+    }
+
+    // POLL FUNCTION TO WAIT
     function waitForElem(waitFor, callback, minElements = 1, isVariable = false, timer = 10000, frequency = 25) {
         let elements = isVariable ? window[waitFor] : document.querySelectorAll(waitFor);
         if (timer <= 0) return;
         (!isVariable && elements.length >= minElements) || (isVariable && typeof window[waitFor] !== "undefined") ? callback(elements) : setTimeout(() => waitForElem(waitFor, callback, minElements, isVariable, timer - frequency), frequency);
     }
 
+    // DELECT DEVICE OS
     function detectOS() {
         const ua = navigator.userAgent;
         const platform = navigator.userAgentData?.platform || navigator.platform;
@@ -75,10 +101,14 @@
         container.className = "express-pay-section-container py-3";
 
         const title = document.createElement("div");
-        title.innerHTML = `<p class="express-pay-title font-bold text-[14px] flex-wrap">Express pay options available in cart</p>`;
+        title.innerHTML = `
+        <p class="express-pay-title font-bold text-[14px] text-start">
+            Express pay options available in cart
+        </p>
+    `;
 
         const strip = document.createElement("div");
-        strip.className = "flex items-center bg-white pt-2";
+        strip.className = "flex items-center justify-start sm:justify-end bg-white pt-2";
 
         PAY_BUTTONS.forEach((item) => {
             strip.appendChild(createPayButton(item));
@@ -86,12 +116,15 @@
 
         container.appendChild(title);
         container.appendChild(strip);
+
         return container;
     }
 
     // ADD CREATED SECTION TO UI
     function addExpressPayBtn() {
         if (document.querySelector(".express-pay-section-container")) return;
+
+        injectStyles(css);
 
         document.querySelector("#add-to-cart-area").insertAdjacentElement("afterEnd", createPaySection());
     }
