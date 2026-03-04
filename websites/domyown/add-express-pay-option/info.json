@@ -1,0 +1,13 @@
+{
+  "id": "1772619000200_7765_add_express_pay_option",
+  "name": "add-express-pay-option",
+  "type": "A/B",
+  "website": "domyown",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-04T10:10:00.200Z",
+  "createdAtReadable": "3/4/2026, 4:10:00 PM",
+  "lastUpdated": "2026-03-04T10:10:00.361Z"
+}

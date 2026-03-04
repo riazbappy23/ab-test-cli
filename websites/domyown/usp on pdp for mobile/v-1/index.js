@@ -25,7 +25,8 @@
             border-radius: 16px 16px 0 0;
             transition: transform .35s ease;
             z-index: 9999;
-            display: flex; flex-direction: column;
+            display: flex;
+            flex-direction: column;
         }
         .usp-modal.active { transform: translate(-50%, 0%); }
 
@@ -221,9 +222,9 @@
     }
 
     // Builds a single USP bar button
-    function createUSPButton({text, svg, key}, onClickFn) {
+    function createUSPButton({text, svg, key}, isLast, onClickFn) {
         const btn = document.createElement("button");
-        btn.className = "flex flex-col items-center justify-center flex-1 p-4 border border-r border-gray-200 text-center gap-2 bg-white";
+        btn.className = `flex flex-col items-center justify-center flex-1 p-4 border ${isLast ? "" : " border-r"} border-gray-200 text-center gap-2 bg-white`;
         btn.innerHTML = `
             <span class="pdp-usp-icon">${svg}</span>
             <span class="pdp-usp-text">${text}</span>
@@ -244,8 +245,9 @@
         const strip = document.createElement("div");
         strip.className = "flex justify-between items-center bg-white border-t border-b border-gray-200";
 
-        USP_BUTTONS.forEach((item) => {
-            strip.appendChild(createUSPButton(item, onButtonClick));
+        USP_BUTTONS.forEach((item, index) => {
+            const isLast = index === USP_BUTTONS.length - 1;
+            strip.appendChild(createUSPButton(item, isLast, onButtonClick));
         });
 
         const phone = document.createElement("div");

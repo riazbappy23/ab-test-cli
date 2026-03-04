@@ -233,18 +233,10 @@
     }
 
     // Helper to poll for element or variable
-    const waitForElement = (selector, callback, minElements = 1, isVariable = false, timer = 30000, frequency = 100) => {
+    var waitForElem = (waitFor, callback, minElements = 1, isVariable = false, timer = 30000, frequency = 100) => {
+        let elements = isVariable ? window[waitFor] : document.querySelectorAll(waitFor);
         if (timer <= 0) return;
-
-        const elements = isVariable ? window[selector] : document.querySelectorAll(selector);
-        const conditionMet = isVariable ? typeof elements !== "undefined" : elements.length >= minElements;
-
-        if (conditionMet) {
-            callback(elements);
-            return;
-        }
-
-        setTimeout(() => waitForElement(selector, callback, minElements, isVariable, timer - frequency, frequency), frequency);
+        (!isVariable && elements.length >= minElements) || (isVariable && typeof window[waitFor] !== "undefined") ? callback(elements) : setTimeout(() => waitForElem(waitFor, callback, minElements, isVariable, timer - frequency), frequency);
     };
 
     // Check if mobile viewport
@@ -777,7 +769,7 @@
         replaceGuaranteeBadges();
         repositionAccordionAndReviewsForDesktop();
         enhanceMiniCart();
-        moveQtyNextToCart()
+        moveQtyNextToCart();
         addGalleryImageClass();
     };
 
