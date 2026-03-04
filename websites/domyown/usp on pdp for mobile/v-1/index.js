@@ -237,7 +237,7 @@
     }
 
     // Builds the full USP bar section
-    function createUSPBar(onButtonClick) {
+    function createUSPSection(onButtonClick) {
         const container = document.createElement("div");
         container.className = "pdp-usp-section-container py-6";
 
@@ -295,7 +295,7 @@
         injectStyles(css);
 
         const {modal, backdrop} = createModal();
-        const uspBar = createUSPBar(() => openModal(modal, backdrop));
+        const uspBar = createUSPSection(() => openModal(modal, backdrop));
 
         document.querySelector("#add-to-cart-area").insertAdjacentElement("afterEnd", uspBar);
         redesignCTABtn();
