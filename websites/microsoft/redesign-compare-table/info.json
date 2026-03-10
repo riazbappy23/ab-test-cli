@@ -1,0 +1,13 @@
+{
+  "id": "1772708681708_2380_redesign_compare_table",
+  "name": "redesign-compare-table",
+  "type": "A/B",
+  "website": "microsoft",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-05T11:04:41.708Z",
+  "createdAtReadable": "3/5/2026, 5:04:41 PM",
+  "lastUpdated": "2026-03-05T11:04:41.783Z"
+}
