@@ -1,0 +1,13 @@
+{
+  "id": "1773132781520_7044_VC125_Removed_Product_Save_For_Later_Banner",
+  "name": "VC125-Removed Product Save For Later Banner",
+  "type": "A/B",
+  "website": "vicicollection",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-10T08:53:01.520Z",
+  "createdAtReadable": "3/10/2026, 2:53:01 PM",
+  "lastUpdated": "2026-03-10T08:53:01.643Z"
+}
