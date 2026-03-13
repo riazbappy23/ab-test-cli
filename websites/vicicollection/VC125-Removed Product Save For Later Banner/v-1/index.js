@@ -14,7 +14,7 @@
         site_url: "https://www.vicicollection.com/",
         test_name: "VC125: [CART] Removed Product Save For Later Banner (2) SET UP TEST",
         page_initials: "AB-VC125",
-        test_version: 0.0003,
+        test_version: 0.0002,
         test_variation: 1,
     };
     const {test_variation} = TEST_CONFIG;
@@ -41,15 +41,20 @@
         bagItem: ".bag-item",
         removeBtn: ".bag-item__inner-actions-wrapper .bag-item__remove",
         saveBtn: ".bag-item__inner-actions-wrapper .bag-item__save-for-later-button",
+        decrementBtn: ".bag-item__qty .increment__subtr[data-action='remove']",
         itemImage: [".bag-item__photo img", "[class*='bag-item'] img"].join(", "),
         itemTitle: ".bag-item__title",
         itemVariant: ".bag-item__variant",
+        qtyInput: ".bag-item__qty .increment__input",
         savedWrapper: ".saved-for-later-item__title-variants-wrapper",
         savedTitle: ".saved-for-later-item__title",
         savedVariants: ".saved-for-later-item__variants",
     };
 
     const css = `
+        .bag__items-wrapper .bag-item {
+            padding : 1.125rem 0;
+        }
         #vc125-banner-zone {
             width    : 100%;
             overflow : visible;
@@ -63,7 +68,7 @@
             background   : #E8E8E8;
             box-sizing   : border-box;
             width        : 100%;
-            margin       : 18px 0;
+            margin-bottom: 18px;
             transform    : translateX(110%);
             opacity      : 0;
             transition   : transform 0.35s cubic-bezier(.22,.68,0,1.15),
@@ -133,7 +138,7 @@
             color                : #333132;
             cursor               : pointer;
             white-space          : nowrap;
-            text-decoration      : underline;
+            text-decoration      : underline !important;
             text-underline-offset: 3px;
             font-family          : Lato !important;
         }
@@ -146,6 +151,9 @@
         }
 
         @media (max-width: 767px) {
+          .bag__items-wrapper .bag-item {
+               padding : .9rem 0;
+            }
             .vc125-banner { padding: 23px 20px 22px 18px; }
             .vc125-banner__img { display: none; }
         }
@@ -265,9 +273,10 @@
         if (existing) return existing;
         const zone = document.createElement("div");
         zone.id = "vc125-banner-zone";
-        const checkout = q(SELECTOR_LIST.checkout);
-        if (checkout) {
-            checkout.after(zone);
+        const productCard = q(SELECTOR_LIST.bagItem);
+        if (productCard) {
+            // insert at the top of productcard
+            productCard.insertAdjacentElement("afterbegin", zone);
         } else {
             (q(SELECTOR_LIST.cartRoot) || document.body).prepend(zone);
         }
@@ -327,7 +336,7 @@
         });
 
         function onSaveClick() {
-            fireGA4Event("VC125_SaveForLaterBannerClick");
+            fireGA4Event("VC125_SaveForLaterBannerClick", "Save For Later");
             logInfo("VC125_SaveForLaterBannerClick fired");
             clearTimeout(timerId);
             if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
@@ -349,24 +358,51 @@
 
     function onCartClick(e) {
         const removeBtn = e.target.closest(SELECTOR_LIST.removeBtn);
-        if (!removeBtn) return;
+        if (removeBtn) {
+            if (nativeClickAllowed.has(removeBtn)) {
+                nativeClickAllowed.delete(removeBtn);
+                return;
+            }
 
-        if (nativeClickAllowed.has(removeBtn)) {
-            nativeClickAllowed.delete(removeBtn);
+            fireGA4Event("VC125_RemoveFromCart", "Remove");
+            logInfo("VC125_RemoveFromCart fired");
+
+            if (removeBtn.classList.contains("vc125-remove-disabled")) return;
+
+            const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
+            if (isAlreadySaved(bagItem)) return;
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            showBanner(removeBtn);
             return;
         }
 
-        fireGA4Event("VC125_RemoveFromCart");
-        logInfo("VC125_RemoveFromCart fired");
+        const decrementBtn = e.target.closest(SELECTOR_LIST.decrementBtn);
+        if (decrementBtn) {
+            const bagItem = decrementBtn.closest(SELECTOR_LIST.bagItem);
+            if (!bagItem) return;
 
-        if (removeBtn.classList.contains("vc125-remove-disabled")) return;
+            const qtyInput = q(SELECTOR_LIST.qtyInput, bagItem);
+            const qty = qtyInput ? parseInt(qtyInput.value, 10) : null;
 
-        const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
-        if (isAlreadySaved(bagItem)) return;
+            if (qty !== 1) return;
 
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        showBanner(removeBtn);
+            if (nativeClickAllowed.has(decrementBtn)) {
+                nativeClickAllowed.delete(decrementBtn);
+                return;
+            }
+
+            fireGA4Event("VC125_RemoveFromCart", "Remove");
+            logInfo("VC125_RemoveFromCart fired (decrement)");
+
+            if (decrementBtn.classList.contains("vc125-remove-disabled")) return;
+            if (isAlreadySaved(bagItem)) return;
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            showBanner(decrementBtn);
+        }
     }
 
     function attachClickInterceptor() {
