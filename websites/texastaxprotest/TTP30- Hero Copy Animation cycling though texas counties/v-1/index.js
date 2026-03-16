@@ -130,7 +130,7 @@
         const texts = qAll(".mantine-Text-root", root);
 
         texts.forEach((el) => {
-            el.innerText = el.innerText.replace(/500\+\s*reviews?/i, "1000+ Reviews");
+            el.innerText = el.innerText.replace(/4\.5\s*Stars/i, "4.7 Stars").replace(/500\+\s*reviews?/i, "1000+ Reviews");
         });
     }
 
