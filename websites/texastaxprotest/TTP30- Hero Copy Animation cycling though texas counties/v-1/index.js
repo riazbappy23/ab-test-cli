@@ -11,7 +11,7 @@
     const TEST_CONFIG = {
         page_initials: "AB-TTP30-V1",
         test_variation: 1,
-        test_version: 0.0001,
+        test_version: 0.0002,
     };
 
     const {page_initials, test_variation, test_version} = TEST_CONFIG;
@@ -69,29 +69,24 @@
             const style = document.createElement("style");
             style.id = "AB-county-styles";
             style.textContent = `
-            .mantine-Title-root.AB-county-title {
-                font-size: calc(2.95rem * var(--mantine-scale)) !important;
-                line-height: 1.25 !important;
-                text-align: center !important;
-            }
+                .mantine-Title-root.AB-county-title {
+                    font-size: calc(2.95rem * var(--mantine-scale)) !important;
+                    line-height: 1.25 !important;
+                    text-align: center !important;
+                    opacity: .8;
+                    transition: opacity 0.5s ease;
+                }
 
-            /* Smooth fade + rise animation */
-            .AB-county-span {
-                display: inline-block;
-                opacity: .7;
-                transition: opacity 0.5s ease, transform 0.5s ease;
-            }
+                .mantine-Title-root.AB-county-title.AB-show {
+                    opacity: 1;
+                }
 
-            .AB-county-span.AB-show {
-                opacity: 1;
-            }
-
-            .AB-county-name {
-                color: #FFE9D9 !important;
-                text-decoration: underline;
-                text-underline-offset: 4px;
-            }
-        `;
+                .AB-county-name {
+                    color: #FFE9D9 !important;
+                    text-decoration: underline;
+                    text-underline-offset: 4px;
+                }
+            `;
             document.head.appendChild(style);
         }
 
@@ -100,33 +95,32 @@
         function highlightCounty(text) {
             const match = text.match(/In\s(.+?)\sCounty/i);
             if (!match) return text;
-
             return `In <span class="AB-county-name">${match[1]}</span> County`;
         }
 
         title.innerHTML = `
-        Lower Your Property Taxes 
-        <span class="AB-county-span">${highlightCounty(counties[0])}</span>
-    `;
+            Lower Your Property Taxes ${highlightCounty(counties[0])}
+        `;
 
         title.style.visibility = "visible";
 
-        const span = q(".AB-county-span", title);
-        if (!span) return;
-
-        requestAnimationFrame(() => span.classList.add("AB-show"));
+        requestAnimationFrame(() => {
+            title.classList.add("AB-show");
+        });
 
         let index = 0;
 
         setInterval(() => {
-            span.classList.remove("AB-show");
+            title.classList.remove("AB-show");
 
             setTimeout(() => {
                 index = (index + 1) % counties.length;
 
-                span.innerHTML = highlightCounty(counties[index]);
+                title.innerHTML = `
+                    Lower Your Property Taxes ${highlightCounty(counties[index])}
+                `;
 
-                span.classList.add("AB-show");
+                title.classList.add("AB-show");
             }, 500);
         }, 1800);
     }
