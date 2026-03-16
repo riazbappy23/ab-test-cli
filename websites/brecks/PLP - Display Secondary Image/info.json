@@ -1,0 +1,13 @@
+{
+  "id": "1773647574708_6509_PLP___Display_Secondary_Image",
+  "name": "PLP - Display Secondary Image",
+  "type": "A/B",
+  "website": "brecks",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-16T07:52:54.708Z",
+  "createdAtReadable": "3/16/2026, 1:52:54 PM",
+  "lastUpdated": "2026-03-16T07:52:54.831Z"
+}
