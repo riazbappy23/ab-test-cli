@@ -30,7 +30,12 @@ display:flex;
 .PLP-Display_Secondary_Image-swiper .swiper-pagination-bullet {
   background: #8a8a8a;
   opacity: 0.7;
-  marin: 0 4px !important;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .PLP-Display_Secondary_Image-swiper .swiper-pagination {
+    gap: 4px;
+  }
 }
 
 .PLP-Display_Secondary_Image-swiper .swiper-pagination-bullet-active {
