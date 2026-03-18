@@ -24,6 +24,8 @@
         return Array.from(root.querySelectorAll(sel));
     }
 
+    const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
+
     function waitFrames(n) {
         return new Promise((resolve) => {
             let i = 0;
@@ -55,6 +57,16 @@
         });
     }
 
+    function highlightCounty(text) {
+        const match = text.match(/In\s(.+?)\sCounty/i);
+        if (!match) return text;
+        return isMobile() ? `in<br><span class="AB-county-name">${match[1]}</span> County` : `in <span class="AB-county-name">${match[1]}</span> County`;
+    }
+
+    function buildTitleHTML(countyText) {
+        return isMobile() ? `Lower Your<br>Property Taxes ${highlightCounty(countyText)}` : `Lower Your Property Taxes ${highlightCounty(countyText)}`;
+    }
+
     function replaceText() {
         const counties = ["In Harris County", "In Dallas County", "In Tarrant County", "In Travis County", "In Collin County", "In Denton County", "In Fort Bend County", "In Montgomery County", "In Williamson County"];
 
@@ -69,39 +81,37 @@
             const style = document.createElement("style");
             style.id = "AB-county-styles";
             style.textContent = `
+            .mantine-Title-root.AB-county-title {
+                font-size: calc(2.95rem * var(--mantine-scale)) !important;
+                line-height: 1.25 !important;
+                text-align: center !important;
+                opacity: .8;
+                transition: opacity 0.5s ease;
+            }
+
+            .mantine-Title-root.AB-county-title.AB-show {
+                opacity: 1;
+            }
+
+            .AB-county-name {
+                color: #FFE9D9 !important;
+                text-decoration: underline;
+                text-underline-offset: 4px;
+            }
+
+            @media (max-width: 767px) {
                 .mantine-Title-root.AB-county-title {
-                    font-size: calc(2.95rem * var(--mantine-scale)) !important;
-                    line-height: 1.25 !important;
-                    text-align: center !important;
-                    opacity: .8;
-                    transition: opacity 0.5s ease;
+                    font-size: calc(2.3rem * var(--mantine-scale)) !important;
+                    line-height: 1.1 !important;
                 }
-
-                .mantine-Title-root.AB-county-title.AB-show {
-                    opacity: 1;
-                }
-
-                .AB-county-name {
-                    color: #FFE9D9 !important;
-                    text-decoration: underline;
-                    text-underline-offset: 4px;
-                }
-            `;
+            }
+        `;
             document.head.appendChild(style);
         }
 
         title.classList.add("AB-county-title");
 
-        function highlightCounty(text) {
-            const match = text.match(/In\s(.+?)\sCounty/i);
-            if (!match) return text;
-            return `In <span class="AB-county-name">${match[1]}</span> County`;
-        }
-
-        title.innerHTML = `
-            Lower Your Property Taxes ${highlightCounty(counties[0])}
-        `;
-
+        title.innerHTML = buildTitleHTML(counties[0]);
         title.style.visibility = "visible";
 
         requestAnimationFrame(() => {
@@ -115,11 +125,7 @@
 
             setTimeout(() => {
                 index = (index + 1) % counties.length;
-
-                title.innerHTML = `
-                    Lower Your Property Taxes ${highlightCounty(counties[index])}
-                `;
-
+                title.innerHTML = buildTitleHTML(counties[index]);
                 title.classList.add("AB-show");
             }, 500);
         }, 1800);
