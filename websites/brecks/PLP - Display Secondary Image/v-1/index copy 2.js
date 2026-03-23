@@ -1,360 +1,247 @@
-(() => { // IIFE — runs immediately and keeps variables out of global scope
+(function () {
+    var interval = setInterval(function () {
+        if (document.head) {
+            // Check if <head> exists
+            clearInterval(interval); // Stop checking once found
+            var style = document.createElement("style");
+            style.innerHTML = `
+      .PLP-Display_Secondary_Image-swiper {
+   height: 100%;
+   width: 100%;
+   z-index:0;
+ }
 
-    // Wait until an element appears in DOM (polling approach)
-    const waitForElem = (selector, callback, timer = 30000, frequency = 100) => {
-        const el = document.querySelector(selector); // try to find element now
+.PLP-Display_Secondary_Image-swiper .swiper-slide {
+display:flex;
+  padding-bottom: 20px;
+}
 
-        if (!el) { // if element not found
-            if (timer <= 0) return; // stop trying if timeout exceeded
+.PLP-Display_Secondary_Image-swiper .swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
 
-            // try again after "frequency" ms
-            setTimeout(
-                () => waitForElem(selector, callback, timer - frequency, frequency),
-                frequency
-            );
-        } else {
-            callback(el); // element found → run callback
+.PLP-Display_Secondary_Image-swiper .swiper-pagination {
+  bottom: 0px;
+}
+
+.swiper-pagination-bullets{
+background:white !important;
+}
+
+.PLP-Display_Secondary_Image-swiper .swiper-pagination-bullet {
+  background: #8a8a8a;
+  opacity: 0.7;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .PLP-Display_Secondary_Image-swiper .swiper-pagination {
+    gap: 4px;
+  }
+}
+
+.PLP-Display_Secondary_Image-swiper .swiper-pagination-bullet-active {
+  background: black;
+  padding: 0 10px;
+  border-radius: 4px;
+  opacity: 1;
+}
+
+@media only screen and (max-width: 1024px) {
+  .product-item__floating-action-buttons {
+    top: unset;
+    bottom: 20px;
+  }
+:where(wishlist-button-collection) .wk-button {
+  display: none !important;
+}
+}
+`;
+            document.head.appendChild(style);
+            setTimeout(() => {
+                clearInterval(interval); // Clear the interval after 5 seconds
+            }, 5000);
         }
+    }, 100); // Check every 100ms for <head>
+})();
+(() => {
+    const waitForElem = (selector, callback, timer = 30000, frequency = 100) => {
+        const el = document.querySelector(selector);
+        if (el) return callback(el);
+        if (timer <= 0) return;
+        setTimeout(() => waitForElem(selector, callback, timer - frequency, frequency), frequency);
     };
 
-    // Short helper for querySelector
-    function q(sel, root = document) {
-        return root.querySelector(sel); // find first matching element inside root
-    }
+    const q = (s, r = document) => r.querySelector(s);
+    const qAll = (s, r = document) => [...r.querySelectorAll(s)];
 
-    // Short helper for querySelectorAll that returns REAL array
-    function qAll(sel, root = document) {
-        return [...root.querySelectorAll(sel)];
-    }
-
-    // Experiment identifiers
     const ID = "PLP-Display_Secondary_Image";
     const VAR = "1";
 
-    // Logging helper (stores logs + prints to console)
-    function expLog() {
-        window.runningExperiments[ID].logs.push([...arguments]);
-        console.debug(...arguments);
-    }
-
-    // Ensure global experiment container exists
     window.runningExperiments = window.runningExperiments || {};
+    window.runningExperiments[ID] = {name: "", variation: VAR, logs: []};
 
-    // Register this experiment
-    window.runningExperiments[ID] = {
-        name: "",
-        variation: `${VAR}`,
-        logs: []
-    };
+    const log = (...a) => console.debug(...a);
 
-    // Centralized selectors
     const SELECTORS = {
-        collection: ".collection__products, .collection__infinite-container", // main product grid
-        productItem: ".product-item", // each product card
-        productImg: "img.image__img", // product image inside card
-        loading: ".collection__loading", // loading spinner
-        quickViewIcon: ".product-item__floating-action-buttons",
+        collection: ".collection__products, .collection__infinite-container",
+        productItem: ".product-item",
+        productImg: "img.image__img",
     };
 
-    // Get (or create) global product cache object
-    const getCache = () =>
-        (window._plpSecondaryImageCache =
-            window._plpSecondaryImageCache || {});
+    const getCache = () => (window._plpImgCache = window._plpImgCache || {});
 
-    // Extract product handle from card's data-url
     const getHandle = (card) => {
-        const dataUrl = card.getAttribute("data-url") || ""; // product link
-        const part = (dataUrl.split("/products/")[1] || "").split(/[/?#]/)[0];
-        return part ? decodeURIComponent(part) : null; // decoded handle
+        const url = card.getAttribute("data-url") || "";
+        const part = (url.split("/products/")[1] || "").split(/[/?#]/)[0];
+        return part ? decodeURIComponent(part) : null;
     };
 
-    // Fetch product JSON and cache it
-    const fetchProduct = (handle, cache) => {
-        const cleanHandle = handle.split("?")[0];
+    const fetchImages = (handle, cache) => {
+        if (cache[handle]) return cache[handle];
 
-        // If not already fetched → fetch now
-        if (!cache[cleanHandle]) {
-            cache[cleanHandle] = fetch(`/products/${cleanHandle}.js`)
-                .then((res) => (res.ok ? res.json() : null))
-                .catch(() => null);
-        }
+        cache[handle] = fetch(`/products/${handle}.js`)
+            .then((res) => (res.ok ? res.json() : null))
+            .then((data) => data?.images || [])
+            .catch(() => null);
 
-        return cache[cleanHandle]; // return cached Promise
+        return cache[handle];
     };
 
-    // Prefetch product data for visible cards
-    const prefetchCards = (cards, cache) => {
-        cards.forEach((card) => {
-            const handle = getHandle(card);
-            if (!handle || cache[handle]) return;
-            fetchProduct(handle, cache);
+    const preloadImages = (images, count = 2) => {
+        images.slice(0, count).forEach((src) => {
+            const img = new Image();
+            img.src = src;
         });
     };
 
-    // MutationObserver instance reference
-    let _collectionBodyObserver = null;
-
-    // Observe page for collection changes (infinite scroll etc.)
-    const observeCollection = (cache, setupFn) => {
-
-        // Disconnect previous observer if exists
-        if (_collectionBodyObserver) {
-            try { _collectionBodyObserver.disconnect(); } catch (e) {}
-        }
-
-        // Check if mutation affects collection or product items
-        const isRelevantMutation = (mutations) =>
-            mutations.some((m) =>
-                [...m.addedNodes, ...m.removedNodes].some((n) => {
-                    if (n.nodeType !== 1) return false; // only element nodes
-                    if (n.matches?.(SELECTORS.collection)) return true;
-                    if (n.querySelector?.(SELECTORS.productItem)) return true;
-                    return false;
-                })
-            );
-
-        const callback = (mutations) => {
-            if (!isRelevantMutation(mutations)) return;
-
-            const current = q(SELECTORS.collection);
-            if (!current) return;
-
-            setupFn(current, cache); // re-run setup when grid changes
-        };
-
-        _collectionBodyObserver = new MutationObserver(callback);
-
-        // Observe whole body for subtree changes
-        _collectionBodyObserver.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+    const setLoading = (card, on) => {
+        card.style.opacity = on ? "0.6" : "";
     };
 
-    // Choose secondary image (not same as current)
-    const pickSecondaryImage = (product, currentSrc) => {
-        const images = product?.images;
+    const pickSecondary = (images, currentSrc) => {
         if (!images || images.length < 2) return null;
 
-        const currentBase = currentSrc.split("?")[0];
-        const candidate = images[1];
+        const base = currentSrc.split("?")[0];
 
-        if (candidate.split("?")[0] === currentBase) {
-            return images.length > 2 ? images[2] : null;
-        }
+        if (images[1].split("?")[0] === base) return images[2] || null;
 
-        return candidate;
+        return images[1];
     };
 
-    // Swap image on hover (desktop)
-    const swapImageOnHover = (card, cache) => {
+    const bindHover = (card, images) => {
+        if (card.dataset.hoverInit) return;
+        card.dataset.hoverInit = "1";
 
-        const handle = getHandle(card);
-        if (!handle) return;
+        const img = q(SELECTORS.productImg, card);
+        if (!img) return;
 
-        let originalSrc = null;
-        let originalSrcset = null;
-        let secondarySrc = null;
+        const secondary = pickSecondary(images, img.src);
+        if (!secondary) return;
 
-        // Helper to get image element
-        const getImg = () => card.querySelector(SELECTORS.productImg);
+        let originalSrc;
+        let originalSet;
 
-        // Mouse enter → show secondary image
-        card.addEventListener("mouseenter", async () => {
-
-            if (!secondarySrc) {
-                const product = await cache[handle];
-                secondarySrc = pickSecondaryImage(product, getImg()?.src || "");
-            }
-
-            if (!secondarySrc) return;
-
-            const img = getImg();
-            if (!img) return;
-
-            // Save original image
+        card.addEventListener("mouseenter", () => {
             originalSrc = img.src;
-            originalSrcset = img.srcset;
-
-            // Replace with secondary image
-            img.src = secondarySrc;
-            img.srcset = secondarySrc;
+            originalSet = img.srcset;
+            img.src = secondary;
+            img.srcset = secondary;
         });
 
-        // Mouse leave → restore original image
         card.addEventListener("mouseleave", () => {
-            if (!originalSrc) return;
-
-            const img = getImg();
-            if (!img) return;
-
-            img.src = originalSrc;
-            img.srcset = originalSrcset;
-        });
-    };
-
-    // Attach hover behavior only on desktop
-    const bindHover = (card, cache) => {
-        if (window.innerWidth <= 768) return; // skip mobile
-        if (card.getAttribute("data-hover-init")) return; // avoid duplicates
-
-        card.setAttribute("data-hover-init", "1");
-        swapImageOnHover(card, cache);
-    };
-
-    // Setup all cards (desktop)
-    const setupAllCards = (container, cache) => {
-        const cards = qAll(SELECTORS.productItem, container);
-
-        prefetchCards(cards, cache);
-        cards.forEach((card) => bindHover(card, cache));
-    };
-
-    // Wait until product items appear inside container
-    const waitForProductItems = (container, onReady) => {
-
-        if (q(SELECTORS.productItem, container)) {
-            onReady();
-            return;
-        }
-
-        const waiter = new MutationObserver((_, obs) => {
-            if (q(SELECTORS.productItem, container)) {
-                obs.disconnect();
-                onReady();
+            if (originalSrc) {
+                img.src = originalSrc;
+                img.srcset = originalSet;
             }
         });
-
-        waiter.observe(container, { childList: true, subtree: true });
     };
 
-    // Initialize desktop behavior
-    const initCollection = () => {
-        const container = q(SELECTORS.collection);
-        if (!container) return;
-
-        const cache = getCache();
-
-        waitForProductItems(container, () =>
-            setupAllCards(container, cache)
-        );
-
-        observeCollection(cache, setupAllCards);
-    };
-
-    // Load Swiper library if not already loaded
-    const loadSwiperAssets = () => {
-
+    const loadSwiper = () => {
         if (window.Swiper) return Promise.resolve();
 
-        if (!document.getElementById("swiper-js")) {
+        if (!document.getElementById("swiper-css")) {
             document.head.insertAdjacentHTML(
                 "beforeend",
                 `<link id="swiper-css" rel="stylesheet"
                  href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">`
             );
-
-            return new Promise((resolve) => {
-                const js = document.createElement("script");
-                js.id = "swiper-js";
-                js.src =
-                    "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js";
-                js.onload = resolve;
-                document.head.appendChild(js);
-            });
         }
 
-        return Promise.resolve();
+        return new Promise((resolve) => {
+            const js = document.createElement("script");
+            js.src = "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js";
+            js.onload = resolve;
+            document.head.appendChild(js);
+        });
     };
 
-    // Build HTML slides for Swiper
     const buildSwiperSlides = (images) =>
         images
             .map(
-                (src, i) =>
-                    `<div class="swiper-slide">
-                        <img src="${src}" loading="eager"
-                             decoding="async"
-                             class="lazyloaded"
-                             data-swiper-img="${i}" alt="">
-                     </div>`
+                (src, i) => `
+            <div class="swiper-slide">
+                <img
+                    src="${src}"
+                    loading="${i < 2 ? "eager" : "lazy"}"
+                    decoding="async"
+                    alt="">
+            </div>
+        `
             )
             .join("");
 
-    // Create Swiper container element
     const createSwiperContainer = (images) => {
         const el = document.createElement("div");
-
         el.className = `swiper ${ID}-swiper`;
 
         el.innerHTML = `
-            <div class="swiper-wrapper">
-                ${buildSwiperSlides(images)}
-            </div>
+            <div class="swiper-wrapper">${buildSwiperSlides(images)}</div>
             <div class="swiper-pagination"></div>
         `;
 
-        el.style.cssText =
-            "position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .2s;pointer-events:none;";
+        el.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .2s;pointer-events:none;";
 
         return el;
     };
 
-    // Show Swiper after images load
     const revealSwiperOnLoad = (swiperEl, existingImg) => {
+        swiperEl.style.opacity = "1";
+        swiperEl.style.pointerEvents = "auto";
 
-        const imgs = Array.from(qAll("img", swiperEl));
+        const firstImg = swiperEl.querySelector("img");
 
-        Promise.all(
-            imgs.map((img) =>
-                img.complete
-                    ? Promise.resolve()
-                    : img.decode().catch(() => {})
-            )
-        ).then(() => {
-
-            swiperEl.style.pointerEvents = "auto";
-            swiperEl.style.opacity = "1";
-
-            if (existingImg) existingImg.style.visibility = "hidden";
-        });
+        if (firstImg) {
+            if (firstImg.complete) {
+                existingImg && (existingImg.style.visibility = "hidden");
+            } else {
+                firstImg.onload = () => {
+                    existingImg && (existingImg.style.visibility = "hidden");
+                };
+            }
+        }
     };
 
-    // Build Swiper slider inside a product card
     const buildSwiper = (card, images) => {
-
-        const imageWrapper =
-            card.querySelector(".product-item__image");
-
+        const imageWrapper = card.querySelector(".product-item__image");
         if (!imageWrapper) return;
         if (imageWrapper.querySelector(`.${ID}-swiper`)) return;
 
-        // Make wrapper square
-        const w =
-            imageWrapper.offsetWidth ||
-            card.offsetWidth ||
-            Math.round(
-                (q(SELECTORS.collection)?.offsetWidth || 400) / 2
-            );
+        const existingImg = imageWrapper.querySelector(SELECTORS.productImg);
 
-        imageWrapper.style.cssText =
-            `height:${w}px;padding-bottom:0;overflow:hidden;position:relative;`;
-
-        const existingImg =
-            imageWrapper.querySelector(SELECTORS.productImg);
+        imageWrapper.style.position = "relative";
+        imageWrapper.style.overflow = "hidden";
 
         const swiperEl = createSwiperContainer(images);
+        imageWrapper.insertAdjacentElement("afterend", swiperEl);
 
-        imageWrapper.appendChild(swiperEl);
-
-        // Initialize Swiper after DOM update
         requestAnimationFrame(() => {
-
-            new Swiper(swiperEl, {
+            new window.Swiper(swiperEl, {
                 loop: false,
                 pagination: {
                     el: swiperEl.querySelector(".swiper-pagination"),
-                    clickable: true
+                    clickable: true,
                 },
             });
 
@@ -362,77 +249,70 @@
         });
     };
 
-    // Lazy-build Swiper when card enters viewport
-    const observeCardIntersection = (cards, cache) => {
+    const processCard = async (card, cache, isDesktop) => {
+        if (card.classList.contains("AB-PLP-added")) return;
+        card.classList.add("AB-PLP-added");
+        const handle = getHandle(card);
+        if (!handle) return;
 
+        setLoading(card, true);
+
+        const images = await fetchImages(handle, cache);
+        setLoading(card, false);
+
+        if (!images?.length) return;
+
+        if (isDesktop) {
+            bindHover(card, images);
+        } else {
+            preloadImages(images);
+            buildSwiper(card, images);
+        }
+    };
+
+    const createObserver = (container, cache, isDesktop) => {
         const io = new IntersectionObserver(
-            async (entries) => {
-
-                for (const entry of entries) {
-
-                    if (!entry.isIntersecting) continue;
-
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
                     io.unobserve(entry.target);
-
-                    const card = entry.target;
-
-                    if (card.querySelector(`.${ID}-swiper`)) continue;
-
-                    const handle = getHandle(card);
-                    if (!handle) continue;
-
-                    const product = await fetchProduct(handle, cache);
-                    if (!product?.images?.length) continue;
-
-                    buildSwiper(card, product.images);
-                }
+                    processCard(entry.target, cache, isDesktop);
+                });
             },
-            { rootMargin: "200px 0px" }
+            {rootMargin: "200px"}
         );
 
-        cards.forEach((card) => io.observe(card));
+        const observeNewCards = () => {
+            qAll(SELECTORS.productItem, container).forEach((card) => {
+                if (!card.classList.contains("AB-PLP-added")) io.observe(card);
+            });
+        };
+
+        observeNewCards();
+
+        new MutationObserver(observeNewCards).observe(container, {
+            childList: true,
+            subtree: true,
+        });
     };
 
-    // Setup mobile cards
-    const setupMobileCards = (container, cache) => {
-        const cards = qAll(SELECTORS.productItem, container);
-
-        prefetchCards(cards, cache);
-        observeCardIntersection(cards, cache);
-    };
-
-    // Initialize mobile behavior
-    const initForMobile = () => {
-
+    const init = (isDesktop) => {
         const container = q(SELECTORS.collection);
         if (!container) return;
 
         const cache = getCache();
 
-        loadSwiperAssets().then(() => {
-
-            waitForProductItems(container, () =>
-                setupMobileCards(container, cache)
-            );
-
-            observeCollection(cache, setupMobileCards);
-        });
+        createObserver(container, cache, isDesktop);
     };
 
-    // START: wait for collection grid to exist
-    waitForElem(SELECTORS.collection, () => {
-
-        if (!q(SELECTORS.loading)) return;
-
+    waitForElem(SELECTORS.collection, async () => {
         document.body.classList.add(`${ID}_${VAR}`);
+        log("RUNNING EXPERIMENT:", ID, VAR);
 
-        expLog("RUNNING EXPERIMENT:", ID, "::", VAR);
+        const isDesktop = window.innerWidth > 1024;
 
-        if (window.innerWidth > 768) {
-            initCollection(); // desktop
-        } else {
-            initForMobile(); // mobile
-        }
+        if (!isDesktop) await loadSwiper();
+
+        init(isDesktop);
     });
-
-})(); // end IIFE
+})();
