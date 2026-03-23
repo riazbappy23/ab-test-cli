@@ -1,0 +1,13 @@
+{
+  "id": "1774255854368_1590_plp_pdp_sale_color_vc_128",
+  "name": "plp_pdp_sale_color_vc_128",
+  "type": "A/B",
+  "website": "vicicollection",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-23T08:50:54.368Z",
+  "createdAtReadable": "3/23/2026, 2:50:54 PM",
+  "lastUpdated": "2026-03-23T08:50:54.511Z"
+}
