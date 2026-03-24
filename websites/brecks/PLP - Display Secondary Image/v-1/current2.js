@@ -1,13 +1,13 @@
 (function () {
     var interval = setInterval(function () {
         if (document.head) {
-            // Check if <head> exists
-            clearInterval(interval); // Stop checking once found
+            clearInterval(interval);
             var style = document.createElement("style");
             style.innerHTML = `
       .PLP-Display_Secondary_Image-swiper {
    height: 100%;
    width: 100%;
+   z-index:0;
  }
 
 .PLP-Display_Secondary_Image-swiper .swiper-slide {
@@ -19,24 +19,25 @@ display:flex;
   display: block;
   width: 100%;
   height: 100%;
-  -o-object-fit: contain;
-  object-fit: contain;
 }
 
 .PLP-Display_Secondary_Image-swiper .swiper-pagination {
   bottom: 0px;
 }
 
-@supports (-webkit-touch-callout: none) {
-  .PLP-Display_Secondary_Image-swiper .swiper-pagination {
-    gap: 4px;
-  }
+.swiper-pagination-bullets{
+background:white !important;
 }
 
 .PLP-Display_Secondary_Image-swiper .swiper-pagination-bullet {
   background: #8a8a8a;
   opacity: 0.7;
-  marin: 0 4px !important;
+}
+
+@supports (-webkit-touch-callout: none) {
+  .PLP-Display_Secondary_Image-swiper .swiper-pagination {
+    gap: 4px;
+  }
 }
 
 .PLP-Display_Secondary_Image-swiper .swiper-pagination-bullet-active {
@@ -58,11 +59,12 @@ display:flex;
 `;
             document.head.appendChild(style);
             setTimeout(() => {
-                clearInterval(interval); // Clear the interval after 5 seconds
+                clearInterval(interval);
             }, 5000);
         }
-    }, 100); // Check every 100ms for <head>
+    }, 100);
 })();
+
 (() => {
     const waitForElem = (selector, callback, timer = 30000, frequency = 100) => {
         const el = document.querySelector(selector);
@@ -88,6 +90,48 @@ display:flex;
         productImg: "img.image__img",
     };
 
+    // ─── Touch/tablet detection (covers wide tablets > 1024px too) ───────────────
+    const isTouchDevice = () =>
+        ("ontouchstart" in window) || navigator.maxTouchPoints > 0;
+
+    // Show swiper on touch devices regardless of screen width
+    const shouldUseSwiper = isTouchDevice();
+
+    // ─── Eagerly start loading Swiper as soon as script runs ─────────────────────
+    // Don't wait for the collection element — kick off the network request now
+    // so it's ready (or nearly ready) by the time cards need it.
+    let swiperReady = null; // resolves when Swiper is available
+
+    const loadSwiper = () => {
+        if (swiperReady) return swiperReady; // already loading / loaded
+
+        if (window.Swiper) {
+            swiperReady = Promise.resolve();
+            return swiperReady;
+        }
+
+        if (!document.getElementById("swiper-css")) {
+            document.head.insertAdjacentHTML(
+                "beforeend",
+                `<link id="swiper-css" rel="stylesheet"
+                 href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">`
+            );
+        }
+
+        swiperReady = new Promise((resolve) => {
+            const js = document.createElement("script");
+            js.src = "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js";
+            js.onload = resolve;
+            document.head.appendChild(js);
+        });
+
+        return swiperReady;
+    };
+
+    // Start loading Swiper immediately if this device will use it
+    if (shouldUseSwiper) loadSwiper();
+
+    // ─── Image fetching via .json (smaller payload, faster) ──────────────────────
     const getCache = () => (window._plpImgCache = window._plpImgCache || {});
 
     const getHandle = (card) => {
@@ -99,9 +143,10 @@ display:flex;
     const fetchImages = (handle, cache) => {
         if (cache[handle]) return cache[handle];
 
-        cache[handle] = fetch(`/products/${handle}.js`)
+        // .json returns a leaner payload than .js — only product data, no storefront JS
+        cache[handle] = fetch(`/products/${handle}.json`)
             .then((res) => (res.ok ? res.json() : null))
-            .then((data) => data?.images || [])
+            .then((data) => data?.product?.images?.map((img) => img.src) || [])
             .catch(() => null);
 
         return cache[handle];
@@ -118,13 +163,11 @@ display:flex;
         card.style.opacity = on ? "0.6" : "";
     };
 
+    // ─── Desktop hover ────────────────────────────────────────────────────────────
     const pickSecondary = (images, currentSrc) => {
         if (!images || images.length < 2) return null;
-
         const base = currentSrc.split("?")[0];
-
         if (images[1].split("?")[0] === base) return images[2] || null;
-
         return images[1];
     };
 
@@ -138,8 +181,7 @@ display:flex;
         const secondary = pickSecondary(images, img.src);
         if (!secondary) return;
 
-        let originalSrc;
-        let originalSet;
+        let originalSrc, originalSet;
 
         card.addEventListener("mouseenter", () => {
             originalSrc = img.src;
@@ -156,25 +198,7 @@ display:flex;
         });
     };
 
-    const loadSwiper = () => {
-        if (window.Swiper) return Promise.resolve();
-
-        if (!document.getElementById("swiper-css")) {
-            document.head.insertAdjacentHTML(
-                "beforeend",
-                `<link id="swiper-css" rel="stylesheet"
-                 href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">`
-            );
-        }
-
-        return new Promise((resolve) => {
-            const js = document.createElement("script");
-            js.src = "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js";
-            js.onload = resolve;
-            document.head.appendChild(js);
-        });
-    };
-
+    // ─── Swiper build ─────────────────────────────────────────────────────────────
     const buildSwiperSlides = (images) =>
         images
             .map(
@@ -199,7 +223,8 @@ display:flex;
             <div class="swiper-pagination"></div>
         `;
 
-        el.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .2s;pointer-events:none;";
+        el.style.cssText =
+            "position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .2s;pointer-events:none;";
 
         return el;
     };
@@ -209,7 +234,6 @@ display:flex;
         swiperEl.style.pointerEvents = "auto";
 
         const firstImg = swiperEl.querySelector("img");
-
         if (firstImg) {
             if (firstImg.complete) {
                 existingImg && (existingImg.style.visibility = "hidden");
@@ -247,42 +271,37 @@ display:flex;
         });
     };
 
-    const processCard = async (card, cache, isDesktop) => {
+    // ─── Per-card processing ──────────────────────────────────────────────────────
+    const processCard = async (card, cache) => {
         if (card.classList.contains("AB-PLP-added")) return;
         card.classList.add("AB-PLP-added");
-        console.log(" ====Card==== ", card);
 
         const handle = getHandle(card);
-
-        console.log(" ====handle==== ", handle);
-
         if (!handle) return;
 
         setLoading(card, true);
-
         const images = await fetchImages(handle, cache);
-
-        console.log(" ====images==== ", images);
-
         setLoading(card, false);
 
         if (!images?.length) return;
 
-        if (isDesktop) {
-            bindHover(card, images);
-        } else {
+        if (shouldUseSwiper) {
             preloadImages(images);
+            await swiperReady; // already resolving by now in most cases
             buildSwiper(card, images);
+        } else {
+            bindHover(card, images);
         }
     };
 
-    const createObserver = (container, cache, isDesktop) => {
+    // ─── Intersection observer ────────────────────────────────────────────────────
+    const createObserver = (container, cache) => {
         const io = new IntersectionObserver(
             (entries) => {
                 entries.forEach((entry) => {
                     if (!entry.isIntersecting) return;
                     io.unobserve(entry.target);
-                    processCard(entry.target, cache, isDesktop);
+                    processCard(entry.target, cache);
                 });
             },
             {rootMargin: "200px"}
@@ -302,23 +321,15 @@ display:flex;
         });
     };
 
-    const init = (isDesktop) => {
+    const init = () => {
         const container = q(SELECTORS.collection);
         if (!container) return;
-
-        const cache = getCache();
-
-        createObserver(container, cache, isDesktop);
+        createObserver(container, getCache());
     };
 
-    waitForElem(SELECTORS.collection, async () => {
+    waitForElem(SELECTORS.collection, () => {
         document.body.classList.add(`${ID}_${VAR}`);
         log("RUNNING EXPERIMENT:", ID, VAR);
-
-        const isDesktop = window.innerWidth > 1024;
-
-        if (!isDesktop) await loadSwiper();
-
-        init(isDesktop);
+        init();
     });
 })();

@@ -4,63 +4,62 @@
             clearInterval(interval);
             var style = document.createElement("style");
             style.innerHTML = `
-      .PLP-Display_Secondary_Image-swiper {
-   height: 100%;
-   width: 100%;
-   z-index:0;
- }
-
+.AB-PLP-added .product-item__inner .badger {
+z-index:2
+}
+.PLP-Display_Secondary_Image-swiper {
+  height:100%;
+  width:100%;
+}
 .PLP-Display_Secondary_Image-swiper .swiper-slide {
-display:flex;
-  padding-bottom: 20px;
+  display:flex;
 }
-
-.PLP-Display_Secondary_Image-swiper .swiper-slide img {
-  display: block;
-  width: 100%;
-  height: 100%;
-}
-
 .PLP-Display_Secondary_Image-swiper .swiper-pagination {
-  bottom: 0px;
+  position:absolute !important;
+  bottom:8px !important;
+  top:auto !important;
+  left:0;
+  right:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  z-index:5;
+  pointer-events:none;
 }
-
-.swiper-pagination-bullets{
-background:white !important;
-}
-
 .PLP-Display_Secondary_Image-swiper .swiper-pagination-bullet {
-  background: #8a8a8a;
-  opacity: 0.7;
+  width:6px;
+  height:6px;
+  background:rgba(225, 225, 225, 0.65);
+  opacity:1;
+  margin:0 3px !important;
+  transition:all .25s ease;
+  pointer-events:auto;
 }
-
-@supports (-webkit-touch-callout: none) {
-  .PLP-Display_Secondary_Image-swiper .swiper-pagination {
-    gap: 4px;
-  }
-}
-
 .PLP-Display_Secondary_Image-swiper .swiper-pagination-bullet-active {
-  background: black;
-  padding: 0 10px;
-  border-radius: 4px;
-  opacity: 1;
+  width:18px;
+  height:6px;
+  border-radius:6px;
+  background:rgba(255,255,255,0.65);
+  opacity:1;
 }
-
-@media only screen and (max-width: 1024px) {
-  .product-item__floating-action-buttons {
-    top: unset;
-    bottom: 20px;
+@media (hover:hover) and (pointer:fine) {
+  .product-item__image img.image__img {
+    transition:opacity .35s ease, transform .5s ease;
+    will-change:opacity, transform;
   }
-:where(wishlist-button-collection) .wk-button {
-  display: none !important;
 }
+@media only screen and (max-width: 1071px) {
+  .product-item__floating-action-buttons {
+    top:unset;
+    bottom:20px;
+  }
+  :where(wishlist-button-collection) .wk-button {
+    display:none !important;
+  }
 }
 `;
             document.head.appendChild(style);
-            setTimeout(() => {
-                clearInterval(interval);
-            }, 5000);
+            setTimeout(() => clearInterval(interval), 5000);
         }
     }, 100);
 })();
@@ -75,6 +74,7 @@ background:white !important;
 
     const q = (s, r = document) => r.querySelector(s);
     const qAll = (s, r = document) => [...r.querySelectorAll(s)];
+    const isMobileOrTab = () => window.matchMedia("(max-width: 1071px)").matches;
 
     const ID = "PLP-Display_Secondary_Image";
     const VAR = "1";
@@ -90,32 +90,17 @@ background:white !important;
         productImg: "img.image__img",
     };
 
-    // ─── Touch/tablet detection (covers wide tablets > 1024px too) ───────────────
-    const isTouchDevice = () =>
-        ("ontouchstart" in window) || navigator.maxTouchPoints > 0;
+    const isTouchDevice = () => window.matchMedia("(hover: none) and (pointer: coarse)").matches;
+    const shouldUseSwiper = isTouchDevice() || isMobileOrTab();
 
-    // Show swiper on touch devices regardless of screen width
-    const shouldUseSwiper = isTouchDevice();
-
-    // ─── Eagerly start loading Swiper as soon as script runs ─────────────────────
-    // Don't wait for the collection element — kick off the network request now
-    // so it's ready (or nearly ready) by the time cards need it.
-    let swiperReady = null; // resolves when Swiper is available
+    let swiperReady = null;
 
     const loadSwiper = () => {
-        if (swiperReady) return swiperReady; // already loading / loaded
-
-        if (window.Swiper) {
-            swiperReady = Promise.resolve();
-            return swiperReady;
-        }
+        if (swiperReady) return swiperReady;
+        if (window.Swiper) return (swiperReady = Promise.resolve());
 
         if (!document.getElementById("swiper-css")) {
-            document.head.insertAdjacentHTML(
-                "beforeend",
-                `<link id="swiper-css" rel="stylesheet"
-                 href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">`
-            );
+            document.head.insertAdjacentHTML("beforeend", `<link id="swiper-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">`);
         }
 
         swiperReady = new Promise((resolve) => {
@@ -128,10 +113,8 @@ background:white !important;
         return swiperReady;
     };
 
-    // Start loading Swiper immediately if this device will use it
     if (shouldUseSwiper) loadSwiper();
 
-    // ─── Image fetching via .json (smaller payload, faster) ──────────────────────
     const getCache = () => (window._plpImgCache = window._plpImgCache || {});
 
     const getHandle = (card) => {
@@ -142,13 +125,10 @@ background:white !important;
 
     const fetchImages = (handle, cache) => {
         if (cache[handle]) return cache[handle];
-
-        // .json returns a leaner payload than .js — only product data, no storefront JS
         cache[handle] = fetch(`/products/${handle}.json`)
             .then((res) => (res.ok ? res.json() : null))
             .then((data) => data?.product?.images?.map((img) => img.src) || [])
             .catch(() => null);
-
         return cache[handle];
     };
 
@@ -163,7 +143,6 @@ background:white !important;
         card.style.opacity = on ? "0.6" : "";
     };
 
-    // ─── Desktop hover ────────────────────────────────────────────────────────────
     const pickSecondary = (images, currentSrc) => {
         if (!images || images.length < 2) return null;
         const base = currentSrc.split("?")[0];
@@ -181,34 +160,44 @@ background:white !important;
         const secondary = pickSecondary(images, img.src);
         if (!secondary) return;
 
+        const preload = new Image();
+        preload.src = secondary;
+
         let originalSrc, originalSet;
 
         card.addEventListener("mouseenter", () => {
             originalSrc = img.src;
             originalSet = img.srcset;
-            img.src = secondary;
-            img.srcset = secondary;
+            img.style.opacity = "0";
+            img.style.transform = "scale(1.04)";
+            setTimeout(() => {
+                img.src = secondary;
+                img.srcset = secondary;
+                img.style.opacity = "1";
+                img.style.transform = "scale(1)";
+            }, 120);
         });
 
         card.addEventListener("mouseleave", () => {
             if (originalSrc) {
-                img.src = originalSrc;
-                img.srcset = originalSet;
+                img.style.opacity = "0";
+                img.style.transform = "scale(1.04)";
+                setTimeout(() => {
+                    img.src = originalSrc;
+                    img.srcset = originalSet;
+                    img.style.opacity = "1";
+                    img.style.transform = "scale(1)";
+                }, 120);
             }
         });
     };
 
-    // ─── Swiper build ─────────────────────────────────────────────────────────────
     const buildSwiperSlides = (images) =>
         images
             .map(
                 (src, i) => `
             <div class="swiper-slide">
-                <img
-                    src="${src}"
-                    loading="${i < 2 ? "eager" : "lazy"}"
-                    decoding="async"
-                    alt="">
+                <img src="${src}" loading="${i < 2 ? "eager" : "lazy"}" decoding="async" alt="">
             </div>
         `
             )
@@ -217,22 +206,17 @@ background:white !important;
     const createSwiperContainer = (images) => {
         const el = document.createElement("div");
         el.className = `swiper ${ID}-swiper`;
-
         el.innerHTML = `
             <div class="swiper-wrapper">${buildSwiperSlides(images)}</div>
             <div class="swiper-pagination"></div>
         `;
-
-        el.style.cssText =
-            "position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .2s;pointer-events:none;";
-
+        el.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .25s;pointer-events:none;";
         return el;
     };
 
     const revealSwiperOnLoad = (swiperEl, existingImg) => {
         swiperEl.style.opacity = "1";
         swiperEl.style.pointerEvents = "auto";
-
         const firstImg = swiperEl.querySelector("img");
         if (firstImg) {
             if (firstImg.complete) {
@@ -251,27 +235,21 @@ background:white !important;
         if (imageWrapper.querySelector(`.${ID}-swiper`)) return;
 
         const existingImg = imageWrapper.querySelector(SELECTORS.productImg);
-
         imageWrapper.style.position = "relative";
         imageWrapper.style.overflow = "hidden";
 
         const swiperEl = createSwiperContainer(images);
-        imageWrapper.insertAdjacentElement("afterend", swiperEl);
+        imageWrapper.appendChild(swiperEl);
 
         requestAnimationFrame(() => {
             new window.Swiper(swiperEl, {
                 loop: false,
-                pagination: {
-                    el: swiperEl.querySelector(".swiper-pagination"),
-                    clickable: true,
-                },
+                pagination: {el: swiperEl.querySelector(".swiper-pagination"), clickable: true},
             });
-
             revealSwiperOnLoad(swiperEl, existingImg);
         });
     };
 
-    // ─── Per-card processing ──────────────────────────────────────────────────────
     const processCard = async (card, cache) => {
         if (card.classList.contains("AB-PLP-added")) return;
         card.classList.add("AB-PLP-added");
@@ -287,14 +265,13 @@ background:white !important;
 
         if (shouldUseSwiper) {
             preloadImages(images);
-            await swiperReady; // already resolving by now in most cases
+            await swiperReady;
             buildSwiper(card, images);
         } else {
             bindHover(card, images);
         }
     };
 
-    // ─── Intersection observer ────────────────────────────────────────────────────
     const createObserver = (container, cache) => {
         const io = new IntersectionObserver(
             (entries) => {
@@ -314,24 +291,40 @@ background:white !important;
         };
 
         observeNewCards();
-
-        new MutationObserver(observeNewCards).observe(container, {
-            childList: true,
-            subtree: true,
-        });
+        new MutationObserver(observeNewCards).observe(container, {childList: true, subtree: true});
     };
 
-    // ─── Init ─────────────────────────────────────────────────────────────────────
     const init = () => {
         const container = q(SELECTORS.collection);
         if (!container) return;
         createObserver(container, getCache());
     };
 
+    const watchFilters = () => {
+        let debounceTimer;
+
+        const onFilterChange = () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                qAll(SELECTORS.productItem).forEach((card) => {
+                    card.classList.remove("AB-PLP-added");
+                    card.dataset.hoverInit = "";
+                });
+                window._plpImgCache = {};
+                init();
+            }, 300);
+        };
+
+        [".filter-topbar-wrap", ".filter-drawer"].forEach((sel) => {
+            const el = q(sel);
+            if (el) new MutationObserver(onFilterChange).observe(el, {childList: true, subtree: true, attributes: true});
+        });
+    };
+
     waitForElem(SELECTORS.collection, () => {
         document.body.classList.add(`${ID}_${VAR}`);
         log("RUNNING EXPERIMENT:", ID, VAR);
-        // Swiper is already loading (started at top of script for touch devices)
         init();
+        watchFilters();
     });
 })();
