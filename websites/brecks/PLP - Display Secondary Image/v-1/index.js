@@ -74,7 +74,6 @@ z-index:2
 
     const q = (s, r = document) => r.querySelector(s);
     const qAll = (s, r = document) => [...r.querySelectorAll(s)];
-    const isMobileOrTab = () => window.matchMedia("(max-width: 1071px)").matches;
 
     const ID = "PLP-Display_Secondary_Image";
     const VAR = "1";
@@ -90,8 +89,7 @@ z-index:2
         productImg: "img.image__img",
     };
 
-    const isTouchDevice = () => window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-    const shouldUseSwiper = isTouchDevice() || isMobileOrTab();
+    const shouldUseSwiper = window.matchMedia("(max-width: 1180px)").matches;
 
     let swiperReady = null;
 
