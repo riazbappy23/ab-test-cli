@@ -89,7 +89,7 @@ z-index:2
         productImg: "img.image__img",
     };
 
-    const shouldUseSwiper = window.matchMedia("(max-width: 1180px)").matches;
+    const shouldUseSwiper = window.matchMedia("(max-width: 1180px)").matches || "ontouchstart" in window || navigator.maxTouchPoints > 0;
 
     let swiperReady = null;
 
@@ -239,13 +239,17 @@ z-index:2
         const swiperEl = createSwiperContainer(images);
         imageWrapper.appendChild(swiperEl);
 
-        requestAnimationFrame(() => {
+        setTimeout(() => {
             new window.Swiper(swiperEl, {
                 loop: false,
-                pagination: {el: swiperEl.querySelector(".swiper-pagination"), clickable: true},
+                pagination: {
+                    el: swiperEl.querySelector(".swiper-pagination"),
+                    clickable: true,
+                },
             });
+
             revealSwiperOnLoad(swiperEl, existingImg);
-        });
+        }, 50);
     };
 
     const processCard = async (card, cache) => {

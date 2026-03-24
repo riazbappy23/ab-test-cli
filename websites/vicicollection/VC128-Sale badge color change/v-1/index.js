@@ -12,9 +12,9 @@
         client: "Acadia",
         project: "vicicollection",
         site_url: "https://www.vicicollection.com/",
-        test_name: "🧡🔥🍿VC128: [COLLECTION PRODUCT] Collection + PDP Sale Color (2) SET UP TEST",
+        test_name: "VC128: [COLLECTION PRODUCT] Collection + PDP Sale Color (2) SET UP TEST",
         page_initials: "AB-VC128",
-        test_version: 0.0001,
+        test_version: 0.0002,
     };
     const test_variation = 1;
     const {page_initials, test_version} = TEST_CONFIG;
@@ -48,8 +48,8 @@
         return Array.from((root || document).querySelectorAll(selector));
     }
 
-    function isAllSalePage() {
-        return window.location.pathname.includes("all-sale");
+    function isEligibleRoute() {
+        return window.location.pathname.includes("/collections/") || window.location.pathname.includes("/products/");
     }
 
     function isPDP() {
@@ -63,6 +63,11 @@
         }
         .AB-VC128 .product-item__price {
             color: #000000 !important;
+        }
+        .AB-VC128--plp .product-item__price {
+            font-weight: 400 !important;
+        }
+        .AB-VC128--pdp .product-item__price {
             font-weight: 700 !important;
         }
         .AB-VC128 .product-item__price--original,
@@ -97,10 +102,17 @@
     `;
 
     const cssVariant1 = `
-        .AB-VC128--v1 .global-sale-message {
+        .AB-VC128--v1 .product-item__price-wrapper.product-item__price--on-sale ~ div .global-sale-message {
             background-color: #C8102E !important;
             color: #FFFFFF !important;
         }
+        .AB-VC128--v1 
+        .product-info__container:has(.pv-price__original.has-compare-price)
+        .global-sale-message {
+            background-color: #C8102E !important;
+            color: #FFFFFF !important;
+}
+}
     `;
 
     function injectStyles(cssString) {
@@ -150,11 +162,27 @@
         });
     }
 
+    function observePLPSaleCards() {
+        const container = q("body");
+        if (!container) return;
+
+        const observer = new MutationObserver((mutations) => {
+            const saleCards = qAll(".product-item__price--on-sale");
+            if (saleCards.length > 0) {
+                fireGA4Event("VC128_ViewedSaleProductCard", `variant_${test_variation}`);
+                logInfo(`Event fired: VC128_ViewedSaleProductCard (${saleCards.length} sale card(s) found)`);
+                observer.disconnect();
+            }
+        });
+
+        observer.observe(container, {childList: true, subtree: true});
+    }
+
     function init() {
         const body = q("body");
 
-        if (!isAllSalePage()) {
-            logInfo("Aborted — not an all-sale page.");
+        if (!isEligibleRoute()) {
+            logInfo("Aborted — not an sale page.");
             return;
         }
 
@@ -178,17 +206,17 @@
         observeCodeSpan();
 
         if (pageType === "pdp") {
-            const hasCompareAtPDP = !!q(".pv-price__compare");
-            if (hasCompareAtPDP) {
-                fireGA4Event("VC128_ViewedSalePDP", `variant_${test_variation}`);
-                logInfo("Event fired: VC128_ViewedSalePDP");
+            try {
+                const hasCompareAtPDP = !!q(".pv-price__compare");
+                if (hasCompareAtPDP) {
+                    fireGA4Event("VC128_ViewedSalePDP", `variant_${test_variation}`);
+                    logInfo("Event fired: VC128_ViewedSalePDP");
+                }
+            } catch {
+                logInfo("No PDP sale detected — skipping GA4 event");
             }
         } else {
-            const saleCards = qAll(".product-item__price--original");
-            if (saleCards.length > 0) {
-                fireGA4Event("VC128_ViewedSaleProductCard", `variant_${test_variation}`);
-                logInfo(`Event fired: VC128_ViewedSaleProductCard (${saleCards.length} sale card(s) found)`);
-            }
+            observePLPSaleCards();
         }
 
         logInfo(`Initialised — Variant ${test_variation} | Page: ${pageType}`);

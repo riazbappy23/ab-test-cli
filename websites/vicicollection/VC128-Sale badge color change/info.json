@@ -1,0 +1,13 @@
+{
+  "id": "1774345353003_464_VC128_Sale_badge_color_change",
+  "name": "VC128-Sale badge color change",
+  "type": "A/B",
+  "website": "vicicollection",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-24T09:42:33.003Z",
+  "createdAtReadable": "3/24/2026, 3:42:33 PM",
+  "lastUpdated": "2026-03-24T09:42:33.100Z"
+}
