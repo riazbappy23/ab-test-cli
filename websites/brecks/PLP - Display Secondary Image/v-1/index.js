@@ -48,7 +48,7 @@ z-index:2
     will-change:opacity, transform;
   }
 }
-@media only screen and (max-width: 1071px) {
+@media only screen and (max-width: 1180px) {
   .product-item__floating-action-buttons {
     top:unset;
     bottom:20px;
@@ -89,29 +89,7 @@ z-index:2
         productImg: "img.image__img",
     };
 
-    const shouldUseSwiper = window.matchMedia("(max-width: 1180px)").matches || "ontouchstart" in window || navigator.maxTouchPoints > 0;
-
-    let swiperReady = null;
-
-    const loadSwiper = () => {
-        if (swiperReady) return swiperReady;
-        if (window.Swiper) return (swiperReady = Promise.resolve());
-
-        if (!document.getElementById("swiper-css")) {
-            document.head.insertAdjacentHTML("beforeend", `<link id="swiper-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">`);
-        }
-
-        swiperReady = new Promise((resolve) => {
-            const js = document.createElement("script");
-            js.src = "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js";
-            js.onload = resolve;
-            document.head.appendChild(js);
-        });
-
-        return swiperReady;
-    };
-
-    if (shouldUseSwiper) loadSwiper();
+    const shouldUseSwiper = window.matchMedia("(max-width: 1180px)").matches;
 
     const getCache = () => (window._plpImgCache = window._plpImgCache || {});
 
@@ -190,6 +168,26 @@ z-index:2
         });
     };
 
+    let swiperReady = null;
+
+    const loadSwiper = () => {
+        if (swiperReady) return swiperReady;
+        if (window.Swiper) return (swiperReady = Promise.resolve());
+
+        if (!document.getElementById("swiper-css")) {
+            document.head.insertAdjacentHTML("beforeend", `<link id="swiper-css" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css">`);
+        }
+
+        swiperReady = new Promise((resolve) => {
+            const js = document.createElement("script");
+            js.src = "https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js";
+            js.onload = resolve;
+            document.head.appendChild(js);
+        });
+
+        return swiperReady;
+    };
+
     const buildSwiperSlides = (images) =>
         images
             .map(
@@ -237,9 +235,9 @@ z-index:2
         imageWrapper.style.overflow = "hidden";
 
         const swiperEl = createSwiperContainer(images);
-        imageWrapper.appendChild(swiperEl);
-
-        setTimeout(() => {
+        imageWrapper.insertAdjacentElement("afterend", swiperEl);
+        
+        requestAnimationFrame(() => {
             new window.Swiper(swiperEl, {
                 loop: false,
                 pagination: {
@@ -249,28 +247,29 @@ z-index:2
             });
 
             revealSwiperOnLoad(swiperEl, existingImg);
-        }, 50);
+        });
     };
 
     const processCard = async (card, cache) => {
-        if (card.classList.contains("AB-PLP-added")) return;
-        card.classList.add("AB-PLP-added");
+        if (!card.classList.contains("AB-PLP-added")) {
+            card.classList.add("AB-PLP-added");
 
-        const handle = getHandle(card);
-        if (!handle) return;
+            const handle = getHandle(card);
+            if (handle) {
+                setLoading(card, true);
+                const images = await fetchImages(handle, cache);
+                setLoading(card, false);
 
-        setLoading(card, true);
-        const images = await fetchImages(handle, cache);
-        setLoading(card, false);
-
-        if (!images?.length) return;
-
-        if (shouldUseSwiper) {
-            preloadImages(images);
-            await swiperReady;
-            buildSwiper(card, images);
-        } else {
-            bindHover(card, images);
+                if (images?.length) {
+                    if (shouldUseSwiper) {
+                        preloadImages(images);
+                        await swiperReady;
+                        buildSwiper(card, images);
+                    } else {
+                        bindHover(card, images);
+                    }
+                }
+            }
         }
     };
 
@@ -298,8 +297,7 @@ z-index:2
 
     const init = () => {
         const container = q(SELECTORS.collection);
-        if (!container) return;
-        createObserver(container, getCache());
+        if (container) createObserver(container, getCache());
     };
 
     const watchFilters = () => {
@@ -322,6 +320,8 @@ z-index:2
             if (el) new MutationObserver(onFilterChange).observe(el, {childList: true, subtree: true, attributes: true});
         });
     };
+
+    loadSwiper();
 
     waitForElem(SELECTORS.collection, () => {
         document.body.classList.add(`${ID}_${VAR}`);
