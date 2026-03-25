@@ -62,7 +62,7 @@
 
     function onCartClick(e) {
         if (e.target.closest(SELECTOR_LIST.removeBtn)) {
-            fireGA4Event("VC125_RemoveFromCart");
+            fireGA4Event("VC125_RemoveFromCart", "Remove");
             logInfo("VC125_RemoveFromCart fired");
             return;
         }

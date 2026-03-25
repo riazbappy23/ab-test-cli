@@ -1,6 +1,6 @@
 (async () => {
     const TEST_ID = "VC125";
-    const VARIANT_ID = "V1";
+    const VARIANT_ID = "V2";
 
     function logInfo(message) {
         console.log(`%cAcadia%c${TEST_ID}-${VARIANT_ID}`, "color:white;background:rgb(0,0,57);font-weight:700;padding:2px 4px;border-radius:2px;", "margin-left:8px;color:white;background:rgb(0,57,57);font-weight:700;padding:2px 4px;border-radius:2px;", message);
@@ -15,7 +15,7 @@
         test_name: "VC125: [CART] Removed Product Save For Later Banner (2) SET UP TEST",
         page_initials: "AB-VC125",
         test_version: 0.0002,
-        test_variation: 1,
+        test_variation: 2,
     };
     const {test_variation} = TEST_CONFIG;
     const REMOVE_DELAY = test_variation === 1 ? 5000 : 10000;
@@ -65,6 +65,7 @@
             align-items  : center;
             gap          : 12px;
             padding      : 8px 20px 8px 8px;
+            margin: 18px 0;
             background   : #E8E8E8;
             box-sizing   : border-box;
             width        : 100%;
@@ -151,8 +152,8 @@
         }
 
         @media (max-width: 767px) {
-          .bag__items-wrapper .bag-item {
-               padding : .9rem 0;
+            .bag__items-wrapper .bag-item {
+                padding : .9rem 0;
             }
             .vc125-banner { padding: 23px 20px 22px 18px; }
             .vc125-banner__img { display: none; }
@@ -268,15 +269,14 @@
         };
     }
 
-    function getOrCreateBannerZone() {
+    function getOrCreateBannerZone(bagItem) {
         const existing = document.getElementById("vc125-banner-zone");
         if (existing) return existing;
         const zone = document.createElement("div");
         zone.id = "vc125-banner-zone";
-        const productCard = q(SELECTOR_LIST.bagItem);
-        if (productCard) {
-            // insert at the top of productcard
-            productCard.insertAdjacentElement("afterbegin", zone);
+        const checkout = q(SELECTOR_LIST.checkout);
+        if (checkout) {
+            checkout.after(zone);
         } else {
             (q(SELECTOR_LIST.cartRoot) || document.body).prepend(zone);
         }
@@ -325,7 +325,7 @@
 
         removeBtn.classList.add("vc125-remove-disabled");
 
-        const zone = getOrCreateBannerZone();
+        const zone = getOrCreateBannerZone(bagItem);
         const banner = createBannerElement(product);
         zone.appendChild(banner);
 
@@ -358,51 +358,32 @@
 
     function onCartClick(e) {
         const removeBtn = e.target.closest(SELECTOR_LIST.removeBtn);
-        if (removeBtn) {
-            if (nativeClickAllowed.has(removeBtn)) {
-                nativeClickAllowed.delete(removeBtn);
-                return;
-            }
+        const decrementBtn = !removeBtn && e.target.closest(SELECTOR_LIST.decrementBtn);
+        const btn = removeBtn || decrementBtn;
+        if (!btn) return;
 
-            fireGA4Event("VC125_RemoveFromCart", "Remove");
-            logInfo("VC125_RemoveFromCart fired");
+        if (decrementBtn) {
+            const bagItem = decrementBtn.closest(SELECTOR_LIST.bagItem);
+            const qtyInput = bagItem && q(SELECTOR_LIST.qtyInput, bagItem);
+            if (!bagItem || parseInt(qtyInput?.value, 10) !== 1) return;
+        }
 
-            if (removeBtn.classList.contains("vc125-remove-disabled")) return;
-
-            const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
-            if (isAlreadySaved(bagItem)) return;
-
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            showBanner(removeBtn);
+        if (nativeClickAllowed.has(btn)) {
+            nativeClickAllowed.delete(btn);
             return;
         }
 
-        const decrementBtn = e.target.closest(SELECTOR_LIST.decrementBtn);
-        if (decrementBtn) {
-            const bagItem = decrementBtn.closest(SELECTOR_LIST.bagItem);
-            if (!bagItem) return;
+        fireGA4Event("VC125_RemoveFromCart", "Remove");
+        logInfo("VC125_RemoveFromCart fired");
 
-            const qtyInput = q(SELECTOR_LIST.qtyInput, bagItem);
-            const qty = qtyInput ? parseInt(qtyInput.value, 10) : null;
+        if (btn.classList.contains("vc125-remove-disabled")) return;
 
-            if (qty !== 1) return;
+        const bagItem = btn.closest(SELECTOR_LIST.bagItem);
+        if (isAlreadySaved(bagItem)) return;
 
-            if (nativeClickAllowed.has(decrementBtn)) {
-                nativeClickAllowed.delete(decrementBtn);
-                return;
-            }
-
-            fireGA4Event("VC125_RemoveFromCart", "Remove");
-            logInfo("VC125_RemoveFromCart fired (decrement)");
-
-            if (decrementBtn.classList.contains("vc125-remove-disabled")) return;
-            if (isAlreadySaved(bagItem)) return;
-
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            showBanner(decrementBtn);
-        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        showBanner(btn);
     }
 
     function attachClickInterceptor() {
