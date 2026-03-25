@@ -269,7 +269,7 @@
         };
     }
 
-    function getOrCreateBannerZone(bagItem) {
+    function getOrCreateBannerZone() {
         const existing = document.getElementById("vc125-banner-zone");
         if (existing) return existing;
         const zone = document.createElement("div");
