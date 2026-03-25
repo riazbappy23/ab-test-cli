@@ -59,12 +59,7 @@
             width    : 100%;
             overflow : visible;
         }
-
         .vc125-banner {
-            display      : flex;
-            align-items  : center;
-            gap          : 12px;
-            padding      : 8px 20px 8px 8px;
             margin: 18px 0;
             background   : #E8E8E8;
             box-sizing   : border-box;
@@ -75,28 +70,23 @@
             transition   : transform 0.35s cubic-bezier(.22,.68,0,1.15),
                            opacity   0.25s ease;
         }
-
         .vc125-banner.vc125-banner--visible {
             transform : translateX(0);
             opacity   : 1;
         }
-
         .vc125-banner.vc125-banner--exit {
             transform  : translateX(-110%);
             opacity    : 0;
             transition : transform 0.3s ease-in,
                          opacity   0.25s ease;
         }
-
-        .vc125-banner__img {
-            flex-shrink : 0;
-            width       : 49px;
-            height      : 61.25px;
-            object-fit  : cover;
-            display     : block;
-            background  : #e8e8e8;
+        .vc125-banner__inner{
+            display      : flex;
+            align-items  : center;
+            justify-content: space-between;
+            gap          : 12px;
+            padding: 23px 20px 22px 18px;
         }
-
         .vc125-banner__text {
             display        : flex;
             flex-direction : column;
@@ -104,7 +94,6 @@
             flex           : 1;
             min-width      : 0;
         }
-
         .vc125-banner__title {
             font-size     : 14px;
             font-weight   : 600;
@@ -117,7 +106,6 @@
             margin        : 0;
             font-family   : Lato !important;
         }
-
         .vc125-banner__subtitle {
             font-size     : 13px;
             color         : #838383;
@@ -127,7 +115,6 @@
             margin        : 0;
             font-family   : Lato !important;
         }
-
         .vc125-banner__save-btn {
             flex-shrink          : 0;
             background           : none;
@@ -143,20 +130,16 @@
             text-underline-offset: 3px;
             font-family          : Lato !important;
         }
-
         .vc125-banner__save-btn:hover { opacity: 0.55; }
-
         .vc125-remove-disabled {
             pointer-events : none !important;
             opacity        : 0.35 !important;
         }
-
         @media (max-width: 767px) {
             .bag__items-wrapper .bag-item {
                 padding : .9rem 0;
             }
-            .vc125-banner { padding: 23px 20px 22px 18px; }
-            .vc125-banner__img { display: none; }
+            .vc125-banner__inner { padding: 19px 25px 18px 8px; }
         }
     `;
 
@@ -255,17 +238,8 @@
     function getProductInfo(bagItem) {
         if (!bagItem) return {name: "", imgSrc: "", imgAlt: ""};
         const titleEl = q(SELECTOR_LIST.itemTitle, bagItem);
-        const imgEl = q(SELECTOR_LIST.itemImage, bagItem);
-        let imgSrc = "";
-        if (imgEl) {
-            imgSrc = imgEl.src || imgEl.dataset.src || imgEl.dataset.lazySrc || "";
-            if (!imgSrc && imgEl.srcset) imgSrc = imgEl.srcset.split(/[\s,]+/)[0];
-        }
-        if (imgSrc && imgSrc.startsWith("//")) imgSrc = "https:" + imgSrc;
         return {
             name: titleEl ? titleEl.textContent.trim() : "",
-            imgSrc: imgSrc,
-            imgAlt: imgEl ? imgEl.alt || "" : "",
         };
     }
 
@@ -283,20 +257,20 @@
         return zone;
     }
 
-    function createBannerElement({name, imgSrc, imgAlt}) {
+    function createBannerElement({name}) {
         const banner = document.createElement("div");
         banner.className = "vc125-banner";
         banner.setAttribute("role", "status");
         banner.setAttribute("aria-live", "polite");
         const safeTitle = name ? escapeHTML(name) : "This item";
-        const imgHTML = imgSrc ? `<img class="vc125-banner__img" src="${escapeHTML(imgSrc)}" alt="${escapeHTML(imgAlt)}" />` : `<div class="vc125-banner__img"></div>`;
         banner.innerHTML = `
-            ${imgHTML}
-            <div class="vc125-banner__text">
-                <p class="vc125-banner__title">${safeTitle}</p>
-                <p class="vc125-banner__subtitle">was removed from your cart</p>
+            <div class="vc125-banner__inner">
+                <div class="vc125-banner__text">
+                    <p class="vc125-banner__title">${safeTitle}</p>
+                    <p class="vc125-banner__subtitle">was removed from your cart</p>
+                </div>
+                <button class="vc125-banner__save-btn" type="button">Save For Later</button>
             </div>
-            <button class="vc125-banner__save-btn" type="button">Save For Later</button>
         `;
         return banner;
     }
