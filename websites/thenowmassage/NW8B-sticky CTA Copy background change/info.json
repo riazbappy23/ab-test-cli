@@ -1,0 +1,13 @@
+{
+  "id": "1774451058523_4183_NW8B_sticky_CTA_Copy_background_change",
+  "name": "NW8B-sticky CTA Copy background change",
+  "type": "A/B",
+  "website": "thenowmassage",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-25T15:04:18.523Z",
+  "createdAtReadable": "3/25/2026, 9:04:18 PM",
+  "lastUpdated": "2026-03-25T15:04:18.622Z"
+}

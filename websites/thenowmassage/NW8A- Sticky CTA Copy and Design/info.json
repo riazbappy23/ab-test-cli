@@ -1,0 +1,13 @@
+{
+  "id": "1774432957556_6002_NW8A__Sticky_CTA_Copy_and_Design",
+  "name": "NW8A- Sticky CTA Copy and Design",
+  "type": "A/B",
+  "website": "thenowmassage",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-25T10:02:37.556Z",
+  "createdAtReadable": "3/25/2026, 4:02:37 PM",
+  "lastUpdated": "2026-03-25T10:02:37.702Z"
+}
