@@ -4,8 +4,15 @@
             clearInterval(interval);
             var style = document.createElement("style");
             style.innerHTML = `
+.AB-PLP-added .product-item__inner .badger,
+.AB-PLP-added .product-item__inner .soldoutstrip {
+    z-index: 2;
+}
 .AB-PLP-added .product-item__inner .badger {
-z-index:2
+    pointer-events: none;
+}
+.AB-PLP-added .product-item__inner .badger img {
+    pointer-events: none;
 }
 .PLP-Display_Secondary_Image-swiper {
   height:100%;
@@ -42,12 +49,18 @@ z-index:2
   background:rgba(255,255,255,0.65);
   opacity:1;
 }
-@media (hover:hover) and (pointer:fine) {
-  .product-item__image img.image__img {
-    transition:opacity .35s ease, transform .5s ease;
-    will-change:opacity, transform;
-  }
+.product-item__image img {
+  transition: opacity 0.4s ease;
+  display: block;
+  width: 100%;
+  height: 100%;
 }
+.product-item__image:hover img {
+  transform: scale(1.02);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+
 @media only screen and (max-width: 1180px) {
   .product-item__floating-action-buttons {
     top:unset;
@@ -122,8 +135,8 @@ z-index:2
     const pickSecondary = (images, currentSrc) => {
         if (!images || images.length < 2) return null;
         const base = currentSrc.split("?")[0];
-        if (images[1].split("?")[0] === base) return images[2] || null;
-        return images[1];
+        if (images[1] && images[1].split("?")[0] === base) return images[2] || null;
+        return images[1] || null;
     };
 
     const bindHover = (card, images) => {
@@ -206,7 +219,7 @@ z-index:2
             <div class="swiper-wrapper">${buildSwiperSlides(images)}</div>
             <div class="swiper-pagination"></div>
         `;
-        el.style.cssText = "position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;transition:opacity .25s;pointer-events:none;";
+        el.style.cssText = "position:absolute;top:0;left:0;width:100.2%;height:100%;opacity:0;transition:opacity .25s;pointer-events:none;";
         return el;
     };
 
@@ -236,8 +249,12 @@ z-index:2
 
         const swiperEl = createSwiperContainer(images);
         imageWrapper.insertAdjacentElement("afterend", swiperEl);
-        
+
         requestAnimationFrame(() => {
+            if (!window.Swiper) {
+                console.warn("Swiper library not loaded");
+                return;
+            }
             new window.Swiper(swiperEl, {
                 loop: false,
                 pagination: {
@@ -258,12 +275,13 @@ z-index:2
             if (handle) {
                 setLoading(card, true);
                 const images = await fetchImages(handle, cache);
+                console.log("images: ", images);
                 setLoading(card, false);
 
                 if (images?.length) {
                     if (shouldUseSwiper) {
                         preloadImages(images);
-                        await swiperReady;
+                        await loadSwiper();
                         buildSwiper(card, images);
                     } else {
                         bindHover(card, images);
