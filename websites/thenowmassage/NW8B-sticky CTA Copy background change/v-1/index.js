@@ -10,13 +10,11 @@
 
     const TEST_CONFIG = {
         page_initials: "AB-NW8B",
-        test_variation: 2,
+        test_variation: 1,
         test_version: 0.0001,
     };
 
     const {page_initials, test_variation, test_version} = TEST_CONFIG;
-
-    const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
 
     function fireGA4Event(eventName, eventLabel = "") {
         window.dataLayer = window.dataLayer || [];
@@ -53,18 +51,18 @@
     }
 
     const css = `
-        @media (max-width: 767px) {
-            .AB-NW8A .nav-main__ctas a {
-                background: #fff !important;
-            }
-            .AB-NW8A .nav-main__ctas a .nw8b-cta__label {
-                color: #404D6A !important;
-            }
-            .AB-NW8A .nw8b-cta__arrow {
-                fill: #404D6A !important;
-            }
+    @media (max-width: 767px) {
+        .AB-NW8A .nav-main__ctas a {
+            background: #fff !important;
         }
-    `;
+        .AB-NW8A .nav-main__ctas a .nw8a-cta__label {
+            color: #404D6A !important;
+        }
+        .AB-NW8A .nav-main__ctas a .nw8a-cta__arrow path {
+    fill: #404D6A !important;
+     } 
+    }
+`;
 
     function injectStyles(cssString) {
         if (document.getElementById("NW8B-styles")) return;
@@ -84,8 +82,8 @@
             if (!anchor) return;
 
             anchor.addEventListener("click", () => {
-                fireGA4Event("NW8A_StickyCTAClicks", "Sticky CTA Copy");
-                logInfo(`NW8B_StickyCTAClicks fired — "${label}"`);
+                fireGA4Event("NW8B_StickyCTAClicks", "Sticky CTA Copy");
+                logInfo(`NW8B_StickyCTAClicks fired`);
             });
 
             logInfo("Initialised.");
@@ -93,7 +91,7 @@
     }
 
     function isReady() {
-        return !!(isMobile() && q(`body:not(.${page_initials}):not(.${page_initials}--v${test_variation})`) && q(".AB-NW8A"));
+        return !!( q(".AB-NW8A"));
     }
 
     try {

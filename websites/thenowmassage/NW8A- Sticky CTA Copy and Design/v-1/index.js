@@ -75,9 +75,7 @@
                 justify-content: center;
                 gap: 10px;
                 width: 100%;
-                line-height: 100%;
                background: #2e3f57 !important;
-                padding: 15px;
                 box-sizing: border-box;
                 text-decoration: none;
                 border-radius: 0 !important;
@@ -88,8 +86,11 @@
                 font-size: 16px;
                 font-weight: 600;
                 letter-spacing: 5%;
+                line-height: 100%;
+                padding: 16.5px 0;
                 color: #fff !important;
                 text-transform: uppercase;
+                centered text;
                 font-family: inherit;
                 white-space: nowrap;
             }

@@ -1,0 +1,13 @@
+{
+  "id": "1774870649279_6170_Homepage__Test_Play_Easy_vs_Time_Well_Spent",
+  "name": "Homepage- Test Play Easy vs Time Well Spent",
+  "type": "A/B",
+  "website": "dunlopsports",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-03-30T11:37:29.279Z",
+  "createdAtReadable": "3/30/2026, 5:37:29 PM",
+  "lastUpdated": "2026-03-30T11:37:29.380Z"
+}
