@@ -52,15 +52,17 @@
 
     const css = `
     @media (max-width: 767px) {
-        .AB-NW8A .nav-main__ctas a {
+        .AB-NW8A--v1 .nav-main__ctas a, .AB-NW8A--v2 .nav-main__ctas a {
             background: #fff !important;
         }
-        .AB-NW8A .nav-main__ctas a .nw8a-cta__label {
+        .AB-NW8A--v1 .nav-main__ctas a .nw8a-cta__label, .AB-NW8A--v2 .nav-main__ctas a .nw8a-cta__label {
             color: #404D6A !important;
         }
-        .AB-NW8A .nav-main__ctas a .nw8a-cta__arrow path {
+        .AB-NW8A--v1 .nav-main__ctas a .nw8a-cta__arrow path, .AB-NW8A--v2 .nav-main__ctas a .nw8a-cta__arrow path {
     fill: #404D6A !important;
-     } 
+     }
+     .AB-NW8A--v1 .location-search-form__container{
+            margin-top: 25px;
     }
 `;
 
@@ -91,7 +93,7 @@
     }
 
     function isReady() {
-        return !!( q(".AB-NW8A"));
+        return !!q(".AB-NW8A");
     }
 
     try {
