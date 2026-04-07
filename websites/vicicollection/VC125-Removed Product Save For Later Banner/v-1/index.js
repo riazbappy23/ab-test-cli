@@ -322,9 +322,10 @@
         function onTimerExpired() {
             dismissBanner(banner, () => {
                 if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
-                triggerNativeRemove(removeBtn);
             });
         }
+
+        triggerNativeRemove(removeBtn);
 
         q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, {once: true});
         timerId = setTimeout(onTimerExpired, REMOVE_DELAY);
