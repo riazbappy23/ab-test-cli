@@ -1,0 +1,305 @@
+:root {
+    --primary-color: #0056b3;
+    --primary-light: #cce4f7;
+    --text-dark: #333333;
+    --text-muted: #666666;
+    --border-color: #939393;
+    --bg-white: #ffffff;
+    --bg-light: #f6f5f3;
+    --transition-speed: 0.3s;
+}
+
+/* Main Section */
+.benefits-slider-section {
+    padding: 48px 0;
+    background: var(--bg-light);
+    margin-bottom: 0;
+}
+
+/* Title */
+.benefits-slider-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0 0 40px 0;
+    letter-spacing: -0.5px;
+    font-family: inherit;
+}
+
+/* Wrapper with Fade Effect */
+.benefits-slider-wrapper {
+    position: relative;
+    margin: 0 auto;
+}
+
+.benefits-slider-wrapper::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 100px;
+    background: linear-gradient(to right, transparent 0%, var(--bg-light) 100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.benefits-slider {
+    position: relative;
+}
+
+/* Slide Container */
+.benefits-slide {
+    box-sizing: border-box;
+}
+.benefits-slide:not(.no-margin-left) {
+    margin-left: 59px;
+}
+
+/* Card Styling */
+.benefits-slide-card {
+    background: #ffffff;
+    border: 1px solid #939393;
+    border-radius: 8px;
+    padding: 18px;
+    min-height: 280px;
+    min-width: 210px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: all var(--transition-speed) ease;
+    position: relative;
+}
+
+.benefits-slide-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 86, 179, 0.12);
+    border-color: var(--primary-light);
+}
+
+.benefits-card-header {
+    display:flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    margin-top: -10px !important;
+    color: var(--primary-color);
+    line-height: 23.4px;
+    letter-spacing: 0%;
+    font-family: inherit;
+}
+
+.benefits-card-number {
+    font-size: 32px;
+    flex-shrink: 0;
+    margin: 0; 
+}
+
+.benefits-card-title {
+    font-size: 16px;
+    margin: 0;
+    font-weight: 600;
+    color: var(--primary-color);
+    line-height: 23.4px;
+}
+.benefits-card-description {
+    font-size: 13px;
+    color: var(--text-dark);
+    margin: 0;
+    line-height: 1.55;
+    font-family: inherit;
+    flex: 1;
+}
+
+/* Slick Base Styles */
+.slick-slider {
+    position: relative;
+    display: block;
+    box-sizing: border-box;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -khtml-user-select: none;
+    -ms-touch-action: pan-y;
+    touch-action: pan-y;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.slick-list {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.slick-track {
+    position: relative;
+    left: 0;
+    top: 0;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.slick-slide {
+    display: none;
+    float: left;
+    height: 100%;
+    min-height: 1px;
+    outline: none;
+}
+
+.slick-slide.slick-loading img {
+    display: none;
+}
+
+.slick-slide.slick-initialized {
+    display: block;
+}
+
+.slick-slide.slick-loading {
+    visibility: hidden;
+}
+
+.slick-initialized .slick-slide {
+    display: block;
+}
+
+.slick-next {
+    width: 40px !important;
+    height: 40px !important;
+    position: absolute;
+    top: 50%;
+    right: -60px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.slick-next:before {
+    content: none !important;
+}
+
+.slick-next::after {
+    content: "";
+    position: absolute;
+    width: 44px;
+    height: 44px;
+    background: #bcd8fa;
+    border-radius: 50%;
+    z-index: 0;
+    transition: all 0.3s ease;
+}
+
+.slick-next svg {
+    width: 20px;
+    height: 20px;
+    fill: #09479b;
+    position: relative;
+    z-index: 1;
+}
+
+/* Hover */
+.slick-next:hover::after {
+    background: #add2ff;
+}
+
+/* Active */
+.slick-next:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+/* Disabled */
+.slick-next.slick-disabled {
+    display: none;
+}
+
+.slick-prev {
+    display: none;
+}
+
+/* No dots */
+.slick-dots {
+    display: none;
+}
+
+/* Source Attribution */
+.benefits-slider-source {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin: 0;
+    text-align: center;
+    padding-top: 20px;
+    font-family: inherit;
+    display: block;
+    text-decoration: none;
+}
+
+.benefits-slider-source:hover {
+    text-decoration: underline;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .benefits-slider-section {
+        padding: 32px 0;
+    }
+    .benefits-slider-title {
+        font-size: 20px;
+        margin-bottom: 32px;
+        padding: 0 20px;
+    }
+    .benefits-slider-wrapper {
+        padding: 0;
+        margin: 0 -16px;
+    }
+
+    .benefits-slider-wrapper::after {
+        width: 80px;
+    }
+
+    .benefits-slide:not(.no-padding) {
+        padding-left: 13px;
+    }
+
+    .benefits-slide-card {
+        padding: 16px;
+        min-height: auto;
+        border-radius: 8px;
+    }
+
+    .benefits-card-header {
+        gap: 10px;
+    }
+
+    .benefits-card-number {
+        font-size: 24px;
+    }
+
+    .benefits-card-title {
+        font-size: 14px;
+    }
+
+    .benefits-card-description {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .slick-next {
+        right: 16px;
+    }
+
+    .benefits-slider-source {
+        padding-top: 40px;
+        padding: 40px 20px 0 20px;
+        font-size: 10px;
+    }
+}

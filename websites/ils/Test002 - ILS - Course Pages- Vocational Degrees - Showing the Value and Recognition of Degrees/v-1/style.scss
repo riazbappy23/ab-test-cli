@@ -1,15 +1,217 @@
-html {
-  position: relative;
+:root {
+    --primary-color: #0056b3;
+    --primary-light: #cce4f7;
+    --text-dark: #333333;
+    --text-muted: #666666;
+    --border-color: #939393;
+    --bg-white: #ffffff;
+    --bg-light: #f6f5f3;
+    --transition-speed: 0.3s;
+}
 
-  &::before {
-    content: "AB test pilot CSS";
-    position: fixed;
+.benefits-slider-section {
+    padding: 48px 0;
+    background: var(--bg-light);
+    margin-bottom: 0;
+}
+
+.benefits-slider-title {
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 0 0 40px 0;
+    letter-spacing: -0.5px;
+    font-family: inherit;
+}
+
+.benefits-slider-wrapper {
+    position: relative;
+    margin-bottom: 18px;
+}
+
+.benefits-slider-wrapper::after {
+    content: "";
+    position: absolute;
+    right: 0;
     top: 0;
-    left: 0;
-    z-index: 99999999999;
-    background: #ff0000;
-    color: #ffffff;
-    padding: 10px;
-    border: 7px solid #269b11;
-  }
+    bottom: 0;
+    width: 80px;
+    background: linear-gradient(to right, transparent 0%, var(--bg-light) 100%);
+    pointer-events: none;
+    z-index: 5;
+}
+
+.benefits-swiper {
+    overflow: visible;
+    clip-path: inset(0px 0px 0px -9999px);
+}
+
+.benefits-swiper .swiper-wrapper {
+    align-items: stretch;
+}
+
+.benefits-swiper .swiper-slide {
+    height: auto;
+}
+
+.benefits-slide-card {
+    background: #ffffff;
+    border: 1px solid #939393;
+    border-radius: 8px;
+    padding: 18px;
+    transition: all var(--transition-speed) ease;
+    height: 100%;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-sizing: border-box;
+}
+
+.benefits-slide-card:hover {
+    box-shadow: 0 2px 8px rgba(0, 86, 179, 0.12);
+    border-color: var(--primary-light);
+}
+
+.benefits-card-header {
+    display: flex;
+    align-items: center;
+    margin-top: -20px;
+    height: max-content;
+    gap: 12px;
+    font-weight: 700;
+    color: var(--primary-color);
+    line-height: 1.45;
+    font-family: inherit;
+}
+
+.benefits-card-number {
+    font-size: 32px;
+    flex-shrink: 0;
+    line-height: 1;
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.benefits-card-title {
+    font-size: 16px;
+    margin: 0;
+    font-weight: 600;
+    color: var(--primary-color);
+    line-height: 1.45;
+    margin-top: 4px;
+}
+
+.benefits-card-description {
+    font-size: 16px;
+    margin: 0;
+    font-weight: 400;
+    color: var(--primary-color);
+    line-height: 1.45;
+    font-family: inherit;
+    flex: 1;
+}
+
+.benefits-next-btn {
+    width: 44px;
+    height: 44px;
+    position: absolute;
+    top: 50%;
+    right: -52px;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #bcd8fa;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 10;
+    padding: 0;
+}
+
+.benefits-next-btn:hover {
+    background: #add2ff;
+}
+
+.benefits-next-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.benefits-next-btn svg {
+    width: 20px;
+    height: 15px;
+    display: block;
+}
+
+.benefits-slider-source {
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 23.4px;
+    letter-spacing: 0%;
+    color: var(--text-muted);
+    margin: 0;
+    text-align: left;
+    font-family: inherit;
+    display: block;
+    text-decoration: none;
+    color:black
+}
+.benefits-slider-source-label{
+    color: var(--text-dark);
+}
+.benefits-slider-source-url {
+    text-decoration: underline;
+    color:var(--primary-color)
+}
+
+/* ─── Mobile ──────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .benefits-slider-section {
+        padding: 32px 0;
+    }
+    .benefits-slider-wrapper {
+        margin-bottom: 30px;
+    }
+    .benefits-slide-card {
+        min-height: 282px;
+        min-width: 150px;
+    }
+    .benefits-slider-title {
+        font-size: 20px;
+        margin-bottom: 32px;
+    }
+
+    .benefits-slider-wrapper::after {
+        width: 50px;
+    }
+
+    .benefits-card-number {
+        font-size: 24px;
+    }
+
+    .benefits-card-title {
+        font-size: 14px;
+        line-height: 1.3;
+    }
+
+    .benefits-card-description {
+        font-size: 12px;
+        line-height: 1.5;
+    }
+
+    .benefits-next-btn {
+        right: 0px;
+        width: 30px;
+        height: 30px;
+    }
+
+     .benefits-next-btn svg {
+        width: 16px;
+    }
+
+
+    .benefits-slider-source {
+        font-size: 16px;
+    }
 }

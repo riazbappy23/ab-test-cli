@@ -48,10 +48,6 @@
         return Array.from((root || document).querySelectorAll(selector));
     }
 
-    function isEligibleRoute() {
-        return window.location.pathname.includes("/collections/") || window.location.pathname.includes("/products/");
-    }
-
     function isPDP() {
         return !!q("#productPrice.pv-price");
     }
@@ -181,11 +177,6 @@
     function init() {
         const body = q("body");
 
-        if (!isEligibleRoute()) {
-            logInfo("Aborted — not an sale page.");
-            return;
-        }
-
         const pageType = isPDP() ? "pdp" : "plp";
 
         body.classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version:${test_version}`, `AB-VC128--${pageType}`);
@@ -223,7 +214,7 @@
     }
 
     function isDomReady() {
-        return !!(q(`body:not(.${page_initials}):not(.${page_initials}--v${test_variation})`) && q("body"));
+        return !!(q(`body:not(.${page_initials}):not(.${page_initials}--v${test_variation})`));
     }
 
     try {
