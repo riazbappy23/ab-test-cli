@@ -1,6 +1,6 @@
 (async () => {
     const TEST_ID = "HC7";
-    const VARIANT_ID = "V1";
+    const VARIANT_ID = "V2";
 
     function logInfo(message) {
         console.log(`%cAcadia%c${TEST_ID}-${VARIANT_ID}`, "color: white; background: rgb(0, 0, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", "margin-left: 8px; color: white; background: rgb(0, 57, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", message);
@@ -14,7 +14,7 @@
         site_url: "https://www.hctax.com",
         test_name: "HC7 - CONTACT US PAGE Redesign Contact Form SET UP TEST",
         page_initials: "AB-HC7-V2",
-        test_variation: 1,
+        test_variation: 2,
         test_version: 0.0002,
     };
 
@@ -521,16 +521,6 @@
         formCard.insertAdjacentElement("afterend", badge);
     }
 
-    function modifyFormPadding() {
-        const contactForm = q(SELECTORS_LIST.contactForm);
-        if (!contactForm) return;
-
-        const formSection = contactForm.closest(".mantine-Grid-root")?.closest(".mantine-Container-root")?.parentElement;
-
-        if (formSection && formSection.hasAttribute("style")) {
-            formSection.style.setProperty("padding-block", "calc(3rem * var(--mantine-scale))");
-        }
-    }
 
     function addFormHeader() {
         const contactForm = q(SELECTORS_LIST.contactForm);
@@ -836,6 +826,9 @@
             }
 
             @media (max-width: 768px) {
+             .${page_initials} .hc7-main {
+               background-size: 150%;
+            }
                 .${page_initials} .hc7-top-section {
                     padding-top: 40px !important;
                 }
@@ -958,7 +951,6 @@
 
         setTimeout(() => {
             modifyTopSection();
-            if(test_variation === 1) modifyFormPadding();
             groupEmailAndPhone();
             moveInfoCardsBelowForm();
             addFormHeader();

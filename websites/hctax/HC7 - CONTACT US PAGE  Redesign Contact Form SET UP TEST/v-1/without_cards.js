@@ -13,7 +13,7 @@
         project: "hctax",
         site_url: "https://www.hctax.com",
         test_name: "HC7 - CONTACT US PAGE Redesign Contact Form SET UP TEST",
-        page_initials: "AB-HC7-V2",
+        page_initials: "AB-HC7-V1",
         test_variation: 1,
         test_version: 0.0002,
     };
@@ -442,11 +442,6 @@
 
         topParagraph.innerHTML = firstSentence;
         topParagraph.classList.add("hc7-top-section__p--trimmed");
-
-        if (test_variation === 2) {
-            const cards = createTopCards();
-            parentContainer.insertBefore(cards, topParagraph.nextSibling);
-        }
     }
 
     function moveInfoCardsBelowForm() {
@@ -523,12 +518,12 @@
 
     function modifyFormPadding() {
         const contactForm = q(SELECTORS_LIST.contactForm);
-        if (!contactForm) return;
+        if (contactForm) {
+            const formSection = contactForm.closest(".mantine-Grid-root")?.closest(".mantine-Container-root")?.parentElement;
 
-        const formSection = contactForm.closest(".mantine-Grid-root")?.closest(".mantine-Container-root")?.parentElement;
-
-        if (formSection && formSection.hasAttribute("style")) {
-            formSection.style.setProperty("padding-block", "calc(3rem * var(--mantine-scale))");
+            if (formSection && formSection.hasAttribute("style")) {
+                formSection.style.setProperty("padding-block", "calc(3rem * var(--mantine-scale))");
+            }
         }
     }
 
@@ -836,6 +831,9 @@
             }
 
             @media (max-width: 768px) {
+             .${page_initials} .hc7-main {
+               background-size: 150%;
+            }
                 .${page_initials} .hc7-top-section {
                     padding-top: 40px !important;
                 }
@@ -958,7 +956,7 @@
 
         setTimeout(() => {
             modifyTopSection();
-            if(test_variation === 1) modifyFormPadding();
+            modifyFormPadding();
             groupEmailAndPhone();
             moveInfoCardsBelowForm();
             addFormHeader();
