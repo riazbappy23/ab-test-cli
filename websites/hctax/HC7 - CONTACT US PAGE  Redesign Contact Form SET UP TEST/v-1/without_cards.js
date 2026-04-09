@@ -56,52 +56,6 @@
     };
 
     const ICONS = Object.freeze({
-        never_miss: `<svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="50" height="50" fill="white" fill-opacity="0.1"/>
-<path fill-rule="evenodd" clip-rule="evenodd" d="M8.3335 11.6667H41.6668V23.2553L36.3817 19.349L21.7537 39.1398H31.4392L29.583 41.6667H8.3335V11.6667ZM41.6668 29.1398V29.0223L41.58 29.1398H41.6668Z" fill="white" fill-opacity="0.15"/>
-<path d="M41.6668 11.6667H8.3335V18.3333H41.6668V11.6667Z" fill="#FFC200"/>
-<path d="M26.6668 41.6667H8.3335V11.6667H41.6668V21.6667" stroke="white" stroke-width="2"/>
-<path d="M8.3335 18.3333H41.6668" stroke="white" stroke-width="2"/>
-<path d="M15 6.66666V11.6667" stroke="white" stroke-width="2"/>
-<path d="M35 6.66666V11.6667" stroke="white" stroke-width="2"/>
-<path d="M38.4213 25L31.667 34.1383H41.3162L34.5617 43.3333" stroke="white" stroke-width="2"/>
-</svg>
-`,
-        tax_savings: `<svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="50" height="50" fill="white" fill-opacity="0.1"/>
-<g clip-path="url(#clip0_3_527)">
-<path d="M31.6667 43.3332C38.11 43.3332 43.3333 40.7747 43.3333 37.6188V31.6667H20V37.6188C20 40.7747 25.2233 43.3332 31.6667 43.3332Z" fill="#FFC200"/>
-<path d="M18.3911 36.6666C24.8343 36.6666 30.0578 34.1083 30.0578 30.9523L29.9998 18.3333H6.6665L6.72444 30.9523C6.72444 34.1083 11.9478 36.6666 18.3911 36.6666Z" fill="#FFC200"/>
-<path d="M20 31.6667C20 32.9927 21.2292 34.2645 23.4171 35.2022C25.605 36.1399 28.5725 36.6667 31.6667 36.6667C34.7609 36.6667 37.7283 36.1399 39.9162 35.2022C42.1042 34.2645 43.3333 32.9927 43.3333 31.6667C43.3333 30.3406 42.1042 29.0688 39.9162 28.1311C37.7283 27.1934 34.7609 26.6667 31.6667 26.6667C28.5725 26.6667 25.605 27.1934 23.4171 28.1311C21.2292 29.0688 20 30.3406 20 31.6667Z" fill="white" fill-opacity="0.15"/>
-<path d="M6.6665 18.3333C6.6665 19.6594 7.89567 20.9312 10.0836 21.8688C12.2715 22.8065 15.239 23.3333 18.3332 23.3333C21.4274 23.3333 24.3948 22.8065 26.5828 21.8688C28.7707 20.9312 29.9998 19.6594 29.9998 18.3333C29.9998 17.0072 28.7707 15.7355 26.5828 14.7978C24.3948 13.8601 21.4274 13.3333 18.3332 13.3333C15.239 13.3333 12.2715 13.8601 10.0836 14.7978C7.89567 15.7355 6.6665 17.0072 6.6665 18.3333Z" fill="white" fill-opacity="0.15"/>
-<path d="M6.6665 18.345V30.9517C6.6665 33.5402 10.1807 35.7268 14.9998 36.4293" stroke="white" stroke-width="2"/>
-<path d="M31.2441 18.7557L43.3331 6.66666" stroke="white" stroke-width="2"/>
-<path d="M32.1924 8.29342L32.8719 7.61392L33.5514 8.29342L32.8719 8.97294L32.1924 8.29342Z" stroke="white" stroke-width="2"/>
-<path d="M41.0254 17.1281L41.7049 16.4485L42.3844 17.1281L41.7049 17.8076L41.0254 17.1281Z" stroke="white" stroke-width="2"/>
-<path d="M20 31.6667C20 32.9927 21.2292 34.2645 23.4171 35.2022C25.605 36.1399 28.5725 36.6667 31.6667 36.6667C34.7609 36.6667 37.7283 36.1399 39.9162 35.2022C42.1042 34.2645 43.3333 32.9927 43.3333 31.6667C43.3333 30.3406 42.1042 29.0688 39.9162 28.1311C37.7283 27.1934 34.7609 26.6667 31.6667 26.6667C28.5725 26.6667 25.605 27.1934 23.4171 28.1311C21.2292 29.0688 20 30.3406 20 31.6667Z" stroke="white" stroke-width="2"/>
-<path d="M6.6665 24.2855C6.6665 26.874 10.1807 29.0607 14.9998 29.7632" stroke="white" stroke-width="2"/>
-<path d="M20 31.6667V37.6188C20 40.7747 25.2233 43.3332 31.6667 43.3332C38.11 43.3332 43.3333 40.7747 43.3333 37.6188V31.6667" stroke="white" stroke-width="2"/>
-<path d="M27.4998 15.24C25.3635 14.0788 22.0515 13.3333 18.3332 13.3333C11.8899 13.3333 6.6665 15.5719 6.6665 18.3333C6.6665 21.0947 11.8899 23.3333 18.3332 23.3333C22.0515 23.3333 25.3635 22.5878 27.4998 21.4266" stroke="white" stroke-width="2"/>
-</g>
-<defs>
-<clipPath id="clip0_3_527">
-<rect width="40" height="40" fill="white" transform="translate(5 5)"/>
-</clipPath>
-</defs>
-</svg>
-`,
-        peace_of_mind: `<svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect width="50" height="50" fill="white" fill-opacity="0.1"/>
-<path d="M43.3332 43.3343C36.6665 28.0005 13.3332 36.6667 6.6665 41.669V43.3332L43.3332 43.3343Z" fill="#FFC200"/>
-<path d="M43.3333 12.5C43.3333 14.8012 41.4678 16.6667 39.1667 16.6667C36.8655 16.6667 35 14.8012 35 12.5C35 10.1988 36.8655 8.33334 39.1667 8.33334C41.4678 8.33334 43.3333 10.1988 43.3333 12.5Z" fill="white" fill-opacity="0.15"/>
-<path d="M18.694 15.7375C13.0196 17.258 9.07728 22.0162 8.32227 27.492L20.9379 24.1117L33.5535 20.7313C30.1618 16.3667 24.3685 14.217 18.694 15.7375Z" fill="#FFC200"/>
-<path d="M6.6665 41.6692C13.3332 36.6667 36.6665 28.0005 43.3332 43.3343" stroke="white" stroke-width="2"/>
-<path d="M43.3333 12.5C43.3333 14.8012 41.4678 16.6667 39.1667 16.6667C36.8655 16.6667 35 14.8012 35 12.5C35 10.1988 36.8655 8.33334 39.1667 8.33334C41.4678 8.33334 43.3333 10.1988 43.3333 12.5Z" stroke="white" stroke-width="2"/>
-<path d="M18.694 15.7375C13.0196 17.258 9.07728 22.0162 8.32227 27.492L20.9379 24.1117L33.5535 20.7313C30.1618 16.3667 24.3685 14.217 18.694 15.7375Z" stroke="white" stroke-width="2"/>
-<path d="M23.8546 35.0017L20.9375 24.1145" stroke="white" stroke-width="2"/>
-<path d="M18.6937 15.7402L17.6152 11.7155" stroke="white" stroke-width="2"/>
-</svg>
-`,
         fifty_years: `<svg width="68" height="77" viewBox="0 0 68 77" fill="none" xmlns="http://www.w3.org/2000/svg">
 <path d="M6 58.4434L11.2036 59.4495L11.6249 64.0653C14.5921 61.451 17.9208 59.4489 21.4425 58.0762C20.3505 55.6226 19.1289 53.2435 17.9221 50.86C13.6336 52.6305 9.59156 55.1642 6 58.4434Z" fill="url(#paint0_linear_3_653)"/>
 <path d="M14.9761 58.561C14.9761 58.561 18.209 57.5164 21.4426 58.0767L19.9198 53.953L14.9761 56.005V58.561Z" fill="url(#paint1_linear_3_653)"/>
@@ -388,26 +342,6 @@
 `,
     });
 
-    const TOP_CARDS_DATA = [
-        {icon: ICONS.never_miss, text: `Never Miss A <br> Deadline Again`},
-        {icon: ICONS.tax_savings, text: `Unlock <br> Tax Savings`},
-        {icon: ICONS.peace_of_mind, text: `Complete <br> Peace Of Mind`},
-    ];
-
-    function createTopCards() {
-        const wrapper = document.createElement("div");
-        wrapper.className = "hc7-top-cards";
-        TOP_CARDS_DATA.forEach(({icon, text}) => {
-            const card = document.createElement("div");
-            card.className = "hc7-top-card";
-            card.innerHTML = `
-                <span class="hc7-top-card__icon">${icon}</span>
-                <span class="hc7-top-card__text">${text}</span>
-            `;
-            wrapper.appendChild(card);
-        });
-        return wrapper;
-    }
 
     function modifyTopSection() {
         const main = q("main");
@@ -431,7 +365,6 @@
             return;
         }
 
-        const parentContainer = topParagraph.parentNode;
         const htmlContent = topParagraph.innerHTML;
         const brIndex = htmlContent.indexOf("<br>");
         let firstSentence = htmlContent;
@@ -978,7 +911,6 @@
         logInfo(`Error during initialization: ${error.message}`);
         setTimeout(() => {
             if (isCorrectPage()) {
-                logInfo("Fallback initialization");
                 init();
             }
         }, 2000);

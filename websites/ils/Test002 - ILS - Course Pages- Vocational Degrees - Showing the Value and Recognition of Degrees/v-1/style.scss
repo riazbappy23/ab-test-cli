@@ -64,8 +64,9 @@
     min-width: 220px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 12px; 
     box-sizing: border-box;
+    justify-content: flex-start;
 }
 
 .benefits-slide-card:hover {
@@ -75,32 +76,41 @@
 
 .benefits-card-header {
     display: flex;
-    align-items: center;
-    margin-top: -20px;
-    height: max-content;
+    align-items: flex-start;
     gap: 12px;
     font-weight: 700;
     color: var(--primary-color);
     line-height: 1.45;
     font-family: inherit;
+    margin: 0;
+    padding-top: 0;
+}
+
+.benefits-slide-card .benefits-card-title,
+.benefits-slide-card h3.benefits-card-title {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
 }
 
 .benefits-card-number {
     font-size: 32px;
     flex-shrink: 0;
-    line-height: 1;
     color: var(--primary-color);
     font-weight: 700;
+    margin: 0;
+    padding: 0;
 }
 
 .benefits-card-title {
     font-size: 16px;
     margin: 0;
     font-weight: 600;
+    margin-top: 0;
     color: var(--primary-color);
     line-height: 1.45;
-    margin-top: 4px;
+    flex: 1;
 }
+
 
 .benefits-card-description {
     font-size: 16px;
@@ -155,17 +165,16 @@
     font-family: inherit;
     display: block;
     text-decoration: none;
-    color:black
+    color: black;
 }
-.benefits-slider-source-label{
+.benefits-slider-source-label {
     color: var(--text-dark);
 }
 .benefits-slider-source-url {
     text-decoration: underline;
-    color:var(--primary-color)
+    color: var(--primary-color);
 }
 
-/* ─── Mobile ──────────────────────────────────────────── */
 @media (max-width: 768px) {
     .benefits-slider-section {
         padding: 32px 0;
@@ -174,8 +183,7 @@
         margin-bottom: 30px;
     }
     .benefits-slide-card {
-        min-height: 282px;
-        min-width: 150px;
+        min-height: max-content;
     }
     .benefits-slider-title {
         font-size: 20px;
@@ -183,7 +191,7 @@
     }
 
     .benefits-slider-wrapper::after {
-        width: 50px;
+        width: 10px;
     }
 
     .benefits-card-number {
@@ -196,6 +204,7 @@
     }
 
     .benefits-card-description {
+        max-width: 97%;
         font-size: 12px;
         line-height: 1.5;
     }
@@ -206,10 +215,9 @@
         height: 30px;
     }
 
-     .benefits-next-btn svg {
+    .benefits-next-btn svg {
         width: 16px;
     }
-
 
     .benefits-slider-source {
         font-size: 16px;

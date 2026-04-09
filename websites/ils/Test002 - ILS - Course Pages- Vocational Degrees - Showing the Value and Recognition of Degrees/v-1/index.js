@@ -79,7 +79,6 @@
 
     function injectSwiperAssets() {
         return new Promise((resolve) => {
-            // Inject Swiper CSS
             if (!document.querySelector('link[href*="swiper-bundle"]')) {
                 const swiperCSS = document.createElement("link");
                 swiperCSS.rel = "stylesheet";
@@ -87,7 +86,6 @@
                 document.head.appendChild(swiperCSS);
             }
 
-            // Inject Swiper JS if not already loaded
             if (!window.Swiper) {
                 const swiperScript = document.createElement("script");
                 swiperScript.src = "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js";
@@ -134,18 +132,18 @@
         `;
     }
 
-    function isMobileOrTab() {
-        return window.innerWidth <= 1024;
+    function isMobile() {
+        return window.innerWidth <= 768;
     }
 
     function initSlider() {
-        const targetSection = q(".section--bg-orange");
+        const targetSection = document.querySelector("section:has(.container .accordion)");
         if (!targetSection) {
-            logInfo("Target section .section--bg-orange not found");
+            logInfo("Target section not found");
             return;
         }
 
-        targetSection.insertAdjacentHTML("beforebegin", createBenefitsHTML());
+        targetSection.insertAdjacentHTML("afterend", createBenefitsHTML());
 
         const swiperEl = q(".benefits-swiper");
         const nextBtn = q(".benefits-next-btn");
@@ -155,15 +153,26 @@
             return;
         }
 
-        const getSlidesPerView = () => (isMobileOrTab() ? 2 : 4.5);
-        const getSpaceBetween = () => (isMobileOrTab() ? 13 : 59);
+        const getSlidesPerView = () => (isMobile() ? 1 : 4.5);
+
+        let resizeTimeout;
 
         const swiper = new window.Swiper(swiperEl, {
             slidesPerView: getSlidesPerView(),
-            spaceBetween: getSpaceBetween(),
+            spaceBetween: isMobile() ? 13 : 59,
             speed: 300,
             watchOverflow: true,
             grabCursor: true,
+            breakpoints: {
+                0: {
+                    slidesPerView: 1,
+                    spaceBetween: 13,
+                },
+                769: {
+                    slidesPerView: 4.5,
+                    spaceBetween: 59,
+                },
+            },
             on: {
                 afterInit: function () {
                     updateArrow(this, nextBtn);
@@ -171,13 +180,16 @@
                 slideChange: function () {
                     updateArrow(this, nextBtn);
                 },
-                resize: function () {
-                    this.params.slidesPerView = getSlidesPerView();
-                    this.params.spaceBetween = getSpaceBetween();
-                    this.update();
-                    updateArrow(this, nextBtn);
-                },
             },
+        });
+
+        window.addEventListener("resize", function () {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(function () {
+                if (swiper && !swiper.destroyed) {
+                    updateArrow(swiper, nextBtn);
+                }
+            }, 150);
         });
 
         if (nextBtn) {
@@ -188,7 +200,7 @@
 
         logInfo("Swiper initialized successfully");
     }
-
+    
     function updateArrow(swiperInstance, nextBtn) {
         if (!nextBtn) return;
         if (swiperInstance.isEnd) {
@@ -210,7 +222,7 @@
     }
 
     function checkForItems() {
-        return !!(q(`body:not(.${page_initials}):not(.${page_initials}--v${test_variation})`) && q(".main"));
+        return !!(q(`body:not(.${page_initials}):not(.${page_initials}--v${test_variation})`) && q("main"));
     }
 
     try {

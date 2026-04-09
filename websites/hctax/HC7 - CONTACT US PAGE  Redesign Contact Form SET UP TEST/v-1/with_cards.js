@@ -972,7 +972,6 @@
         logInfo(`Error during initialization: ${error.message}`);
         setTimeout(() => {
             if (isCorrectPage()) {
-                logInfo("Fallback initialization");
                 init();
             }
         }, 2000);
