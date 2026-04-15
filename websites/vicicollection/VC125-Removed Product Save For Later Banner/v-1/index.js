@@ -17,10 +17,10 @@
         test_version: 0.0002,
         test_variation: 2,
     };
-    const {test_variation} = TEST_CONFIG;
+    const { test_variation } = TEST_CONFIG;
     const REMOVE_DELAY = test_variation === 1 ? 5000 : 10000;
 
-    const {page_initials, test_version} = TEST_CONFIG;
+    const { page_initials, test_version } = TEST_CONFIG;
 
     function fireGA4Event(eventName, eventLabel = "") {
         window.dataLayer = window.dataLayer || [];
@@ -49,6 +49,7 @@
         savedWrapper: ".saved-for-later-item__title-variants-wrapper",
         savedTitle: ".saved-for-later-item__title",
         savedVariants: ".saved-for-later-item__variants",
+        emptyCartText: ".bag__empty-cart-text",
     };
 
     const css = `
@@ -160,7 +161,7 @@
     }
 
     function escapeHTML(str) {
-        return String(str).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
+        return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
     }
 
     function waitForElement(predicate, timeout = 20000, interval = 150) {
@@ -236,28 +237,90 @@
     }
 
     function getProductInfo(bagItem) {
-        if (!bagItem) return {name: "", imgSrc: "", imgAlt: ""};
+        if (!bagItem) return { name: "", imgSrc: "", imgAlt: "" };
         const titleEl = q(SELECTOR_LIST.itemTitle, bagItem);
         return {
             name: titleEl ? titleEl.textContent.trim() : "",
         };
     }
 
-    function getOrCreateBannerZone() {
-        const existing = document.getElementById("vc125-banner-zone");
-        if (existing) return existing;
-        const zone = document.createElement("div");
-        zone.id = "vc125-banner-zone";
-        const checkout = q(SELECTOR_LIST.checkout);
-        if (checkout) {
-            checkout.after(zone);
-        } else {
-            (q(SELECTOR_LIST.cartRoot) || document.body).prepend(zone);
-        }
-        return zone;
+    function observeCartChanges() {
+        const cartRoot = q(SELECTOR_LIST.cartRoot);
+        if (!cartRoot) return;
+
+        const observer = new MutationObserver(() => {
+            const zone = document.getElementById("vc125-banner-zone");
+            if (!zone) return;
+
+            const hasItems = qAll(SELECTOR_LIST.bagItem).length > 0;
+            const checkout = q(SELECTOR_LIST.checkout);
+            const empty = q(SELECTOR_LIST.emptyCartText);
+
+            if (hasItems && checkout) {
+                checkout.after(zone);
+            } else if (!hasItems && empty) {
+                empty.after(zone);
+            }
+        });
+
+        observer.observe(cartRoot, {
+            childList: true,
+            subtree: true,
+        });
     }
 
-    function createBannerElement({name}) {
+    function getOrCreateBannerZone() {
+        let zone = document.getElementById("vc125-banner-zone");
+
+        if (!zone) {
+            zone = document.createElement("div");
+            zone.id = "vc125-banner-zone";
+
+            (q(SELECTOR_LIST.cartRoot) || document.body).prepend(zone);
+        }
+
+        return zone;
+    }
+    function showBanner(removeBtn) {
+        const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
+        const saveBtn = bagItem ? q(SELECTOR_LIST.saveBtn, bagItem) : null;
+        const product = getProductInfo(bagItem);
+
+        removeBtn.classList.add("vc125-remove-disabled");
+
+        const zone = getOrCreateBannerZone();
+        const banner = createBannerElement(product);
+        zone.appendChild(banner);
+
+        let timerId = null;
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => banner.classList.add("vc125-banner--visible"));
+        });
+
+        function onSaveClick() {
+            fireGA4Event("VC125_SaveForLaterBannerClick", "Save For Later");
+            logInfo("VC125_SaveForLaterBannerClick fired");
+            clearTimeout(timerId);
+            if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
+            dismissBanner(banner, () => {
+                if (saveBtn) saveBtn.click();
+            });
+        }
+
+        function onTimerExpired() {
+            dismissBanner(banner, () => {
+                if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
+            });
+        }
+
+        triggerNativeRemove(removeBtn);
+
+        q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, { once: true });
+        timerId = setTimeout(onTimerExpired, REMOVE_DELAY);
+    }
+
+    function createBannerElement({ name }) {
         const banner = document.createElement("div");
         banner.className = "vc125-banner";
         banner.setAttribute("role", "status");
@@ -288,47 +351,8 @@
             bannerEl.remove();
             onComplete && onComplete();
         };
-        bannerEl.addEventListener("transitionend", finish, {once: true});
+        bannerEl.addEventListener("transitionend", finish, { once: true });
         setTimeout(finish, 600);
-    }
-
-    function showBanner(removeBtn) {
-        const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
-        const saveBtn = bagItem ? q(SELECTOR_LIST.saveBtn, bagItem) : null;
-        const product = getProductInfo(bagItem);
-
-        removeBtn.classList.add("vc125-remove-disabled");
-
-        const zone = getOrCreateBannerZone(bagItem);
-        const banner = createBannerElement(product);
-        zone.appendChild(banner);
-
-        let timerId = null;
-
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => banner.classList.add("vc125-banner--visible"));
-        });
-
-        function onSaveClick() {
-            fireGA4Event("VC125_SaveForLaterBannerClick", "Save For Later");
-            logInfo("VC125_SaveForLaterBannerClick fired");
-            clearTimeout(timerId);
-            if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
-            dismissBanner(banner, () => {
-                if (saveBtn) saveBtn.click();
-            });
-        }
-
-        function onTimerExpired() {
-            dismissBanner(banner, () => {
-                if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
-            });
-        }
-
-        triggerNativeRemove(removeBtn);
-
-        q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, {once: true});
-        timerId = setTimeout(onTimerExpired, REMOVE_DELAY);
     }
 
     function onCartClick(e) {
@@ -371,6 +395,7 @@
         q("body").classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version:${test_version}`);
         injectStyles(css);
         attachClickInterceptor();
+        observeCartChanges();
         logInfo("Initialised.");
     }
 

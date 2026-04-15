@@ -1,6 +1,6 @@
 (async () => {
     const TEST_ID = "VC125";
-    const VARIANT_ID = "V1";
+    const VARIANT_ID = "V2";
 
     function logInfo(message) {
         console.log(`%cAcadia%c${TEST_ID}-${VARIANT_ID}`, "color:white;background:rgb(0,0,57);font-weight:700;padding:2px 4px;border-radius:2px;", "margin-left:8px;color:white;background:rgb(0,57,57);font-weight:700;padding:2px 4px;border-radius:2px;", message);
@@ -14,8 +14,8 @@
         site_url: "https://www.vicicollection.com/",
         test_name: "VC125: [CART] Removed Product Save For Later Banner (2) SET UP TEST",
         page_initials: "AB-VC125",
-        test_version: 0.0003,
-        test_variation: 1,
+        test_version: 0.0002,
+        test_variation: 2,
     };
     const {test_variation} = TEST_CONFIG;
     const REMOVE_DELAY = test_variation === 1 ? 5000 : 10000;
@@ -59,12 +59,8 @@
             width    : 100%;
             overflow : visible;
         }
-
         .vc125-banner {
-            display      : flex;
-            align-items  : center;
-            gap          : 12px;
-            padding      : 8px 20px 8px 8px;
+            margin: 18px 0;
             background   : #E8E8E8;
             box-sizing   : border-box;
             width        : 100%;
@@ -74,28 +70,23 @@
             transition   : transform 0.35s cubic-bezier(.22,.68,0,1.15),
                            opacity   0.25s ease;
         }
-
         .vc125-banner.vc125-banner--visible {
             transform : translateX(0);
             opacity   : 1;
         }
-
         .vc125-banner.vc125-banner--exit {
             transform  : translateX(-110%);
             opacity    : 0;
             transition : transform 0.3s ease-in,
                          opacity   0.25s ease;
         }
-
-        .vc125-banner__img {
-            flex-shrink : 0;
-            width       : 49px;
-            height      : 61.25px;
-            object-fit  : cover;
-            display     : block;
-            background  : #e8e8e8;
+        .vc125-banner__inner{
+            display      : flex;
+            align-items  : center;
+            justify-content: space-between;
+            gap          : 12px;
+            padding: 23px 20px 22px 18px;
         }
-
         .vc125-banner__text {
             display        : flex;
             flex-direction : column;
@@ -103,7 +94,6 @@
             flex           : 1;
             min-width      : 0;
         }
-
         .vc125-banner__title {
             font-size     : 14px;
             font-weight   : 600;
@@ -116,7 +106,6 @@
             margin        : 0;
             font-family   : Lato !important;
         }
-
         .vc125-banner__subtitle {
             font-size     : 13px;
             color         : #838383;
@@ -126,7 +115,6 @@
             margin        : 0;
             font-family   : Lato !important;
         }
-
         .vc125-banner__save-btn {
             flex-shrink          : 0;
             background           : none;
@@ -142,20 +130,16 @@
             text-underline-offset: 3px;
             font-family          : Lato !important;
         }
-
         .vc125-banner__save-btn:hover { opacity: 0.55; }
-
         .vc125-remove-disabled {
             pointer-events : none !important;
             opacity        : 0.35 !important;
         }
-
         @media (max-width: 767px) {
             .bag__items-wrapper .bag-item {
                 padding : .9rem 0;
             }
-            .vc125-banner { padding: 23px 20px 22px 18px; }
-            .vc125-banner__img { display: none; }
+            .vc125-banner__inner { padding: 19px 25px 18px 8px; }
         }
     `;
 
@@ -254,17 +238,8 @@
     function getProductInfo(bagItem) {
         if (!bagItem) return {name: "", imgSrc: "", imgAlt: ""};
         const titleEl = q(SELECTOR_LIST.itemTitle, bagItem);
-        const imgEl = q(SELECTOR_LIST.itemImage, bagItem);
-        let imgSrc = "";
-        if (imgEl) {
-            imgSrc = imgEl.src || imgEl.dataset.src || imgEl.dataset.lazySrc || "";
-            if (!imgSrc && imgEl.srcset) imgSrc = imgEl.srcset.split(/[\s,]+/)[0];
-        }
-        if (imgSrc && imgSrc.startsWith("//")) imgSrc = "https:" + imgSrc;
         return {
             name: titleEl ? titleEl.textContent.trim() : "",
-            imgSrc: imgSrc,
-            imgAlt: imgEl ? imgEl.alt || "" : "",
         };
     }
 
@@ -273,29 +248,29 @@
         if (existing) return existing;
         const zone = document.createElement("div");
         zone.id = "vc125-banner-zone";
-        const productCard = q(SELECTOR_LIST.bagItem);
-        if (productCard) {
-            productCard.insertAdjacentElement("afterbegin", zone);
+        const checkout = q(SELECTOR_LIST.checkout);
+        if (checkout) {
+            checkout.after(zone);
         } else {
             (q(SELECTOR_LIST.cartRoot) || document.body).prepend(zone);
         }
         return zone;
     }
 
-    function createBannerElement({name, imgSrc, imgAlt}) {
+    function createBannerElement({name}) {
         const banner = document.createElement("div");
         banner.className = "vc125-banner";
         banner.setAttribute("role", "status");
         banner.setAttribute("aria-live", "polite");
         const safeTitle = name ? escapeHTML(name) : "This item";
-        const imgHTML = imgSrc ? `<img class="vc125-banner__img" src="${escapeHTML(imgSrc)}" alt="${escapeHTML(imgAlt)}" />` : `<div class="vc125-banner__img"></div>`;
         banner.innerHTML = `
-            ${imgHTML}
-            <div class="vc125-banner__text">
-                <p class="vc125-banner__title">${safeTitle}</p>
-                <p class="vc125-banner__subtitle">was removed from your cart</p>
+            <div class="vc125-banner__inner">
+                <div class="vc125-banner__text">
+                    <p class="vc125-banner__title">${safeTitle}</p>
+                    <p class="vc125-banner__subtitle">was removed from your cart</p>
+                </div>
+                <button class="vc125-banner__save-btn" type="button">Save For Later</button>
             </div>
-            <button class="vc125-banner__save-btn" type="button">Save For Later</button>
         `;
         return banner;
     }
@@ -324,9 +299,7 @@
 
         removeBtn.classList.add("vc125-remove-disabled");
 
-        if (bagItem) bagItem.style.display = "none";
-
-        const zone = getOrCreateBannerZone();
+        const zone = getOrCreateBannerZone(bagItem);
         const banner = createBannerElement(product);
         zone.appendChild(banner);
 
@@ -349,9 +322,10 @@
         function onTimerExpired() {
             dismissBanner(banner, () => {
                 if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
-                triggerNativeRemove(removeBtn);
             });
         }
+
+        triggerNativeRemove(removeBtn);
 
         q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, {once: true});
         timerId = setTimeout(onTimerExpired, REMOVE_DELAY);
@@ -359,52 +333,32 @@
 
     function onCartClick(e) {
         const removeBtn = e.target.closest(SELECTOR_LIST.removeBtn);
+        const decrementBtn = !removeBtn && e.target.closest(SELECTOR_LIST.decrementBtn);
+        const btn = removeBtn || decrementBtn;
+        if (!btn) return;
 
-        if (removeBtn) {
-            if (nativeClickAllowed.has(removeBtn)) {
-                nativeClickAllowed.delete(removeBtn);
-                return;
-            }
+        if (decrementBtn) {
+            const bagItem = decrementBtn.closest(SELECTOR_LIST.bagItem);
+            const qtyInput = bagItem && q(SELECTOR_LIST.qtyInput, bagItem);
+            if (!bagItem || parseInt(qtyInput?.value, 10) !== 1) return;
+        }
 
-            fireGA4Event("VC125_RemoveFromCart", "Remove");
-            logInfo("VC125_RemoveFromCart fired");
-
-            if (removeBtn.classList.contains("vc125-remove-disabled")) return;
-
-            const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
-            if (isAlreadySaved(bagItem)) return;
-
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            showBanner(removeBtn);
+        if (nativeClickAllowed.has(btn)) {
+            nativeClickAllowed.delete(btn);
             return;
         }
 
-        const decrementBtn = e.target.closest(SELECTOR_LIST.decrementBtn);
-        if (decrementBtn) {
-            const bagItem = decrementBtn.closest(SELECTOR_LIST.bagItem);
-            if (!bagItem) return;
+        fireGA4Event("VC125_RemoveFromCart", "Remove");
+        logInfo("VC125_RemoveFromCart fired");
 
-            const qtyInput = q(SELECTOR_LIST.qtyInput, bagItem);
-            const qty = qtyInput ? parseInt(qtyInput.value, 10) : null;
+        if (btn.classList.contains("vc125-remove-disabled")) return;
 
-            if (qty !== 1) return;
+        const bagItem = btn.closest(SELECTOR_LIST.bagItem);
+        if (isAlreadySaved(bagItem)) return;
 
-            if (nativeClickAllowed.has(decrementBtn)) {
-                nativeClickAllowed.delete(decrementBtn);
-                return;
-            }
-
-            fireGA4Event("VC125_RemoveFromCart", "Remove");
-            logInfo("VC125_RemoveFromCart fired (decrement)");
-
-            if (decrementBtn.classList.contains("vc125-remove-disabled")) return;
-            if (isAlreadySaved(bagItem)) return;
-
-            e.preventDefault();
-            e.stopImmediatePropagation();
-            showBanner(decrementBtn);
-        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        showBanner(btn);
     }
 
     function attachClickInterceptor() {

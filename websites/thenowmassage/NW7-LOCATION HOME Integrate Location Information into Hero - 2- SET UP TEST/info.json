@@ -1,0 +1,13 @@
+{
+  "id": "1775798378095_1347_NW7_LOCATION_HOME_Integrate_Location_Information_into_Hero___2__SET_UP_TEST",
+  "name": "NW7-LOCATION HOME Integrate Location Information into Hero - 2- SET UP TEST",
+  "type": "A/B",
+  "website": "thenowmassage",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-04-10T05:19:38.095Z",
+  "createdAtReadable": "4/10/2026, 11:19:38 AM",
+  "lastUpdated": "2026-04-10T05:19:38.370Z"
+}

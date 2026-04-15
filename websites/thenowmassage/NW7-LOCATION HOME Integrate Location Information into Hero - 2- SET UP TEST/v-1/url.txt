@@ -1,0 +1,53 @@
+Hero Section Content Box- 
+
+1. The content info box is missing a greyed background
+
+
+A slight flicker of the Control component is visible during page load. Can this flicker be reduced during initial load/render?
+
+
+The mentioned goals are not firing on the Control
+
+Font issue - discussion
+
+fixed:
+
+
+The Hero section location link and the “Get Direction” CTA under Boutique Info are redirecting to different map destinations.
+
+The “Book Appointment” CTA has incorrect styling. The font family, font color, and font size do not match the design specifications.
+The “50K+ Members” text's font family and font size is incorrect.
+
+3. In the content info box, the typography used does not match the Figma design specifications. (Font family, size, weight is incorrect).
+
+
+
+4. Increase the height and width of the 'opening hours icon'
+
+5. The “Book Appointment” CTA background color is incorrect and should be changed to white.
+
+1. The “Book Appointment” and “View Offer” CTAs do not match the width of the above content box. Basically CTA widths shoukld be aligned with content box width
+
+2. There is an extra 16px top padding on the “Book Appointment” CTA, which needs to be removed.
+
+3. There is a 30px padding between the “Book Appointment” CTA and the Review section below it. This needs to be reduced to 15px.
+
+
+For Mobile -->
+In the Hero section, the top padding of the heading needs to be reduced to approximately 52px.
+Additionally, the bottom padding below the Review section should be reduced to around 45px.
+
+For Desktop -->
+
+Reduce the top padding of the heading and the bottom padding below the Review section.
+2. Contact No icon is incorrect
+
+The availability time shown in Control does not match the availability time displayed in the Variation, resulting in incorrect information for specific locations. Location-specific logic is not aligning properly
+
+
+Increase the width of the Two CTA's. The “Book Appointment” and “View Offer” CTA
+1. In the Hero section, the column gap between each point in the info box needs to be increased. It should be set to 20px.
+
+2. Additionally, the border-radius of the info box should be set to 5px.
+
+The Map & Appointments sections have been swapped, but the swapping has not been implemented correctly. The image section above also needs to be swapped accordingly.

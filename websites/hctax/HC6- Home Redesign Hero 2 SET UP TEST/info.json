@@ -1,0 +1,13 @@
+{
+  "id": "1776088349206_2753_HC6__Home_Redesign_Hero_2_SET_UP_TEST",
+  "name": "HC6- Home Redesign Hero 2 SET UP TEST",
+  "type": "A/B",
+  "website": "hctax",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-04-13T13:52:29.206Z",
+  "createdAtReadable": "4/13/2026, 7:52:29 PM",
+  "lastUpdated": "2026-04-13T13:52:29.409Z"
+}

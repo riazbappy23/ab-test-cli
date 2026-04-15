@@ -100,7 +100,11 @@
             }
             .AB-NW8A .location-search-form__container{
             margin-top: 25px;
-        }
+           }
+            .AB-NW8A--v1 .hs-menu-wrapper[role="navigation"], .AB-NW8A--v2 .hs-menu-wrapper[role="navigation"] {
+            margin-top:40px;
+            }
+}
     `;
 
     function injectStyles(cssString) {
