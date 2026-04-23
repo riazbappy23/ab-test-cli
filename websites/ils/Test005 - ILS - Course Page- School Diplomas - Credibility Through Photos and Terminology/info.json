@@ -1,0 +1,13 @@
+{
+  "id": "1776680018684_853_Test005___ILS___Course_Page__School_Diplomas___Credibility_Through_Photos_and_Terminology",
+  "name": "Test005 - ILS - Course Page- School Diplomas - Credibility Through Photos and Terminology",
+  "type": "A/B",
+  "website": "ils",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-04-20T10:13:38.684Z",
+  "createdAtReadable": "4/20/2026, 4:13:38 PM",
+  "lastUpdated": "2026-04-20T10:13:38.778Z"
+}

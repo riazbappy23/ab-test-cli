@@ -18,16 +18,39 @@
         test_version: 0.0002,
     };
 
-    const { page_initials, test_variation, test_version } = TEST_CONFIG;
+    const {page_initials, test_variation, test_version} = TEST_CONFIG;
 
-    async function waitForElementAsync(waitFor, callback, minElements = 1, isVariable = false, timer = 30000, frequency = 100) {
-        let elements = isVariable ? window[waitFor] : document.querySelectorAll(waitFor);
-        if (timer <= 0) return;
-        (!isVariable && elements.length >= minElements) || (isVariable && typeof window[waitFor] !== "undefined") ? callback(elements) : setTimeout(() => waitForElem(waitFor, callback, minElements, isVariable, timer - frequency), frequency);
+    function fireGA4Event(eventName, eventLabel = "") {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: "GA4event",
+            "ga4-event-name": "cro_event",
+            "ga4-event-p1-name": "event_category",
+            "ga4-event-p1-value": eventName,
+            "ga4-event-p2-name": "event_label",
+            "ga4-event-p2-value": eventLabel,
+        });
+    }
+
+    function waitForElementAsync(waitFor, timeout = 30000, frequency = 100) {
+        return new Promise((resolve, reject) => {
+            const check = () => {
+                if (typeof waitFor === "function" ? waitFor() : document.querySelector(waitFor)) {
+                    resolve();
+                } else if ((timeout -= frequency) <= 0) {
+                    reject(new Error(`Timeout waiting for: ${waitFor}`));
+                } else {
+                    setTimeout(check, frequency);
+                }
+            };
+            check();
+        });
     }
 
     const q = (s, r = document) => r.querySelector(s);
-    const qAll = (s, r = document) => [...r.querySelectorAll(s)];
+    function qAll(s, r) {
+        return Array.from((r || document).querySelectorAll(s));
+    }
 
     const isMobile = () => window.matchMedia("(max-width: 767px)").matches;
     const isSmallerDisplay = () => window.matchMedia("(max-width: 1200px)").matches;
@@ -118,15 +141,15 @@
     });
 
     const TOP_CARDS_DATA = [
-        { icon: ICONS.never_miss, text: `Never Miss A <br> Deadline Again` },
-        { icon: ICONS.tax_savings, text: `Unlock <br> Tax Savings` },
-        { icon: ICONS.peace_of_mind, text: `Complete <br> Peace Of Mind` },
+        {icon: ICONS.never_miss, text: `Never Miss A <br> Deadline Again`},
+        {icon: ICONS.tax_savings, text: `Unlock <br> Tax Savings`},
+        {icon: ICONS.peace_of_mind, text: `Complete <br> Peace Of Mind`},
     ];
 
     function createTopCards() {
         const wrapper = document.createElement("div");
         wrapper.className = "hc7-top-cards";
-        TOP_CARDS_DATA.forEach(({ icon, text }) => {
+        TOP_CARDS_DATA.forEach(({icon, text}) => {
             const card = document.createElement("div");
             card.className = "hc7-top-card";
             card.innerHTML = `
@@ -610,7 +633,7 @@
                 width: 280px !important;
                 flex: 1 !important;
                 padding-top: 50px !important;
-                padding-bottom: 57px !important;
+                padding-bottom: 30px !important;
                 text-align: center;
                 border-radius:5px !important;
                 filter: drop-shadow(0px 5px 5px #26355708);
@@ -648,15 +671,14 @@
 
             .${page_initials} .hc7-info-cards-wrapper .mantine-Stack-root > div:last-child {
                 text-align: center;
-                font-size: 14px;
+                font-size: 16px;
                 line-height: 1.5;
             }
 
             .hc7-info-cards-wrapper .mantine-Card-root{
             margin-top: 0 !important;
             }
-
-           .${page_initials} .hc7-bottom-info-cards .mantine-Stack-root > div:first-child {
+       .${page_initials} .hc7-bottom-info-cards .mantine-Stack-root > div:first-child {
             border-radius: 5px !important;
             }
 
@@ -676,6 +698,11 @@
                 .${page_initials} .hc7-info-cards-container {
                     padding: 0 calc(1.25vw + 10px);
                 }
+            }
+            @media (min-width: 769px) {
+           .${page_initials} .hc7-info-cards-wrapper .mantine-Stack-root > div:last-child {
+                max-width: 200px;
+            }
             }
 
             @media (max-width: 768px) {
@@ -746,6 +773,9 @@
              }
                 .${page_initials} .hc7-bottom-info-cards {
                     margin-top: 40px;
+                }
+                .${page_initials} .hc7-bottom-info-cards .mantine-Stack-root div:has(.hc7-replaced) {
+                border-radius:5px;
                 }
                 .${page_initials} .hc7-info-cards-wrapper {
                     flex-direction: column;
@@ -848,7 +878,7 @@
             addFiftyYearsBadge();
             replaceInfoCardIcons();
             fixThirdInfoCardAddress();
-            logInfo("All modifications applied");
+            fireGA4Event("HC7_ViewContactPage");
         }, 200);
     }
 
@@ -859,6 +889,12 @@
             if (formExists && !document.body.classList.contains("hc7-init")) {
                 logInfo("Observer triggered init");
                 init();
+            } else if (!formExists) {
+                const mainEl = q("main");
+                if (mainEl && mainEl.classList.contains("hc7-main")) {
+                    mainEl.classList.remove("hc7-main");
+                    document.body.classList.remove("hc7-init");
+                }
             }
         });
 

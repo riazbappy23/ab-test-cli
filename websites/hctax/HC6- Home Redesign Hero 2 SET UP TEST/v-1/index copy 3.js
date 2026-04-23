@@ -26,28 +26,19 @@
     };
 
     const q = (s, r = document) => r.querySelector(s);
-
-    async function waitForElementAsync(predicate, timeout = 20000, frequency = 150) {
-        const startTime = Date.now();
-
+    
+    function waitForElementAsync(waitFor, timeout = 30000, frequency = 100) {
         return new Promise((resolve, reject) => {
-            if (typeof predicate === "function" && predicate()) {
-                return resolve(true);
-            }
-
-            const interval = setInterval(() => {
-                const elapsed = Date.now() - startTime;
-
-                if (elapsed >= timeout) {
-                    clearInterval(interval);
-                    return reject(new Error(`Timeout of ${timeout}ms reached while waiting for condition: ${predicate.toString()}`));
+            const check = () => {
+                if (typeof waitFor === "function" ? waitFor() : document.querySelector(waitFor)) {
+                    resolve();
+                } else if ((timeout -= frequency) <= 0) {
+                    reject(new Error(`Timeout waiting for: ${waitFor}`));
+                } else {
+                    setTimeout(check, frequency);
                 }
-
-                if (typeof predicate === "function" && predicate()) {
-                    clearInterval(interval);
-                    return resolve(true);
-                }
-            }, frequency);
+            };
+            check();
         });
     }
 
@@ -372,7 +363,7 @@
                }
                 @media (max-width: 768px) {
                 .${page_initials} .hc6-hero--v1::after {
-                    background: linear-gradient(to right, rgba(38, 53, 87, 0.85) , rgba(38, 53, 87, .85) 100%);
+                    background: linear-gradient(to right, rgba(38, 53, 87, 0.8) , rgba(38, 53, 87, .8) 100%);
                 }
             }
                  .${page_initials} .hc6-hero--v1 .hc6-container {
@@ -439,7 +430,6 @@
                     margin: 30px auto;
                     text-align: justify;
                     text-align-last: center; 
-                    opacity: 0.9;
                }
                .${page_initials} .hc6-cta {
                     width: calc(100% - 20px) !important;
@@ -576,83 +566,69 @@
         }
     }
 
+    function applyCoreClasses() {
+        const body = document.body;
+        if (!body.classList.contains(page_initials)) {
+            body.classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
+        }
+    }
+
     function isHomePage() {
         const path = window.location.pathname;
         return path === "/" || path === "";
     }
 
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
+    function isCorrectPage() {
+        return isHomePage() && !!q(SELECTORS.hero)  && document.readyState === "complete";
     }
 
-    function checkForItems() {
-        if (!isHomePage()) return false;
+    function init() {
+        if (!isHomePage()) return;
+
         const heroEl = q(SELECTORS.hero);
-        if (!heroEl) return false;
-        if (heroEl.classList.contains("hc6-hero")) return false;
-        if (document.readyState !== "complete") return false;
-        return true;
-    }
+        if (!heroEl) return;
+        if (heroEl.classList.contains("hc6-hero")) return;
 
-    async function init_HC6() {
-        if (window[page_initials] === true) return;
-        if (!isHomePage()) return;
-
-        try {
-            await waitForElementAsync(checkForItems);
-
-            window[page_initials] = true;
-            document.body.classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
-
-            injectStyles();
-            applyHero(q(SELECTORS.hero));
-
-            logInfo("All modifications applied");
-        } catch (error) {
-            logInfo(`Init failed: ${error.message}`);
-            return false;
-        }
-    }
-
-    function handleLocationChanges() {
-        if (q(".hc6-hero")) return;
-
-        document.body.classList.remove(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
-        window[page_initials] = false;
-
-        if (!isHomePage()) return;
-
-        init_HC6();
+        logInfo("Initializing...");
+        injectStyles();
+        applyCoreClasses();
+        applyHero(heroEl);
+        logInfo("All modifications applied");
     }
 
     function urlObserver() {
-        const debouncedChanges = debounce(handleLocationChanges, 150);
-
-        const originalPushState = history.pushState;
+        const origPushState = history.pushState;
         history.pushState = function () {
-            originalPushState.apply(history, arguments);
+            origPushState.apply(history, arguments);
             window.dispatchEvent(new Event("pushstate"));
         };
 
-        window.addEventListener("popstate", function () {
-            debouncedChanges();
-        });
+        window.addEventListener("popstate", init);
+        window.addEventListener("pushstate", init);
 
-        window.addEventListener("pushstate", function () {
-            debouncedChanges();
-        });
+        const observer = new MutationObserver(() => init());
+        observer.observe(document.body, {childList: true, subtree: true});
     }
+
+    urlObserver();
+
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted) init();
+    });
 
     if (isHomePage()) applyAntiFlicker();
 
-    init_HC6();
-    urlObserver();
+    try {
+        waitForElementAsync(SELECTORS.hero, () => {
+            if (isCorrectPage()) init();
+        });
+    } catch (error) {
+        logInfo(`Error during initialization: ${error.message}`);
+        setTimeout(() => {
+            if (isCorrectPage()) {
+                logInfo("Fallback initialization");
+                init();
+            }
+        }, 2000);
+    }
 })();

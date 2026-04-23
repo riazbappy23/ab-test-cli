@@ -1,13 +1,6 @@
 {
   "multiple_rules_check_by_condition": "OR",
-  "rules": [
-    {
-      "selector": "#contact-form",
-      "is_matched": true,
-      "waiting_time": 3000,
-      "total_element_count": 1
-    }
-  ],
+  "rules": [],
   "_comments": {
     "EXAMPLE": [
       {

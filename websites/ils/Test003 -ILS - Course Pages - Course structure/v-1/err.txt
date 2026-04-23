@@ -1,0 +1,19 @@
+
+
+
+On the mobile view when using the arrow to slide to the last tab, a visible gap appears on both sides of the slider.
+
+
+fixed :
+
+On the “Starten Sie Ihre Karriere als” section, the placeholder text “BERUFSBEZEICHNUNG” is not replaced with the course name.
+
+
+On the mobile view of the “Starten Sie Ihre Karriere als” section, an extra item is visible at the right edge and appears cut off.
+
+On the “Starten Sie Ihre Karriere als” section in the desktop variant, the spacing between the icon row and the text content below is larger than the Figma design.
+
+On the “Starten Sie Ihre Karriere als” section in the desktop variant, the vertical spacing between the content above and the section title is larger than the Figma design.
+
+On the “Starten Sie Ihre Karriere als” section in the desktop variant, the first icon block is not aligned correctly and does not match the Figma design.
+

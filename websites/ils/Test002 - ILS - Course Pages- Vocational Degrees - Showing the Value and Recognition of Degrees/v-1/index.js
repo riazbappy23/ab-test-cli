@@ -76,6 +76,7 @@
     ];
 
     const ArrowSvg = '<svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.7309 8.07112C22.1214 7.6806 22.1214 7.04743 21.7309 6.65691L15.3669 0.292946C14.9764 -0.0975785 14.3433 -0.0975785 13.9527 0.292946C13.5622 0.68347 13.5622 1.31664 13.9527 1.70716L19.6096 7.36401L13.9527 13.0209C13.5622 13.4114 13.5622 14.0446 13.9527 14.4351C14.3433 14.8256 14.9764 14.8256 15.3669 14.4351L21.7309 8.07112ZM0 7.36401V8.36401H21.0238V7.36401V6.36401H0V7.36401Z" fill="#09479B" /></svg>';
+    const ArrowLeftSvg = '<svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)"><path d="M21.7309 8.07112C22.1214 7.6806 22.1214 7.04743 21.7309 6.65691L15.3669 0.292946C14.9764 -0.0975785 14.3433 -0.0975785 13.9527 0.292946C13.5622 0.68347 13.5622 1.31664 13.9527 1.70716L19.6096 7.36401L13.9527 13.0209C13.5622 13.4114 13.5622 14.0446 13.9527 14.4351C14.3433 14.8256 14.9764 14.8256 15.3669 14.4351L21.7309 8.07112ZM0 7.36401V8.36401H21.0238V7.36401V6.36401H0V7.36401Z" fill="#09479B" /></svg>';
 
     function injectSwiperAssets() {
         return new Promise((resolve) => {
@@ -119,6 +120,7 @@
                 <div class="container">
                     <h2 class="benefits-slider-title">6 gute Gründe diese Weiterbildung zu starten</h2>
                     <div class="benefits-slider-wrapper">
+                        <button class="benefits-prev-btn" type="button" aria-label="Previous slide">${ArrowLeftSvg}</button>
                         <div class="swiper benefits-swiper">
                             <div class="swiper-wrapper">
                                 ${slidesHTML}
@@ -146,6 +148,7 @@
         targetSection.insertAdjacentHTML("afterend", createBenefitsHTML());
 
         const swiperEl = q(".benefits-swiper");
+        const prevBtn = q(".benefits-prev-btn");
         const nextBtn = q(".benefits-next-btn");
 
         if (!swiperEl || !window.Swiper) {
@@ -175,10 +178,10 @@
             },
             on: {
                 afterInit: function () {
-                    updateArrow(this, nextBtn);
+                    updateArrow(this, prevBtn, nextBtn);
                 },
                 slideChange: function () {
-                    updateArrow(this, nextBtn);
+                    updateArrow(this, prevBtn, nextBtn);
                 },
             },
         });
@@ -187,10 +190,16 @@
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(function () {
                 if (swiper && !swiper.destroyed) {
-                    updateArrow(swiper, nextBtn);
+                    updateArrow(swiper, prevBtn, nextBtn);
                 }
             }, 150);
         });
+
+        if (prevBtn) {
+            prevBtn.addEventListener("click", () => {
+                swiper.slidePrev();
+            });
+        }
 
         if (nextBtn) {
             nextBtn.addEventListener("click", () => {
@@ -200,13 +209,26 @@
 
         logInfo("Swiper initialized successfully");
     }
-    
-    function updateArrow(swiperInstance, nextBtn) {
-        if (!nextBtn) return;
-        if (swiperInstance.isEnd) {
-            nextBtn.style.display = "none";
+
+    function updateArrow(swiperInstance, prevBtn, nextBtn) {
+        const wrapper = q(".benefits-slider-wrapper");
+        if (isMobile()) {
+            if (nextBtn) {
+                nextBtn.style.display = "";
+                nextBtn.disabled = swiperInstance.isEnd;
+            }
+            if (prevBtn) {
+                prevBtn.disabled = swiperInstance.isBeginning;
+            }
         } else {
-            nextBtn.style.display = "flex";
+            if (nextBtn) {
+                nextBtn.style.display = swiperInstance.isEnd ? "none" : "flex";
+                nextBtn.disabled = false;
+            }
+            if (prevBtn) prevBtn.disabled = false;
+        }
+        if (wrapper) {
+            wrapper.classList.toggle("benefits-slider-wrapper--at-end", swiperInstance.isEnd);
         }
     }
 

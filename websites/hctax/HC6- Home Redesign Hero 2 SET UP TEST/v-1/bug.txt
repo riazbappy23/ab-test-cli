@@ -1,0 +1,34 @@
+
+
+
+On the hero section in V1, the background image does not match the Figma design.
+
+
+
+fixed :
+On the hero section in both variants, the CTA button’s left alignment does not match the Figma design.
+On the hero section in both variants, the spacing above the CTA button is smaller than the design, and the top padding should be increased to 40px.
+
+On the hero section in both variants, the CTA button's background colour does not match the Figma design.
+On the hero section in both variants, the description text colour does not match the Figma design.
+On the hero section in both variants, the review star colour and the full review box size do not match the Figma design.
+
+In the hero section of the V2 variant, a black background colour is visible behind the rounded corners of the video thumbnail.
+
+
+On the homepage in both variants, when navigating back and forth or coming from another page, the test appears broken at first load, but after refreshing the page it displays correctly.
+
+
+On the mobile version of the site, there is a small gap between the CTA button and the video player.
+
+
+On the hero section in both variants, the CTA button padding on the upper and lower sides is smaller than the design.
+
+On the hero section in both variants, the CTA background does not match the Figma design. In Figma the background was blurred, but it did not happen in the variant.
+
+The vertical gap between the navigation menu and the hero content is large.
+The vertical gap at the bottom of the hero section is small.
+
+
+
+On the hero section in both variants on desktop and mobile, the description text alignment does not match the Figma design.

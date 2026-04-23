@@ -1,6 +1,6 @@
 (async () => {
     const TEST_ID = "HC7";
-    const VARIANT_ID = "V1";
+    const VARIANT_ID = "control";
 
     function logInfo(message) {
         console.log(`%cAcadia%c${TEST_ID}-${VARIANT_ID}`, "color: white; background: rgb(0, 0, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", "margin-left: 8px; color: white; background: rgb(0, 57, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", message);
@@ -26,9 +26,23 @@
         });
     }
 
+    function fireGA4Event(eventName, eventLabel = "") {
+        window.dataLayer = window.dataLayer || [];
+        window.dataLayer.push({
+            event: "GA4event",
+            "ga4-event-name": "cro_event",
+            "ga4-event-p1-value": eventName,
+            "ga4-event-p2-name": "event_label",
+            "ga4-event-p2-value": eventLabel,
+        });
+        logInfo(`Event fired: ${eventName}${eventLabel ? ` - ${eventLabel}` : ""}`);
+    }
 
     function init() {
         logInfo("Initializing...");
+        setTimeout(() => {
+            fireGA4Event("HC7_ViewContactPage");
+        }, 200);
     }
 
     function isCorrectPage() {

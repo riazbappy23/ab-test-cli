@@ -372,7 +372,7 @@
                }
                 @media (max-width: 768px) {
                 .${page_initials} .hc6-hero--v1::after {
-                    background: linear-gradient(to right, rgba(38, 53, 87, 0.85) , rgba(38, 53, 87, .85) 100%);
+                    background: linear-gradient(to right, rgba(38, 53, 87, 0.8) , rgba(38, 53, 87, .8) 100%);
                 }
             }
                  .${page_initials} .hc6-hero--v1 .hc6-container {
@@ -439,7 +439,6 @@
                     margin: 30px auto;
                     text-align: justify;
                     text-align-last: center; 
-                    opacity: 0.9;
                }
                .${page_initials} .hc6-cta {
                     width: calc(100% - 20px) !important;

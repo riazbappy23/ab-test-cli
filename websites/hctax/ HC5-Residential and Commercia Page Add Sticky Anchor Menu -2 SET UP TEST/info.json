@@ -1,0 +1,13 @@
+{
+  "id": "1776855947604_3693__HC5_Residential_and_Commercia_Page_Add_Sticky_Anchor_Menu__2_SET_UP_TEST",
+  "name": " HC5-Residential and Commercia Page Add Sticky Anchor Menu -2 SET UP TEST",
+  "type": "A/B",
+  "website": "hctax",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-04-22T11:05:47.604Z",
+  "createdAtReadable": "4/22/2026, 5:05:47 PM",
+  "lastUpdated": "2026-04-22T11:05:47.718Z"
+}

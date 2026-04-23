@@ -16,7 +16,7 @@
         test_version: 0.0001,
     };
 
-    const { page_initials, test_version } = TEST_CONFIG;
+    const {page_initials, test_version} = TEST_CONFIG;
 
     function fireGA4Event(eventName, eventLabel = "") {
         window.dataLayer = window.dataLayer || [];
@@ -127,6 +127,8 @@
     .nw7-hero-wrap {
       width: max-content;
       margin: 0 auto;
+       position:relative !important;
+       z-index:999 !important;
     }
 
     .nw7-hero-card {
@@ -169,9 +171,13 @@
 
     .nw7-row-hours .location-info-map__operation-hours-data {
         background: white !important;
+        display:block !important;
         color: #000 !important;
-        right:0 ;
-        left:unset !important;
+    }
+    
+    .location-info-map__operation-hours-data {
+     left: unset !important;
+     right: unset !important;
     }
     
     .nw7-row-hours .location-info-map__operation-hours-copy p {
@@ -213,7 +219,7 @@
 
 .AB-NW7 .location-hero__cta a {
     margin-right: 0 !important;
-    padding: 18px 58px !important;
+    padding: 12px 58px !important;
     font-weight: 600;
     font-size: 16px;
     line-height: 100%;
@@ -290,7 +296,7 @@
         .location-info-map__operation-hours-data {
           min-width: max-content !important;
         }
-        .AB-NW7 .location-hero__main-container .location-hero__cta a {
+        .AB-NW7 .location-hero__main-container .location-hero__cta a:first-of-type {
           margin-top: 0 !important;
         }
           .AB-NW7 .location-hero__cta:has(#location-hero__cta-secondary a) a:first-of-type {
@@ -328,21 +334,19 @@
         return null;
     }
 
-
-
     function buildHeroBlock(data) {
         const ctaEl = q(".location-hero__cta");
         if (ctaEl) {
             const parsed = getHeroData(data);
             const card = createHeroCard(parsed);
 
-            const primaryInfo = document.querySelector('.location-info-map__primary-info');
+            const primaryInfo = document.querySelector(".location-info-map__primary-info");
             if (primaryInfo) {
-                const svg = primaryInfo.querySelector('svg');
+                const svg = primaryInfo.querySelector("svg");
                 if (svg) {
                     svg.outerHTML = ICONS.clock;
                 }
-                const hoursRow = card.querySelector('.nw7-row-hours');
+                const hoursRow = card.querySelector(".nw7-row-hours");
                 if (hoursRow) {
                     hoursRow.appendChild(primaryInfo);
                 }
@@ -361,15 +365,8 @@
     function getHeroData(data) {
         const addr = data.address || {};
         const line1 = addr.streetAddress || "";
-        const line2 = [addr.addressLocality, addr.addressRegion, addr.postalCode].filter(Boolean).join(", ");
 
-        const query = [
-            line1,
-            addr.streetAddress2,
-            addr.addressLocality,
-            addr.addressRegion,
-            addr.postalCode
-        ].filter(Boolean).join(" ");
+        const query = [line1, addr.streetAddress2, addr.addressLocality, addr.addressRegion, addr.postalCode].filter(Boolean).join(" ");
         const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 
         const rawPhone = data.telephone || "";
@@ -380,8 +377,6 @@
         const starsHTML = Array(5).fill(ICONS.star).join("");
 
         return {
-            line1,
-            line2,
             mapsUrl,
             fmtPhone,
             telHref,
@@ -390,19 +385,19 @@
     }
 
     function createHeroCard(data) {
-        const { line1, line2, mapsUrl, fmtPhone, telHref } = data;
+        const { mapsUrl, fmtPhone, telHref} = data;
 
         const card = document.createElement("div");
         card.className = "nw7-hero-wrap";
 
-        const primaryInfo = q('.location-info-map__primary-info');
-        primaryInfo.classList.remove('lg:mb-5');
+        const primaryInfo = q(".location-info-map__primary-info");
+        primaryInfo.classList.remove("lg:mb-5");
 
-        const hoursData = q('.location-info-map__hours-of-operation');
-        hoursData.classList.remove('mb-5');
+        const hoursData = q(".location-info-map__hours-of-operation");
+        hoursData.classList.remove("mb-5");
 
-        const clockImg = q('.location-info-map__operation-hours-copy img:first-of-type');
-        const caretImg = q('.location-info-map__operation-hours-copy img:last-of-type');
+        const clockImg = q(".location-info-map__operation-hours-copy img:first-of-type");
+        const caretImg = q(".location-info-map__operation-hours-copy img:last-of-type");
 
         if (clockImg) {
             clockImg.outerHTML = ICONS.clock;
@@ -412,13 +407,21 @@
             caretImg.outerHTML = ICONS.caret;
         }
 
+        const hoursRow = q(".location_info_map__item p");
+        const addressText = hoursRow.innerHTML
+			    .replace(/<br\s*\/?>/gi, " ")
+			    .replace(/\s{2,}/g, " ")
+			    .trim();
+
+
+
         card.innerHTML = `
       <div class="nw7-hero-card">
         <div class="nw7-row nw7-row-hours"></div>
         <div class="nw7-row nw7-row-address">
           ${ICONS.pin}
           <a class="nw7-link nw7-address-link" href="${mapsUrl}" target="_blank" rel="noopener noreferrer">
-            ${line1}<br>${line2}
+            ${addressText}
           </a>
         </div>
         <div class="nw7-row nw7-row-phone">
@@ -479,7 +482,7 @@
     }
 
     function setupScrollEvent() {
-        const heroSection = q(".location-hero__main-container")
+        const heroSection = q(".location-hero__main-container");
         if (!heroSection) {
             logInfo("Hero section not found for scroll event");
             return;
@@ -492,7 +495,7 @@
                     observer.disconnect();
                 }
             },
-            { threshold: 0 }
+            {threshold: 0}
         );
         observer.observe(heroSection);
         logInfo("Scroll event listener attached");
@@ -526,39 +529,29 @@
             logInfo(".location-info-map__actions parent not found");
         }
     }
-
     function swapBoutiqueAndBooking() {
         const mapContainer = q(".location-info-map__map-container");
-        if (!mapContainer) {
-            logInfo("Map container not found — swap skipped");
-            return;
-        }
-        const boutiqueDiv = mapContainer.children[1];
-        if (!boutiqueDiv) {
-            logInfo("Boutique div not found — swap skipped");
-            return;
-        }
         const apptContainer = q(".location-info-map__next-available-appointment-container");
-        if (!apptContainer) {
-            logInfo("Appt container not found — swap skipped");
-            return;
-        }
-        const apptDiv = apptContainer.children[1];
-        if (!apptDiv) {
-            logInfo("Appt div not found — swap skipped");
+
+        if (!mapContainer || !apptContainer) {
+            logInfo("One or both containers not found — swap skipped");
             return;
         }
 
-        const phA = document.createComment("nw7-ph-boutique");
+        const phA = document.createComment("nw7-ph-map");
         const phB = document.createComment("nw7-ph-appt");
-        mapContainer.insertBefore(phA, boutiqueDiv);
-        apptContainer.insertBefore(phB, apptDiv);
-        mapContainer.replaceChild(apptDiv, phA);
-        apptContainer.replaceChild(boutiqueDiv, phB);
 
-        logInfo("V2 swap: Boutique ↔ Book Appointment complete.");
+        const parentA = mapContainer.parentNode;
+        const parentB = apptContainer.parentNode;
+
+        parentA.insertBefore(phA, mapContainer);
+        parentB.insertBefore(phB, apptContainer);
+
+        parentA.replaceChild(apptContainer, phA);
+        parentB.replaceChild(mapContainer, phB);
+
+        logInfo("V2 swap: FULL containers swapped (cross-parent safe).");
     }
-
     function init() {
         if (document.body.classList.contains(page_initials)) return;
         q("body").classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version:${test_version}`);

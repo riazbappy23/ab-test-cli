@@ -1,0 +1,13 @@
+{
+  "id": "1776356102162_1352_Test003__ILS___Course_Pages___Course_structure",
+  "name": "Test003 -ILS - Course Pages - Course structure",
+  "type": "A/B",
+  "website": "ils",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-04-16T16:15:02.162Z",
+  "createdAtReadable": "4/16/2026, 10:15:02 PM",
+  "lastUpdated": "2026-04-16T16:15:02.256Z"
+}

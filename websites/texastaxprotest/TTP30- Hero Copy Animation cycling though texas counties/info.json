@@ -5,9 +5,10 @@
   "website": "texastaxprotest",
   "variations": [
     "control",
-    "v-1"
+    "v-1",
+    "new-v-1"
   ],
   "createdAt": "2026-03-12T14:38:44.615Z",
   "createdAtReadable": "3/12/2026, 8:38:44 PM",
-  "lastUpdated": "2026-03-12T14:38:44.763Z"
+  "lastUpdated": "2026-04-16T12:53:20.811Z"
 }

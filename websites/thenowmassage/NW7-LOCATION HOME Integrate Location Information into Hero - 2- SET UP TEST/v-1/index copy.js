@@ -234,12 +234,12 @@
     color: #3F5270 !important;
 
 }
-.AB-NW7 #location-hero__cta-secondary a {
+.AB-NW7 .location-hero__cta a + a {
   background:transparent !important;
   color: #FFF !important;
 }
 
-.AB-NW7 .location-hero__cta:has(#location-hero__cta-secondary a) a:first-of-type {
+.AB-NW7 .location-hero__cta:has(a + a) a:first-of-type {
     margin-right: 20px !important;
 }
 
@@ -296,13 +296,13 @@
         .location-info-map__operation-hours-data {
           min-width: max-content !important;
         }
-        .AB-NW7 .location-hero__main-container .location-hero__cta a {
+        .AB-NW7 .location-hero__main-container .location-hero__cta {
           margin-top: 0 !important;
         }
-          .AB-NW7 .location-hero__cta:has(#location-hero__cta-secondary a) a:first-of-type {
+          .AB-NW7 .location-hero__cta:has(a + a) a:first-of-type {
                 margin-right: 0px !important;
         }
-        .AB-NW7 #location-hero__cta-secondary a {
+        .AB-NW7 .location-hero__cta a + a {
             margin-top:15px !important;
         }
         .AB-NW7 .nw7-social-proof {

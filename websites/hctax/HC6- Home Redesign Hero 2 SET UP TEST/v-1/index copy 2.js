@@ -1,6 +1,6 @@
 (async () => {
     const TEST_ID = "HC6";
-    const VARIANT_ID = "V1";
+    const VARIANT_ID = "V2";
 
     function logInfo(message) {
         console.log(`%cAcadia%c${TEST_ID}-${VARIANT_ID}`, "color:white;background:rgb(0,0,57);font-weight:700;padding:2px 4px;", "margin-left:8px;color:white;background:rgb(0,57,57);font-weight:700;padding:2px 4px;", message);
@@ -18,7 +18,7 @@
     const {page_initials, test_variation, test_version, variant} = TEST_CONFIG;
 
     const VIDEO_EMBED_URL = "https://cdn.shopify.com/videos/c/o/v/ac10c153b36a4a42b5c0af9fe438d8fb.mp4";
-    const VIDEO_THUMBNAIL_URL = "https://sb.monetate.net/img/1/1723/6081082.png";
+    const VIDEO_THUMBNAIL_URL = "https://cdn.shopify.com/s/files/1/0612/5086/3345/files/H_C_Video_Thumbnail.png?v=1776377241";
 
     const SELECTORS = {
         hero: "main > div:first-child",
@@ -27,28 +27,10 @@
 
     const q = (s, r = document) => r.querySelector(s);
 
-    async function waitForElementAsync(predicate, timeout = 20000, frequency = 150) {
-        const startTime = Date.now();
-
-        return new Promise((resolve, reject) => {
-            if (typeof predicate === "function" && predicate()) {
-                return resolve(true);
-            }
-
-            const interval = setInterval(() => {
-                const elapsed = Date.now() - startTime;
-
-                if (elapsed >= timeout) {
-                    clearInterval(interval);
-                    return reject(new Error(`Timeout of ${timeout}ms reached while waiting for condition: ${predicate.toString()}`));
-                }
-
-                if (typeof predicate === "function" && predicate()) {
-                    clearInterval(interval);
-                    return resolve(true);
-                }
-            }, frequency);
-        });
+    async function waitForElementAsync(waitFor, callback, minElements = 1, isVariable = false, timer = 30000, frequency = 100) {
+        let elements = isVariable ? window[waitFor] : document.querySelectorAll(waitFor);
+        if (timer <= 0) return;
+        (!isVariable && elements.length >= minElements) || (isVariable && typeof window[waitFor] !== "undefined") ? callback(elements) : setTimeout(() => waitForElem(waitFor, callback, minElements, isVariable, timer - frequency), frequency);
     }
 
     function fireGA4Event(eventName, eventLabel = "") {
@@ -103,15 +85,15 @@
                 content: '';
                 position: absolute;
                 inset: 0;
-                background: var(--hc6-hero-bg) 100% center / 75% auto no-repeat;
-                filter: grayscale(100%) brightness(0.9) sepia(100%) hue-rotate(180deg) saturate(180%);
+                background: var(--hc6-hero-bg) 40% center / cover no-repeat;
+                filter: grayscale(100%);
                 z-index: 0;
             }
             .${page_initials} .hc6-hero--v1::after {
                 content: '';
                 position: absolute;
                 inset: 0;
-                background: linear-gradient(to right, #263557 25%, rgba(38, 53, 87, 0) 50%);
+                background: linear-gradient(to right, #263557 10%, rgba(38, 53, 87, 0) 180%);
                 z-index: 1;
             }
             .${page_initials} .hc6-hero--v1 .hc6-container {
@@ -120,19 +102,18 @@
             }
             .${page_initials} .hc6-hero--v2 {
                 background:
-                    linear-gradient(rgba(38, 53, 87, 0.94), rgba(38, 53, 87, 0.94)),
+                    linear-gradient(rgba(38, 53, 87, 0.95), rgba(38, 53, 87, 0.95)),
                     var(--hc6-hero-bg) center / cover no-repeat;
             }
-
              .${page_initials} .hc6-hero--v1 .hc6-container {
                 position: relative;
                 z-index: 2;
-                padding: 92px 140px;
+                padding: 25px 140px;
             }
             .${page_initials} .hc6-hero--v2 .hc6-container {
                 position: relative;
                 z-index: 2;
-                padding: 92px 80px;
+                padding: 25px 80px;
             }
             
             .${page_initials} .hc6-container {
@@ -149,6 +130,7 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
+                min-height: calc(39.375rem * var(--mantine-scale, 1));
                 color: #fff;
             }
 
@@ -164,7 +146,7 @@
             .${page_initials} .hc6-rating {
                 display: flex;
                 align-items: center;
-                gap: 15px;
+                gap: 8px;
             }
             .${page_initials} .hc6-stars {
                 display: flex;
@@ -214,14 +196,13 @@
                 line-height: 34px;
                 letter-spacing: 0%;
                 color: #FFFFFF ; 
-                opacity: 0.8;
-                max-width: 620px;
-                margin: 36px 0 40px 0;
+                max-width: 520px;
+                margin: 36px 0 30px 0;
             }
 
             .${page_initials} .hc6-cta {
                 display: inline-block;
-                background-color: #FFC200;
+                background-color: #F5C518;
                 color: #263557 !important;
                 font-family: Roboto Serif;
                 font-weight: 600;
@@ -230,29 +211,14 @@
                 letter-spacing: 0%;
                 text-align: center;
                 text-transform: capitalize;
-                padding: 23px 36px;
+                padding: 16px 36px;
+                outline: 1px solid #F5C518;
+                outline-offset:10px;
+                border-radius: 0;
                 cursor: pointer;
                 text-decoration: none !important;
                 transition: background 0.2s, transform 0.1s;
                 width: fit-content;
-                margin-left: 10px;
-                position: relative;
-                border: none;
-                outline: 1px solid #FFC200;
-                outline-offset: 12px;
-            }
-            .${page_initials} .hc6-cta::before {
-                content: '';
-                position: absolute;
-                top: -12px;
-                left: -12px;
-                right: -12px;
-                bottom: -12px;
-                background: #263557;
-                opacity:80%;
-                backdrop-filter: blur(6px);
-                z-index: -1;
-                pointer-events: none;
             }
             .${page_initials} .hc6-cta:hover {
                 background-color: #e6b800;
@@ -269,7 +235,6 @@
                 overflow: hidden;
                 box-shadow: 0 8px 40px rgba(0,0,0,0.45);
                 background: #0a1628;
-                border-radius:10px;
                 aspect-ratio: 1.78/1;
             }
             .${page_initials} .hc6-video-thumbnail {
@@ -291,53 +256,47 @@
                 top: 50%;
                 left: 50%;
                 transform: translate(-50%, -50%);
-                width: 72px;
-                height: 72px;
-                background: linear-gradient(135deg, rgba(254, 252, 245, 0.18), rgba(152, 151, 147, 0.18));
-                border: 2px solid rgba(255,255,255,0.55);
+                width: 64px;
+                height: 64px;
+                background: rgba(255,255,255,0.92);
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 cursor: pointer;
-                backdrop-filter: blur(4px);
-                transition: transform 0.2s, background 0.2s, border-color 0.2s;
+                box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+                transition: transform 0.2s, background 0.2s;
                 pointer-events: auto;
-                z-index: 2;
+                z-index: 2
             }
             .${page_initials} .hc6-video-thumbnail:hover ~ .hc6-play-btn,
             .${page_initials} .hc6-play-btn:hover {
-                transform: translate(-50%, -50%) scale(1.08);
-                border-color: rgba(255,255,255,0.9);
+                transform: translate(-50%, -50%) scale(1.1);
+                background: #fff;
             }
             .${page_initials} .hc6-play-btn svg {
                 margin-left: 4px;
             }
-            .${page_initials} .hc6-hero-video {
+            .${page_initials} .hc6-video-iframe {
                 position: absolute;
                 inset: 0;
                 width: 100%;
                 height: 100%;
+                border: none;
                 display: none;
-                border: 5px solid #FFF;
-                border-radius:10px;
                 overflow: hidden;
+                object-fit: cover;
             }
-            .${page_initials} .hc6-hero-video.active {
+            .${page_initials} .hc6-video-iframe.active {
                 display: block;
             }
-            @media (max-width: 1400px) {
-                .${page_initials} .hc6-hero--v1::before {
-                    background: var(--hc6-hero-bg) 100% center / 110% auto no-repeat;
-                }
-            }
             @media (max-width: 1200px) {
-             .${page_initials} .hc6-hero--v1 .hc6-container {
-                padding: 92px 55px;
-            }
-            .${page_initials} .hc6-hero--v2 .hc6-container {
-                padding: 92px 40px;
-            }
+	               .${page_initials} .hc6-hero--v1 .hc6-container {
+	                 padding: 0 60px;
+	               }
+	             .${page_initials} .hc6-hero--v2 .hc6-container {
+	                padding: 0 60px;
+	              }
                  .${page_initials} .hc6-title {
                    font-size: 50px;
                    line-height:60px;
@@ -368,31 +327,21 @@
             @media (max-width: 767px) {
             .${page_initials} .hc6-hero--v1::before {
                 background: var(--hc6-hero-bg) 40% center / cover no-repeat;
-                filter: grayscale(100%);
+                filter: grayscale(40%);
                }
-                @media (max-width: 768px) {
                 .${page_initials} .hc6-hero--v1::after {
-                    background: linear-gradient(to right, rgba(38, 53, 87, 0.85) , rgba(38, 53, 87, .85) 100%);
+                background: linear-gradient(to right, #263557 0%, rgba(38, 53, 87, 0) 500%);
                 }
-            }
                  .${page_initials} .hc6-hero--v1 .hc6-container {
-	                 padding: 40px 20px 50px 20px;
+	                 padding: 40px 20px;
 	               }
 	             .${page_initials} .hc6-hero--v2 .hc6-container {
 	                padding: 40px 20px;
 	              }
-                .hc6-video-thumbnail {
-                    border-top: 3px solid white;
-                    border-bottom: 3px solid white;
-                    border-radius: 10px;
-                }
                 .${page_initials} .hc6-hero--v1 .hc6-col-left {
                     flex: 0 0 100%;
                     max-width: 100%;
                     min-height: unset;
-                }
-                .${page_initials} .hc6-hero--v2 .hc6-col-left {
-                    padding-bottom:10px;
                 }
                 .${page_initials} .hc6-hero--v2 .hc6-grid {
                     flex-direction: column;
@@ -401,7 +350,6 @@
 	                 display: flex;
 	                 justify-content:center;
 	                 align-items:center;
-                     padding: 0;
                 }
                 
                 .${page_initials} .hc6-hero--v2 .hc6-col-left,
@@ -413,9 +361,6 @@
                 .${page_initials} .hc6-hero--v2 .hc6-video-col {
                     padding-top:40px;
                     padding-left: 0;
-                }
-                .${page_initials} .hc6-rating {
-                 gap: 10px;
                 }
                 .${page_initials} .hc6-rating-text {
                     font-size: 14px;
@@ -439,12 +384,9 @@
                     margin: 30px auto;
                     text-align: justify;
                     text-align-last: center; 
-                    opacity: 0.9;
                }
                .${page_initials} .hc6-cta {
-                    width: calc(100% - 20px) !important;
-                    margin-left: 0 !important;
-                    padding: 19.5px 0;
+                    width: 100% !important;
               }
             }
             @media (max-width: 400px) {
@@ -452,11 +394,6 @@
                  font-size: 30px;
                  line-height: 35px;
                }
-            .${page_initials} .hc6-highlight::before {
-                    left:-5px;
-                    top:0px;
-                    width:135px;
-				}
                 .${page_initials} .hc6-cta {
                     font-size: 14px;
               }
@@ -466,7 +403,7 @@
     }
 
     function createStarSVG() {
-        return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#FFC200" xmlns="http://www.w3.org/2000/svg">
+        return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#F5C518" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2L14.9 8.6L22 9.3L16.5 14.1L18.2 21L12 17.3L5.8 21L7.5 14.1L2 9.3L9.1 8.6L12 2Z"/>
         </svg>`;
     }
@@ -500,12 +437,12 @@
                         alt="Watch our video"
                     />
                     <div class="hc6-play-btn">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="#ffffff">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="#1f3556">
                             <path d="M8 5v14l11-7z"/>
                         </svg>
                     </div>
                     <video
-                        class="hc6-hero-video"
+                        class="hc6-video-iframe"
                         playsinline
                         controls
                         preload="none"
@@ -533,12 +470,15 @@
                 thumbnail.classList.add("hidden");
                 playBtn.style.display = "none";
 
-                const video = videoWrapper.querySelector(".hc6-hero-video");
+                const video = videoWrapper.querySelector(".hc6-video-iframe");
+                video.classList.add("active");
+
                 if (!video.src) {
                     video.src = VIDEO_EMBED_URL;
+                    video.addEventListener("canplay", () => video.play(), { once: true });
+                } else {
+                    video.play();
                 }
-                video.classList.add("active");
-                video.play();
 
                 fireGA4Event("HC6_VideoClick");
             }
@@ -576,83 +516,76 @@
         }
     }
 
-    function isHomePage() {
-        const path = window.location.pathname;
-        return path === "/" || path === "";
-    }
-
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
-    }
-
-    function checkForItems() {
-        if (!isHomePage()) return false;
-        const heroEl = q(SELECTORS.hero);
-        if (!heroEl) return false;
-        if (heroEl.classList.contains("hc6-hero")) return false;
-        if (document.readyState !== "complete") return false;
-        return true;
-    }
-
-    async function init_HC6() {
-        if (window[page_initials] === true) return;
-        if (!isHomePage()) return;
-
-        try {
-            await waitForElementAsync(checkForItems);
-
-            window[page_initials] = true;
-            document.body.classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
-
-            injectStyles();
-            applyHero(q(SELECTORS.hero));
-
-            logInfo("All modifications applied");
-        } catch (error) {
-            logInfo(`Init failed: ${error.message}`);
-            return false;
+    function applyCoreClasses() {
+        const body = document.body;
+        if (!body.classList.contains(page_initials)) {
+            body.classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
         }
     }
 
-    function handleLocationChanges() {
-        if (q(".hc6-hero")) return;
-
-        document.body.classList.remove(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
-        window[page_initials] = false;
-
-        if (!isHomePage()) return;
-
-        init_HC6();
+    function isCorrectPage() {
+        return !!q(SELECTORS.hero);
     }
 
-    function urlObserver() {
-        const debouncedChanges = debounce(handleLocationChanges, 150);
+    function init() {
+        if (document.body.classList.contains("hc6-init")) return;
 
-        const originalPushState = history.pushState;
-        history.pushState = function () {
-            originalPushState.apply(history, arguments);
-            window.dispatchEvent(new Event("pushstate"));
-        };
+        const heroEl = q(SELECTORS.hero);
+        if (!heroEl) {
+            logInfo("Hero element not found, aborting.");
+            return;
+        }
 
-        window.addEventListener("popstate", function () {
-            debouncedChanges();
-        });
+        document.body.classList.add("hc6-init");
+        logInfo("Initializing...");
 
-        window.addEventListener("pushstate", function () {
-            debouncedChanges();
-        });
+        injectStyles();
+        applyCoreClasses();
+        applyHero(heroEl);
+
+        logInfo("All modifications applied");
     }
 
-    if (isHomePage()) applyAntiFlicker();
+    function observePageChanges() {
+        const observer = new MutationObserver(() => {
+            const heroEl = q(SELECTORS.hero);
 
-    init_HC6();
-    urlObserver();
+            if (document.body.classList.contains("hc6-init") && heroEl && !heroEl.classList.contains("hc6-hero")) {
+                logInfo("Observer triggered re-apply");
+                applyHero(heroEl);
+            }
+
+            if (!document.body.classList.contains("hc6-init") && heroEl) {
+                logInfo("Observer triggered init");
+                init();
+            }
+        });
+
+        observer.observe(document.body, {childList: true, subtree: true});
+    }
+
+    observePageChanges();
+
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted) {
+            document.body.classList.remove("hc6-init");
+            setTimeout(() => init(), 100);
+        }
+    });
+
+    applyAntiFlicker();
+
+    try {
+        waitForElementAsync(SELECTORS.hero, () => {
+            init();
+        });
+    } catch (error) {
+        logInfo(`Error during initialization: ${error.message}`);
+        setTimeout(() => {
+            if (isCorrectPage()) {
+                logInfo("Fallback initialization");
+                init();
+            }
+        }, 2000);
+    }
 })();

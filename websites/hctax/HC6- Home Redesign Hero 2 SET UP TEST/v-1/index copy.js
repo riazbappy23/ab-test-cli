@@ -27,28 +27,10 @@
 
     const q = (s, r = document) => r.querySelector(s);
 
-    async function waitForElementAsync(predicate, timeout = 20000, frequency = 150) {
-        const startTime = Date.now();
-
-        return new Promise((resolve, reject) => {
-            if (typeof predicate === "function" && predicate()) {
-                return resolve(true);
-            }
-
-            const interval = setInterval(() => {
-                const elapsed = Date.now() - startTime;
-
-                if (elapsed >= timeout) {
-                    clearInterval(interval);
-                    return reject(new Error(`Timeout of ${timeout}ms reached while waiting for condition: ${predicate.toString()}`));
-                }
-
-                if (typeof predicate === "function" && predicate()) {
-                    clearInterval(interval);
-                    return resolve(true);
-                }
-            }, frequency);
-        });
+    async function waitForElementAsync(waitFor, callback, minElements = 1, isVariable = false, timer = 30000, frequency = 100) {
+        let elements = isVariable ? window[waitFor] : document.querySelectorAll(waitFor);
+        if (timer <= 0) return;
+        (!isVariable && elements.length >= minElements) || (isVariable && typeof window[waitFor] !== "undefined") ? callback(elements) : setTimeout(() => waitForElem(waitFor, callback, minElements, isVariable, timer - frequency), frequency);
     }
 
     function fireGA4Event(eventName, eventLabel = "") {
@@ -372,7 +354,7 @@
                }
                 @media (max-width: 768px) {
                 .${page_initials} .hc6-hero--v1::after {
-                    background: linear-gradient(to right, rgba(38, 53, 87, 0.85) , rgba(38, 53, 87, .85) 100%);
+                    background: linear-gradient(to right, rgba(38, 53, 87, 0.8) , rgba(38, 53, 87, .8) 100%);
                 }
             }
                  .${page_initials} .hc6-hero--v1 .hc6-container {
@@ -439,7 +421,6 @@
                     margin: 30px auto;
                     text-align: justify;
                     text-align-last: center; 
-                    opacity: 0.9;
                }
                .${page_initials} .hc6-cta {
                     width: calc(100% - 20px) !important;
@@ -464,7 +445,7 @@
         `;
         document.head.appendChild(style);
     }
-
+    
     function createStarSVG() {
         return `<svg width="16" height="16" viewBox="0 0 24 24" fill="#FFC200" xmlns="http://www.w3.org/2000/svg">
             <path d="M12 2L14.9 8.6L22 9.3L16.5 14.1L18.2 21L12 17.3L5.8 21L7.5 14.1L2 9.3L9.1 8.6L12 2Z"/>
@@ -576,83 +557,99 @@
         }
     }
 
+    function applyCoreClasses() {
+        const body = document.body;
+        if (!body.classList.contains(page_initials)) {
+            body.classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
+        }
+    }
+
     function isHomePage() {
         const path = window.location.pathname;
         return path === "/" || path === "";
     }
 
-    function debounce(func, wait) {
-        let timeout;
-        return function executedFunction(...args) {
-            const later = () => {
-                clearTimeout(timeout);
-                func(...args);
-            };
-            clearTimeout(timeout);
-            timeout = setTimeout(later, wait);
-        };
+    function isCorrectPage() {
+        return isHomePage() && !!q(SELECTORS.hero);
     }
 
-    function checkForItems() {
-        if (!isHomePage()) return false;
+    function init() {
+        if (document.body.classList.contains("hc6-init")) return;
+
         const heroEl = q(SELECTORS.hero);
-        if (!heroEl) return false;
-        if (heroEl.classList.contains("hc6-hero")) return false;
-        if (document.readyState !== "complete") return false;
-        return true;
-    }
-
-    async function init_HC6() {
-        if (window[page_initials] === true) return;
-        if (!isHomePage()) return;
-
-        try {
-            await waitForElementAsync(checkForItems);
-
-            window[page_initials] = true;
-            document.body.classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
-
-            injectStyles();
-            applyHero(q(SELECTORS.hero));
-
-            logInfo("All modifications applied");
-        } catch (error) {
-            logInfo(`Init failed: ${error.message}`);
-            return false;
+        if (!heroEl) {
+            logInfo("Hero element not found, aborting.");
+            return;
         }
+
+        document.body.classList.add("hc6-init");
+        logInfo("Initializing...");
+
+        injectStyles();
+        applyCoreClasses();
+        applyHero(heroEl);
+
+        logInfo("All modifications applied");
     }
 
-    function handleLocationChanges() {
-        if (q(".hc6-hero")) return;
+    function observePageChanges() {
+        let lastUrl = window.location.href;
 
-        document.body.classList.remove(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
-        window[page_initials] = false;
+        function onUrlChange() {
+            const currentUrl = window.location.href;
+            if (currentUrl === lastUrl) return;
+            lastUrl = currentUrl;
+            document.body.classList.remove("hc6-init");
+            logInfo(`Route changed to ${window.location.pathname}`);
+        }
 
-        if (!isHomePage()) return;
-
-        init_HC6();
-    }
-
-    function urlObserver() {
-        const debouncedChanges = debounce(handleLocationChanges, 150);
-
-        const originalPushState = history.pushState;
-        history.pushState = function () {
-            originalPushState.apply(history, arguments);
-            window.dispatchEvent(new Event("pushstate"));
+        const origPushState = history.pushState.bind(history);
+        history.pushState = function (...args) {
+            origPushState(...args);
+            onUrlChange();
         };
 
-        window.addEventListener("popstate", function () {
-            debouncedChanges();
+        window.addEventListener("popstate", onUrlChange);
+
+        const observer = new MutationObserver(() => {
+            if (!isCorrectPage()) return;
+            const heroEl = q(SELECTORS.hero);
+            if (!heroEl || heroEl.classList.contains("hc6-hero")) return;
+
+            if (document.body.classList.contains("hc6-init")) {
+                logInfo("Observer triggered re-apply");
+                applyHero(heroEl);
+            } else {
+                logInfo("Observer triggered init");
+                init();
+            }
         });
 
-        window.addEventListener("pushstate", function () {
-            debouncedChanges();
-        });
+        observer.observe(document.body, {childList: true, subtree: true});
     }
+
+    observePageChanges();
+
+    window.addEventListener("pageshow", function (event) {
+        if (event.persisted && isCorrectPage()) {
+            document.body.classList.remove("hc6-init");
+            setTimeout(() => init(), 100);
+        }
+    });
 
     if (isHomePage()) applyAntiFlicker();
 
-    init_HC6();
-    urlObserver();
+    try {
+        waitForElementAsync(SELECTORS.hero, () => {
+            if (isCorrectPage()) init();
+        });
+    } catch (error) {
+        logInfo(`Error during initialization: ${error.message}`);
+        setTimeout(() => {
+            if (isCorrectPage()) {
+                logInfo("Fallback initialization");
+                init();
+            }
+        }, 2000);
+    }
 })();
