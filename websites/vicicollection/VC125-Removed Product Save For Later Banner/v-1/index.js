@@ -1,6 +1,6 @@
 (async () => {
     const TEST_ID = "VC125";
-    const VARIANT_ID = "V2";
+    const VARIANT_ID = "V1";
 
     function logInfo(message) {
         console.log(`%cAcadia%c${TEST_ID}-${VARIANT_ID}`, "color:white;background:rgb(0,0,57);font-weight:700;padding:2px 4px;border-radius:2px;", "margin-left:8px;color:white;background:rgb(0,57,57);font-weight:700;padding:2px 4px;border-radius:2px;", message);
@@ -15,12 +15,12 @@
         test_name: "VC125: [CART] Removed Product Save For Later Banner (2) SET UP TEST",
         page_initials: "AB-VC125",
         test_version: 0.0002,
-        test_variation: 2,
+        test_variation: 1,
     };
-    const { test_variation } = TEST_CONFIG;
+    const {test_variation} = TEST_CONFIG;
     const REMOVE_DELAY = test_variation === 1 ? 5000 : 10000;
 
-    const { page_initials, test_version } = TEST_CONFIG;
+    const {page_initials, test_version} = TEST_CONFIG;
 
     function fireGA4Event(eventName, eventLabel = "") {
         window.dataLayer = window.dataLayer || [];
@@ -49,7 +49,6 @@
         savedWrapper: ".saved-for-later-item__title-variants-wrapper",
         savedTitle: ".saved-for-later-item__title",
         savedVariants: ".saved-for-later-item__variants",
-        emptyCartText: ".bag__empty-cart-text",
     };
 
     const css = `
@@ -57,11 +56,16 @@
             padding : 1.125rem 0;
         }
         #vc125-banner-zone {
+            margin-top:10px;
             width    : 100%;
             overflow : visible;
         }
+
         .vc125-banner {
-            margin: 18px 0;
+            display      : flex;
+            align-items  : center;
+            gap          : 12px;
+            padding      : 8px 20px 8px 8px;
             background   : #E8E8E8;
             box-sizing   : border-box;
             width        : 100%;
@@ -71,23 +75,28 @@
             transition   : transform 0.35s cubic-bezier(.22,.68,0,1.15),
                            opacity   0.25s ease;
         }
+
         .vc125-banner.vc125-banner--visible {
             transform : translateX(0);
             opacity   : 1;
         }
+
         .vc125-banner.vc125-banner--exit {
             transform  : translateX(-110%);
             opacity    : 0;
             transition : transform 0.3s ease-in,
                          opacity   0.25s ease;
         }
-        .vc125-banner__inner{
-            display      : flex;
-            align-items  : center;
-            justify-content: space-between;
-            gap          : 12px;
-            padding: 23px 20px 22px 18px;
+
+        .vc125-banner__img {
+            flex-shrink : 0;
+            width       : 49px;
+            height      : 61.25px;
+            object-fit  : cover;
+            display     : block;
+            background  : #e8e8e8;
         }
+
         .vc125-banner__text {
             display        : flex;
             flex-direction : column;
@@ -95,6 +104,7 @@
             flex           : 1;
             min-width      : 0;
         }
+
         .vc125-banner__title {
             font-size     : 14px;
             font-weight   : 600;
@@ -107,6 +117,7 @@
             margin        : 0;
             font-family   : Lato !important;
         }
+
         .vc125-banner__subtitle {
             font-size     : 13px;
             color         : #838383;
@@ -116,6 +127,7 @@
             margin        : 0;
             font-family   : Lato !important;
         }
+
         .vc125-banner__save-btn {
             flex-shrink          : 0;
             background           : none;
@@ -131,16 +143,20 @@
             text-underline-offset: 3px;
             font-family          : Lato !important;
         }
+
         .vc125-banner__save-btn:hover { opacity: 0.55; }
+
         .vc125-remove-disabled {
             pointer-events : none !important;
             opacity        : 0.35 !important;
         }
+
         @media (max-width: 767px) {
-            .bag__items-wrapper .bag-item {
-                padding : .9rem 0;
+          .bag__items-wrapper .bag-item {
+               padding : .9rem 0;
             }
-            .vc125-banner__inner { padding: 19px 25px 18px 8px; }
+            .vc125-banner { padding: 23px 20px 22px 18px; }
+            .vc125-banner__img { display: none; }
         }
     `;
 
@@ -161,7 +177,7 @@
     }
 
     function escapeHTML(str) {
-        return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+        return String(str).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
     }
 
     function waitForElement(predicate, timeout = 20000, interval = 150) {
@@ -237,103 +253,49 @@
     }
 
     function getProductInfo(bagItem) {
-        if (!bagItem) return { name: "", imgSrc: "", imgAlt: "" };
+        if (!bagItem) return {name: "", imgSrc: "", imgAlt: ""};
         const titleEl = q(SELECTOR_LIST.itemTitle, bagItem);
+        const imgEl = q(SELECTOR_LIST.itemImage, bagItem);
+        let imgSrc = "";
+        if (imgEl) {
+            imgSrc = imgEl.src || imgEl.dataset.src || imgEl.dataset.lazySrc || "";
+            if (!imgSrc && imgEl.srcset) imgSrc = imgEl.srcset.split(/[\s,]+/)[0];
+        }
+        if (imgSrc && imgSrc.startsWith("//")) imgSrc = "https:" + imgSrc;
         return {
             name: titleEl ? titleEl.textContent.trim() : "",
+            imgSrc: imgSrc,
+            imgAlt: imgEl ? imgEl.alt || "" : "",
         };
     }
 
-    function observeCartChanges() {
-        const cartRoot = q(SELECTOR_LIST.cartRoot);
-        if (!cartRoot) return;
+function getOrCreateBannerZone() {
+    let zone = document.getElementById("vc125-banner-zone");
 
-        const observer = new MutationObserver(() => {
-            const zone = document.getElementById("vc125-banner-zone");
-            if (!zone) return;
+    if (!zone) {
+        zone = document.createElement("div");
+        zone.id = "vc125-banner-zone";
 
-            const hasItems = qAll(SELECTOR_LIST.bagItem).length > 0;
-            const checkout = q(SELECTOR_LIST.checkout);
-            const empty = q(SELECTOR_LIST.emptyCartText);
-
-            if (hasItems && checkout) {
-                checkout.after(zone);
-            } else if (!hasItems && empty) {
-                empty.after(zone);
-            }
-        });
-
-        observer.observe(cartRoot, {
-            childList: true,
-            subtree: true,
-        });
+        (q(SELECTOR_LIST.cartRoot) || document.body).prepend(zone);
     }
 
-    function getOrCreateBannerZone() {
-        let zone = document.getElementById("vc125-banner-zone");
+    return zone;
+}
 
-        if (!zone) {
-            zone = document.createElement("div");
-            zone.id = "vc125-banner-zone";
-
-            (q(SELECTOR_LIST.cartRoot) || document.body).prepend(zone);
-        }
-
-        return zone;
-    }
-    function showBanner(removeBtn) {
-        const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
-        const saveBtn = bagItem ? q(SELECTOR_LIST.saveBtn, bagItem) : null;
-        const product = getProductInfo(bagItem);
-
-        removeBtn.classList.add("vc125-remove-disabled");
-
-        const zone = getOrCreateBannerZone();
-        const banner = createBannerElement(product);
-        zone.appendChild(banner);
-
-        let timerId = null;
-
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => banner.classList.add("vc125-banner--visible"));
-        });
-
-        function onSaveClick() {
-            fireGA4Event("VC125_SaveForLaterBannerClick", "Save For Later");
-            logInfo("VC125_SaveForLaterBannerClick fired");
-            clearTimeout(timerId);
-            if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
-            dismissBanner(banner, () => {
-                if (saveBtn) saveBtn.click();
-            });
-        }
-
-        function onTimerExpired() {
-            dismissBanner(banner, () => {
-                if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
-            });
-        }
-
-        triggerNativeRemove(removeBtn);
-
-        q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, { once: true });
-        timerId = setTimeout(onTimerExpired, REMOVE_DELAY);
-    }
-
-    function createBannerElement({ name }) {
+    function createBannerElement({name, imgSrc, imgAlt}) {
         const banner = document.createElement("div");
         banner.className = "vc125-banner";
         banner.setAttribute("role", "status");
         banner.setAttribute("aria-live", "polite");
         const safeTitle = name ? escapeHTML(name) : "This item";
+        const imgHTML = imgSrc ? `<img class="vc125-banner__img" src="${escapeHTML(imgSrc)}" alt="${escapeHTML(imgAlt)}" />` : `<div class="vc125-banner__img"></div>`;
         banner.innerHTML = `
-            <div class="vc125-banner__inner">
-                <div class="vc125-banner__text">
-                    <p class="vc125-banner__title">${safeTitle}</p>
-                    <p class="vc125-banner__subtitle">was removed from your cart</p>
-                </div>
-                <button class="vc125-banner__save-btn" type="button">Save For Later</button>
+            ${imgHTML}
+            <div class="vc125-banner__text">
+                <p class="vc125-banner__title">${safeTitle}</p>
+                <p class="vc125-banner__subtitle">was removed from your cart</p>
             </div>
+            <button class="vc125-banner__save-btn" type="button">Save For Later</button>
         `;
         return banner;
     }
@@ -351,38 +313,94 @@
             bannerEl.remove();
             onComplete && onComplete();
         };
-        bannerEl.addEventListener("transitionend", finish, { once: true });
+        bannerEl.addEventListener("transitionend", finish, {once: true});
         setTimeout(finish, 600);
+    }
+
+    function showBanner(removeBtn) {
+        const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
+        const saveBtn = bagItem ? q(SELECTOR_LIST.saveBtn, bagItem) : null;
+        const product = getProductInfo(bagItem);
+
+        removeBtn.classList.add("vc125-remove-disabled");
+        
+        bagItem.style.cssText = "opacity:0 !important; height:0 !important; min-height:0 !important; padding:0 !important; margin:0 !important; border:0 !important; overflow:hidden !important; pointer-events:none !important;";
+
+        const zone = getOrCreateBannerZone();
+        const banner = createBannerElement(product);
+        zone.appendChild(banner);
+
+        let timerId = null;
+
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => banner.classList.add("vc125-banner--visible"));
+        });
+
+        function onSaveClick() {
+            fireGA4Event("VC125_SaveForLaterBannerClick", "Save For Later");
+            clearTimeout(timerId);
+            if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
+            dismissBanner(banner, () => {
+                if (saveBtn) saveBtn.click();
+            });
+        }
+
+        function onTimerExpired() {
+            dismissBanner(banner, () => {
+                if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
+                triggerNativeRemove(removeBtn);
+            });
+        }
+
+        q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, {once: true});
+        timerId = setTimeout(onTimerExpired, REMOVE_DELAY);
     }
 
     function onCartClick(e) {
         const removeBtn = e.target.closest(SELECTOR_LIST.removeBtn);
-        const decrementBtn = !removeBtn && e.target.closest(SELECTOR_LIST.decrementBtn);
-        const btn = removeBtn || decrementBtn;
-        if (!btn) return;
+        if (removeBtn) {
+            if (nativeClickAllowed.has(removeBtn)) {
+                nativeClickAllowed.delete(removeBtn);
+                return;
+            }
 
-        if (decrementBtn) {
-            const bagItem = decrementBtn.closest(SELECTOR_LIST.bagItem);
-            const qtyInput = bagItem && q(SELECTOR_LIST.qtyInput, bagItem);
-            if (!bagItem || parseInt(qtyInput?.value, 10) !== 1) return;
-        }
+            fireGA4Event("VC125_RemoveFromCart", "Remove");
 
-        if (nativeClickAllowed.has(btn)) {
-            nativeClickAllowed.delete(btn);
+            if (removeBtn.classList.contains("vc125-remove-disabled")) return;
+
+            const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
+            if (isAlreadySaved(bagItem)) return;
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            showBanner(removeBtn);
             return;
         }
 
-        fireGA4Event("VC125_RemoveFromCart", "Remove");
-        logInfo("VC125_RemoveFromCart fired");
+        const decrementBtn = e.target.closest(SELECTOR_LIST.decrementBtn);
+        if (decrementBtn) {
+            const bagItem = decrementBtn.closest(SELECTOR_LIST.bagItem);
+            if (!bagItem) return;
 
-        if (btn.classList.contains("vc125-remove-disabled")) return;
+            const qtyInput = q(SELECTOR_LIST.qtyInput, bagItem);
+            const qty = qtyInput ? parseInt(qtyInput.value, 10) : null;
 
-        const bagItem = btn.closest(SELECTOR_LIST.bagItem);
-        if (isAlreadySaved(bagItem)) return;
+            if (qty !== 1) return;
 
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        showBanner(btn);
+            if (nativeClickAllowed.has(decrementBtn)) {
+                nativeClickAllowed.delete(decrementBtn);
+                return;
+            }
+
+            fireGA4Event("VC125_RemoveFromCart", "Remove");
+
+            if (decrementBtn.classList.contains("vc125-remove-disabled")) return;
+            if (isAlreadySaved(bagItem)) return;
+
+            e.preventDefault();
+            e.stopImmediatePropagation();
+            showBanner(decrementBtn);
+        }
     }
 
     function attachClickInterceptor() {
@@ -395,8 +413,6 @@
         q("body").classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version:${test_version}`);
         injectStyles(css);
         attachClickInterceptor();
-        observeCartChanges();
-        logInfo("Initialised.");
     }
 
     function isCartReady() {

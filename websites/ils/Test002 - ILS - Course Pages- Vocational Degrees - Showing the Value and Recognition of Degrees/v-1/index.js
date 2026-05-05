@@ -20,21 +20,18 @@
 
     const {page_initials, test_variation, test_version} = TEST_CONFIG;
 
-    async function waitForElementAsync(predicate, timeout = 20000, frequency = 150) {
-        const startTime = Date.now();
+    async function waitForElementAsync(waitFor, timeout = 30000, frequency = 100) {
         return new Promise((resolve, reject) => {
-            if (typeof predicate === "function" && predicate()) return resolve(true);
-            const interval = setInterval(() => {
-                const elapsed = Date.now() - startTime;
-                if (elapsed >= timeout) {
-                    clearInterval(interval);
-                    return reject(new Error(`Timeout of ${timeout}ms reached while waiting for condition: ${predicate.toString()}`));
+            const check = () => {
+                if (typeof waitFor === "function" ? waitFor() : document.querySelector(waitFor)) {
+                    resolve();
+                } else if ((timeout -= frequency) <= 0) {
+                    reject(new Error(`Timeout waiting for: ${waitFor}`));
+                } else {
+                    setTimeout(check, frequency);
                 }
-                if (typeof predicate === "function" && predicate()) {
-                    clearInterval(interval);
-                    return resolve(true);
-                }
-            }, frequency);
+            };
+            check();
         });
     }
 
@@ -61,7 +58,7 @@
         {
             number: "4",
             title: "Schnellerer Weg in Führungspositionen",
-            description: "Eine Weiterbildung ist ein Karriere-Sprungbrett. 47 % der Fortbildungsabsolventen übernehmen später Personalverantwortung, im Vergleich zu nur 39 % bei Hochschulabsolventen.",
+            description: "Eine Weiterbildung ist ein Karriere-Sprungbrett. 47 % der Fortbildungs- absolventen übernehmen später Personal-verantwortung, im Vergleich zu nur 39 % bei Hochschulabsolventen.",
         },
         {
             number: "5",
@@ -77,27 +74,6 @@
 
     const ArrowSvg = '<svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.7309 8.07112C22.1214 7.6806 22.1214 7.04743 21.7309 6.65691L15.3669 0.292946C14.9764 -0.0975785 14.3433 -0.0975785 13.9527 0.292946C13.5622 0.68347 13.5622 1.31664 13.9527 1.70716L19.6096 7.36401L13.9527 13.0209C13.5622 13.4114 13.5622 14.0446 13.9527 14.4351C14.3433 14.8256 14.9764 14.8256 15.3669 14.4351L21.7309 8.07112ZM0 7.36401V8.36401H21.0238V7.36401V6.36401H0V7.36401Z" fill="#09479B" /></svg>';
     const ArrowLeftSvg = '<svg width="23" height="15" viewBox="0 0 23 15" fill="none" xmlns="http://www.w3.org/2000/svg" style="transform:scaleX(-1)"><path d="M21.7309 8.07112C22.1214 7.6806 22.1214 7.04743 21.7309 6.65691L15.3669 0.292946C14.9764 -0.0975785 14.3433 -0.0975785 13.9527 0.292946C13.5622 0.68347 13.5622 1.31664 13.9527 1.70716L19.6096 7.36401L13.9527 13.0209C13.5622 13.4114 13.5622 14.0446 13.9527 14.4351C14.3433 14.8256 14.9764 14.8256 15.3669 14.4351L21.7309 8.07112ZM0 7.36401V8.36401H21.0238V7.36401V6.36401H0V7.36401Z" fill="#09479B" /></svg>';
-
-    function injectSwiperAssets() {
-        return new Promise((resolve) => {
-            if (!document.querySelector('link[href*="swiper-bundle"]')) {
-                const swiperCSS = document.createElement("link");
-                swiperCSS.rel = "stylesheet";
-                swiperCSS.href = "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css";
-                document.head.appendChild(swiperCSS);
-            }
-
-            if (!window.Swiper) {
-                const swiperScript = document.createElement("script");
-                swiperScript.src = "https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js";
-                swiperScript.onload = () => resolve(true);
-                swiperScript.onerror = () => resolve(false);
-                document.body.appendChild(swiperScript);
-            } else {
-                resolve(true);
-            }
-        });
-    }
 
     function createBenefitsHTML() {
         let slidesHTML = "";
@@ -128,7 +104,10 @@
                         </div>
                         <button class="benefits-next-btn" type="button" aria-label="Next slide">${ArrowSvg}</button>
                     </div>
-                    <a class="benefits-slider-source" href="https://www.ihk-akademie-schwaben.de/ueber-uns/bildungsmacher-hub/mehr-gehalt-weiterbildung-karriere-ohne-studium/" target="_blank"> <span class="benefits-slider-source-label">Quelle:</span> <span class="benefits-slider-source-url"> IHK Schwaben </span></a>
+                    <div>
+                        <span class="benefits-slider-source-label">Quelle:</span>
+                        <a class="benefits-slider-source" href="https://www.ihk-akademie-schwaben.de/ueber-uns/bildungsmacher-hub/mehr-gehalt-weiterbildung-karriere-ohne-studium/" target="_blank"> <span class="benefits-slider-source-url"> IHK Schwaben </span></a>
+                    </div>
                 </div>
             </section>
         `;
@@ -148,66 +127,108 @@
         targetSection.insertAdjacentHTML("afterend", createBenefitsHTML());
 
         const swiperEl = q(".benefits-swiper");
+        const track = swiperEl && swiperEl.querySelector(".swiper-wrapper");
+        const slides = track ? Array.from(track.querySelectorAll(".swiper-slide")) : [];
         const prevBtn = q(".benefits-prev-btn");
         const nextBtn = q(".benefits-next-btn");
 
-        if (!swiperEl || !window.Swiper) {
-            logInfo("Swiper element or library not found");
+        if (!swiperEl || !track || slides.length === 0) {
+            logInfo("Slider elements not found");
             return;
         }
 
-        const getSlidesPerView = () => (isMobile() ? 1 : 4.5);
+        let currentIndex = 0;
+        let slideWidth = 210;
+        let gap = 59;
+
+        function measure() {
+            const mobile = isMobile();
+            gap = mobile ? 13 : 59;
+            track.style.gap = gap + "px";
+
+            if (mobile) {
+                slideWidth = swiperEl.clientWidth;
+                slides.forEach((s) => (s.style.width = slideWidth + "px"));
+            } else {
+                slideWidth = 210;
+                slides.forEach((s) => (s.style.width = ""));
+            }
+        }
+
+        function maxOffset() {
+            const totalWidth = slides.length * slideWidth + (slides.length - 1) * gap;
+            return Math.max(0, totalWidth - swiperEl.clientWidth);
+        }
+
+        function maxIndex() {
+            const step = slideWidth + gap;
+            return step > 0 ? Math.ceil(maxOffset() / step) : 0;
+        }
+
+        function update(animate) {
+            const offset = Math.min(currentIndex * (slideWidth + gap), maxOffset());
+            track.style.transition = animate ? "transform 300ms ease" : "none";
+            track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+
+            updateArrow(
+                {
+                    isBeginning: currentIndex <= 0,
+                    isEnd: currentIndex >= maxIndex(),
+                },
+                prevBtn,
+                nextBtn
+            );
+        }
+
+        function go(delta) {
+            const next = Math.max(0, Math.min(maxIndex(), currentIndex + delta));
+            if (next !== currentIndex) {
+                currentIndex = next;
+                update(true);
+            }
+        }
+
+        measure();
+        update(false);
+
+        if (prevBtn) prevBtn.addEventListener("click", () => go(-1));
+        if (nextBtn) nextBtn.addEventListener("click", () => go(1));
 
         let resizeTimeout;
-
-        const swiper = new window.Swiper(swiperEl, {
-            slidesPerView: getSlidesPerView(),
-            spaceBetween: isMobile() ? 13 : 59,
-            speed: 300,
-            watchOverflow: true,
-            grabCursor: true,
-            breakpoints: {
-                0: {
-                    slidesPerView: 1,
-                    spaceBetween: 13,
-                },
-                769: {
-                    slidesPerView: 4.5,
-                    spaceBetween: 59,
-                },
-            },
-            on: {
-                afterInit: function () {
-                    updateArrow(this, prevBtn, nextBtn);
-                },
-                slideChange: function () {
-                    updateArrow(this, prevBtn, nextBtn);
-                },
-            },
-        });
-
         window.addEventListener("resize", function () {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(function () {
-                if (swiper && !swiper.destroyed) {
-                    updateArrow(swiper, prevBtn, nextBtn);
-                }
+                measure();
+                currentIndex = Math.min(currentIndex, maxIndex());
+                update(false);
             }, 150);
         });
 
-        if (prevBtn) {
-            prevBtn.addEventListener("click", () => {
-                swiper.slidePrev();
-            });
-        }
-
-        if (nextBtn) {
-            nextBtn.addEventListener("click", () => {
-                swiper.slideNext();
-            });
-        }
-
-        logInfo("Swiper initialized successfully");
+        let startX = 0;
+        let deltaX = 0;
+        let dragging = false;
+        track.addEventListener(
+            "touchstart",
+            (e) => {
+                startX = e.touches[0].clientX;
+                deltaX = 0;
+                dragging = true;
+            },
+            {passive: true}
+        );
+        track.addEventListener(
+            "touchmove",
+            (e) => {
+                if (dragging) deltaX = e.touches[0].clientX - startX;
+            },
+            {passive: true}
+        );
+        track.addEventListener("touchend", () => {
+            if (!dragging) return;
+            dragging = false;
+            if (deltaX > 50) go(-1);
+            else if (deltaX < -50) go(1);
+        });
     }
 
     function updateArrow(swiperInstance, prevBtn, nextBtn) {
@@ -218,6 +239,7 @@
                 nextBtn.disabled = swiperInstance.isEnd;
             }
             if (prevBtn) {
+                prevBtn.style.display = "";
                 prevBtn.disabled = swiperInstance.isBeginning;
             }
         } else {
@@ -225,22 +247,20 @@
                 nextBtn.style.display = swiperInstance.isEnd ? "none" : "flex";
                 nextBtn.disabled = false;
             }
-            if (prevBtn) prevBtn.disabled = false;
+            if (prevBtn) {
+                prevBtn.style.display = swiperInstance.isBeginning ? "none" : "flex";
+                prevBtn.disabled = false;
+            }
         }
         if (wrapper) {
             wrapper.classList.toggle("benefits-slider-wrapper--at-end", swiperInstance.isEnd);
+            wrapper.classList.toggle("benefits-slider-wrapper--scrolled", !swiperInstance.isBeginning);
         }
     }
 
     function init() {
         q("body").classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version:${test_version}`);
-        injectSwiperAssets().then((loaded) => {
-            if (loaded) {
-                initSlider();
-            } else {
-                logInfo("Failed to load Swiper assets");
-            }
-        });
+        initSlider();
     }
 
     function checkForItems() {

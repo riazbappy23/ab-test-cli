@@ -24,18 +24,27 @@
             "ga4-event-p2-name": "event_label",
             "ga4-event-p2-value": eventLabel,
         });
-
         logInfo(`Event fired: ${eventName}${eventLabel ? ` - ${eventLabel}` : ""}`);
     }
 
-    function q(selector) {
-        return document.querySelector(selector);
-    }
-
-    async function waitForElement(waitFor, callback, minElements = 1, isVariable = false, timer = 30000, frequency = 100) {
-        let elements = isVariable ? window[waitFor] : document.querySelectorAll(waitFor);
-        if (timer <= 0) return;
-        (!isVariable && elements.length >= minElements) || (isVariable && typeof window[waitFor] !== "undefined") ? callback(elements) : setTimeout(() => waitForElem(waitFor, callback, minElements, isVariable, timer - frequency), frequency);
+    function waitForElement(selector, timeout = 20000, interval = 150) {
+        return new Promise((resolve, reject) => {
+            const el = document.querySelector(selector);
+            if (el) return resolve(el);
+            const start = Date.now();
+            const id = setInterval(() => {
+                if (Date.now() - start >= timeout) {
+                    clearInterval(id);
+                    reject(new Error(`Timed out waiting for ${selector}`));
+                    return;
+                }
+                const el = document.querySelector(selector);
+                if (el) {
+                    clearInterval(id);
+                    resolve(el);
+                }
+            }, interval);
+        });
     }
 
     async function setupHeroCTAEvent() {
@@ -45,25 +54,24 @@
             if (!heroCta.dataset.nw7Bound) {
                 heroCta.dataset.nw7Bound = "true";
 
-                heroCta.addEventListener("click", () => {
-                    fireGA4Event("NW7_HeroCTAClick", "CTA Copy");
+                heroCta.addEventListener("click", (e) => {
+                    const clickedLink = e.target.closest("a, button");
+                    const label = (clickedLink ? clickedLink.textContent : heroCta.textContent)
+                        .replace(/\s+/g, " ")
+                        .trim();
+                    fireGA4Event("NW7_HeroCTAClick", label);
                 });
 
                 logInfo("Hero CTA event attached");
             }
         } catch (e) {
-            logInfo("Hero CTA not found");
+            logInfo("Hero CTA not found", e.message);
         }
     }
 
     async function setupScrollEvent() {
         try {
-            const heroSection = await waitForElement(".location-hero__main-container")
-
-            if (!heroSection) {
-                logInfo("Hero section NOT found ❌");
-                return;
-            }
+            const heroSection = await waitForElement(".location-hero__main-container");
 
             logInfo("Hero section found ✅", heroSection);
 
@@ -78,9 +86,7 @@
 
             const observer = new IntersectionObserver(
                 (entries) => {
-                    const entry = entries[0];
-
-                    if (!entry.isIntersecting) {
+                    if (!entries[0].isIntersecting) {
                         fireOnce();
                         observer.disconnect();
                     }
@@ -147,7 +153,6 @@
         setupHeroCTAEvent();
         setupScrollEvent();
         setupBTFClickEvents();
-
         logInfo("control initialised");
     }
 

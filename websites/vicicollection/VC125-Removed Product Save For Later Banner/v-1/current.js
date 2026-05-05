@@ -1,6 +1,6 @@
 (async () => {
     const TEST_ID = "VC125";
-    const VARIANT_ID = "V2";
+    const VARIANT_ID = "V1";
 
     function logInfo(message) {
         console.log(`%cAcadia%c${TEST_ID}-${VARIANT_ID}`, "color:white;background:rgb(0,0,57);font-weight:700;padding:2px 4px;border-radius:2px;", "margin-left:8px;color:white;background:rgb(0,57,57);font-weight:700;padding:2px 4px;border-radius:2px;", message);
@@ -15,10 +15,10 @@
         test_name: "VC125: [CART] Removed Product Save For Later Banner (2) SET UP TEST",
         page_initials: "AB-VC125",
         test_version: 0.0002,
-        test_variation: 2,
+        test_variation: 1,
     };
     const { test_variation } = TEST_CONFIG;
-    const REMOVE_DELAY = test_variation === 1 ? 5000 : 10000;
+    const REMOVE_DELAY = test_variation === 1 ? 50000 : 10000;
 
     const { page_initials, test_version } = TEST_CONFIG;
 
@@ -269,56 +269,56 @@
         });
     }
 
-    function getOrCreateBannerZone() {
-        let zone = document.getElementById("vc125-banner-zone");
+function getOrCreateBannerZone() {
+    let zone = document.getElementById("vc125-banner-zone");
 
-        if (!zone) {
-            zone = document.createElement("div");
-            zone.id = "vc125-banner-zone";
+    if (!zone) {
+        zone = document.createElement("div");
+        zone.id = "vc125-banner-zone";
 
-            (q(SELECTOR_LIST.cartRoot) || document.body).prepend(zone);
-        }
-
-        return zone;
+        (q(SELECTOR_LIST.cartRoot) || document.body).prepend(zone);
     }
-    function showBanner(removeBtn) {
-        const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
-        const saveBtn = bagItem ? q(SELECTOR_LIST.saveBtn, bagItem) : null;
-        const product = getProductInfo(bagItem);
 
-        removeBtn.classList.add("vc125-remove-disabled");
+    return zone;
+}
 
-        const zone = getOrCreateBannerZone();
-        const banner = createBannerElement(product);
-        zone.appendChild(banner);
 
-        let timerId = null;
+function showBanner(removeBtn) {
+    const bagItem = removeBtn.closest(SELECTOR_LIST.bagItem);
+    const saveBtn = bagItem ? q(SELECTOR_LIST.saveBtn, bagItem) : null;
+    const product = getProductInfo(bagItem);
 
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => banner.classList.add("vc125-banner--visible"));
+    removeBtn.classList.add("vc125-remove-disabled");
+
+    bagItem.style.cssText = "display:none !important;";
+
+    const zone = getOrCreateBannerZone();
+    const banner = createBannerElement(product);
+    zone.appendChild(banner);
+
+    let timerId = null;
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => banner.classList.add("vc125-banner--visible"));
+    });
+
+    function onSaveClick() {
+        fireGA4Event("VC125_SaveForLaterBannerClick", "Save For Later");
+        logInfo("VC125_SaveForLaterBannerClick fired");
+        clearTimeout(timerId);
+        saveBtn.click();
+        dismissBanner(banner, () => {});
+    }
+
+    function onTimerExpired() {
+        dismissBanner(banner, () => {
+            triggerNativeRemove(removeBtn);
         });
-
-        function onSaveClick() {
-            fireGA4Event("VC125_SaveForLaterBannerClick", "Save For Later");
-            logInfo("VC125_SaveForLaterBannerClick fired");
-            clearTimeout(timerId);
-            if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
-            dismissBanner(banner, () => {
-                if (saveBtn) saveBtn.click();
-            });
-        }
-
-        function onTimerExpired() {
-            dismissBanner(banner, () => {
-                if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
-            });
-        }
-
-        triggerNativeRemove(removeBtn);
-
-        q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, { once: true });
-        timerId = setTimeout(onTimerExpired, REMOVE_DELAY);
     }
+
+    q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, { once: true });
+    timerId = setTimeout(onTimerExpired, REMOVE_DELAY);
+}
 
     function createBannerElement({ name }) {
         const banner = document.createElement("div");

@@ -43,7 +43,7 @@
     }
 
     const IMAGES = Object.freeze({
-        DESKTOP_HERO: "https://www.ils.de/fileadmin/bilder/testing/ils-headerbild-abitur-desktop.png",
+        DESKTOP_HERO: "https://www.ils.de/fileadmin/bilder/testing/ils-headerbild-abitur-desktop-02.jpg",
         MOBILE_HERO: "https://www.ils.de/fileadmin/bilder/testing/ils-headerbild-abitur-mobile.png",
         REVIEW: "https://www.ils.de/fileadmin/_processed_/5/e/csm_siegel-fernstudium-direkt_73726858b9.png",
         AWARD: "https://www.ils.de/fileadmin/_processed_/3/9/csm_top-fernschule_488bd5c858.png",
@@ -51,7 +51,7 @@
 
     const CTA_URL = "https://www.ils.de/fernkurse/abitur-nachholen/#sud-formular";
 
-    const checkSvg = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    const checkSvg = `<svg class="test005-check-svg" width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <rect width="16" height="16" fill="url(#pattern0_70_49)"/>
 <defs>
 <pattern id="pattern0_70_49" patternContentUnits="objectBoundingBox" width="1" height="1">
@@ -124,9 +124,9 @@
             .test005-img {
                 display: block;
                 width: 100%;
-                height: 800px;
+                height: 696px;
                 object-fit: cover;
-                object-position: center;
+                object-position: center 12%;
             }
             .test005-img--mobile {
                 display: none;
@@ -145,14 +145,14 @@
                 transform: translateY(-50%);
                 background: #ffffff;
                 border-radius: 15px;
-                padding: 13px 37px 30px;
+                padding: 13px 30px 30px;
                 width: 492px;
                 box-shadow: 0 4px 32px rgba(0, 0, 0, 0.12);
                 box-sizing: border-box;
             }
 
               .test005-hero .btn{
-              border: none !importan;
+              border: none !important;
             }
 
             .test005-heading {
@@ -179,7 +179,10 @@
                 font-size: 24px;
                 line-height: 54.3px;
                 letter-spacing: 0%;
-
+            }
+            .test005-check-svg{
+                 width:24px;
+                 height:24px;
             }
             .test005-list-item:last-child {
                 margin-bottom: 0;
@@ -256,7 +259,7 @@
                 }
             }
 
-            @media (max-width: 767px) {
+          @media (max-width: 767px) {
                 .test005-hero {
                     overflow: unset;
                     overflow-y:visible !important;
@@ -281,7 +284,7 @@
                     width: 100%;
                     height: 100%;
                     object-fit: cover;
-                    object-position: center 73%;
+                    object-position: center 60%;
                    
                 }
                 .test005-badges-overlay {
@@ -308,44 +311,68 @@
                     width: auto;
                     min-width: unset;
                     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
-                    padding: 11px 18px;
+                    padding: 11px 9px !important;
                 }
                 .test005-badges-card {
                     display: none;
                 }
                 .test005-heading {
-                    font-size: 22px !important;
                     font-size: 24px !important;
                     line-height: 24px !important;
+                    padding-left:9px !important;
+                    padding-right:9px !important;
                 }
 
                 .test005-list-item {
-                    font-size: 16px;
-                    line-height: 30px;
+                    font-size: 16px !important;
+                    line-height: 30px !important;
+                    padding-left:12px !important;
+                    padding-right:12px !important;
                 }
 
-                .test005-cta {
-                    gap:17px;
+                .test005-check-svg{
+                 width:16px !important;
+                 height:16px !important;
+               }
+
+                .test005-hero .test005-cta {
+                    gap:17px !important;
                     padding: 10px 12px !important;
-                    font-size: 16px;
+                    font-size: 6px;
                 }
                 section:has(nav.breadcrumb) {
                     padding-bottom: 30px;
                 }
             }
-         @media (max-width: 400px) {
-            .test005-cta,
-            body.AB-TEST005 .test005-hero .test005-cta {
-                gap: 10px !important;
-                padding: 8px !important;
-                font-size: 12px !important;
+            @media (max-width: 400px) {
+                .test005-hero .test005-cta {
+                    gap: 8px !important;
+                    padding: 8px !important;
+                    font-size:14px !important;
+                } 
+                }
             }
-        }
+
+            @media (max-width: 371px) {
+                .test005-hero .test005-cta {
+                    gap: 8px !important;
+                    padding: 8px !important;
+                    font-size:12px !important;
+                }
+            }
+            
+            @media (max-width: 350px) {
+                .test005-hero .test005-cta {
+                    gap: 6px !important;
+                    font-size:12px !important;
+                }
+            }
+
+
             
         `;
         document.head.appendChild(style);
     }
-
     function initHero() {
         const sliderSection = q("#main section:has(.slider)") || q("main section:has(.slider)");
         if (!sliderSection) {

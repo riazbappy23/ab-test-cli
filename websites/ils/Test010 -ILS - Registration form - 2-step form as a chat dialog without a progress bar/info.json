@@ -1,0 +1,13 @@
+{
+  "id": "1777474095900_6800_Test010__ILS___Registration_form___2_step_form_as_a_chat_dialog_without_a_progress_bar",
+  "name": "Test010 -ILS - Registration form - 2-step form as a chat dialog without a progress bar",
+  "type": "A/B",
+  "website": "ils",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-04-29T14:48:15.901Z",
+  "createdAtReadable": "4/29/2026, 8:48:15 PM",
+  "lastUpdated": "2026-04-29T14:48:16.060Z"
+}

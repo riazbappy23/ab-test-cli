@@ -28,7 +28,6 @@
             "ga4-event-p2-name": "event_label",
             "ga4-event-p2-value": eventLabel,
         });
-        logInfo(`Event fired: ${eventName}${eventLabel ? ` - ${eventLabel}` : ""}`);
     }
 
     function q(selector) {
@@ -239,7 +238,7 @@
   color: #FFF !important;
 }
 
-.AB-NW7 .location-hero__cta:has(#location-hero__cta-secondary a) a:first-of-type {
+.AB-NW7 .location-hero__cta a:first-of-type {
     margin-right: 20px !important;
 }
 
@@ -299,7 +298,7 @@
         .AB-NW7 .location-hero__main-container .location-hero__cta a:first-of-type {
           margin-top: 0 !important;
         }
-          .AB-NW7 .location-hero__cta:has(#location-hero__cta-secondary a) a:first-of-type {
+          .AB-NW7 .location-hero__cta a:first-of-type {
                 margin-right: 0px !important;
         }
         .AB-NW7 #location-hero__cta-secondary a {
@@ -357,8 +356,6 @@
             updateCTA();
             insertHero(ctaEl, card, social);
             attachHeroEvents(card);
-
-            logInfo("Hero block injected.");
         }
     }
 
@@ -385,7 +382,7 @@
     }
 
     function createHeroCard(data) {
-        const { mapsUrl, fmtPhone, telHref} = data;
+        const {mapsUrl, fmtPhone, telHref} = data;
 
         const card = document.createElement("div");
         card.className = "nw7-hero-wrap";
@@ -409,11 +406,9 @@
 
         const hoursRow = q(".location_info_map__item p");
         const addressText = hoursRow.innerHTML
-			    .replace(/<br\s*\/?>/gi, " ")
-			    .replace(/\s{2,}/g, " ")
-			    .trim();
-
-
+            .replace(/<br\s*\/?>/gi, " ")
+            .replace(/\s{2,}/g, " ")
+            .trim();
 
         card.innerHTML = `
       <div class="nw7-hero-card">
@@ -457,14 +452,16 @@
         const addressLink = card.querySelector(".nw7-address-link");
         if (addressLink) {
             addressLink.addEventListener("click", () => {
-                fireGA4Event("NW7_keylocationclicks", "Address");
+                const label = addressLink.textContent.replace(/\s+/g, " ").trim();
+                fireGA4Event("NW7_keylocationclicks", label);
             });
         }
 
         const phoneLink = card.querySelector(".nw7-phone-link");
         if (phoneLink) {
             phoneLink.addEventListener("click", () => {
-                fireGA4Event("NW7_keylocationclicks", "PhoneNumber");
+                const label = phoneLink.textContent.replace(/\s+/g, " ").trim();
+                fireGA4Event("NW7_keylocationclicks", label);
             });
         }
     }
@@ -473,32 +470,28 @@
         const heroCta = q(".location-hero__cta");
         if (heroCta) {
             heroCta.addEventListener("click", (e) => {
-                fireGA4Event("NW7_HeroCTAClick", "CTA Copy");
-                logInfo("Hero CTA clicked - event fired");
+                const clickedLink = e.target.closest("a, button");
+                const label = (clickedLink ? clickedLink.textContent : heroCta.textContent).replace(/\s+/g, " ").trim();
+                fireGA4Event("NW7_HeroCTAClick", label);
             });
-        } else {
-            logInfo("Hero CTA element not found");
         }
     }
 
     function setupScrollEvent() {
         const heroSection = q(".location-hero__main-container");
         if (!heroSection) {
-            logInfo("Hero section not found for scroll event");
             return;
         }
         const observer = new IntersectionObserver(
             (entries) => {
                 if (!entries[0].isIntersecting) {
                     fireGA4Event("NW7_ViewBTF");
-                    logInfo("User scrolled past hero - BTF event fired");
                     observer.disconnect();
                 }
             },
             {threshold: 0}
         );
         observer.observe(heroSection);
-        logInfo("Scroll event listener attached");
     }
 
     function setupBTFClickEvents() {
@@ -507,26 +500,19 @@
         if (bookingBtn) {
             bookingBtn.addEventListener("click", () => {
                 fireGA4Event("NW7_BTFClick", "Maps Section");
-                logInfo("BTF Maps Section clicked");
             });
-        } else {
-            logInfo("Map container not found for BTF event");
         }
 
         const appointmentContainer = q(".location-info-map__appointments-container");
         if (appointmentContainer) {
-            const bookingBtn = appointmentContainer.querySelector(".location-info-map__next-appointments__card__cta");
+            const bookingBtn = appointmentContainer.querySelector(".location-info-map__next-appointments__card__cta"); // ← scoped
             if (bookingBtn) {
                 bookingBtn.addEventListener("click", (e) => {
                     e.stopPropagation();
                     fireGA4Event("NW7_BTFClick", "Booking Section");
-                    logInfo("BTF Booking Section clicked");
+                    logInfo("BOOKING section clicked");
                 });
-            } else {
-                logInfo("Booking button not found in .location-info-map__actions");
             }
-        } else {
-            logInfo(".location-info-map__actions parent not found");
         }
     }
     function swapBoutiqueAndBooking() {
@@ -534,7 +520,6 @@
         const apptContainer = q(".location-info-map__next-available-appointment-container");
 
         if (!mapContainer || !apptContainer) {
-            logInfo("One or both containers not found — swap skipped");
             return;
         }
 
@@ -549,8 +534,6 @@
 
         parentA.replaceChild(apptContainer, phA);
         parentB.replaceChild(mapContainer, phB);
-
-        logInfo("V2 swap: FULL containers swapped (cross-parent safe).");
     }
     function init() {
         if (document.body.classList.contains(page_initials)) return;
@@ -560,8 +543,6 @@
         const businessData = getStructuredData();
         if (businessData) {
             buildHeroBlock(businessData);
-        } else {
-            logInfo("No structured data — hero block skipped.");
         }
 
         setupHeroCTAEvent();
@@ -571,8 +552,6 @@
         if (test_variation === 2) {
             swapBoutiqueAndBooking();
         }
-
-        logInfo("Initialised - all event listeners attached");
     }
 
     function isReady() {

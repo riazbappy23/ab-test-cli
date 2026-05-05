@@ -1,0 +1,143 @@
+#hc5-anchor-bar {
+    background: #3b76b7;
+    width: 100%;
+    z-index: 1;
+    filter: drop-shadow(0 10px 5px rgba(0, 0, 0, 0.25));
+    transition: box-shadow 0.25s;
+    &.hc5-is-sticky {
+        position: fixed;
+        left: 0;
+        right: 0;
+        box-shadow: 0 10px 14px rgba(0, 0, 0, 0.22);
+    }
+}
+
+.hc5-anchor-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    a {
+        display: block;
+        color: #fff !important;
+        font-family: Roboto Serif;
+        font-weight: 500;
+        font-size: 18px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        padding-top: 18px;
+        padding-bottom: 18px;
+        text-decoration: none !important;
+        border-bottom: 3px solid transparent;
+        transition: color 0.18s;
+        white-space: nowrap;
+        cursor: pointer;
+
+        &:not(:last-child) {
+            padding-right: 60px;
+        }
+
+        &:hover {
+            text-decoration: underline !important;
+        }
+
+        &.hc5-active {
+            text-decoration: underline !important;
+            text-decoration-thickness: 2px !important;
+            text-underline-offset: 5px;
+        }
+    }
+}
+
+.hc5-anchor-dropdown {
+    display: none;
+    width: 100%;
+    position: relative;
+}
+
+.hc5-dropdown-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    background: #3b76b7;
+    border: none;
+    color: #fff;
+    font-family: Roboto Serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-inline: 17px;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+
+    .hc5-toggle-chevron {
+        transition: transform 0.2s;
+        flex-shrink: 0;
+    }
+
+    &.hc5-open .hc5-toggle-chevron {
+        transform: rotate(180deg);
+    }
+}
+
+.hc5-dropdown-list {
+    display: none;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 100%;
+    background: #3b76b7;
+    z-index: 1001;
+    overflow: hidden;
+    box-shadow: 2px 4px 12px rgba(0, 0, 0, 0.3);
+    padding-top: 23px;
+    padding-bottom: 22px;
+    &.hc5-open {
+        display: block;
+    }
+
+    a {
+        display: block;
+        color: #fff;
+        font-family: Roboto Serif;
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-transform: capitalize;
+        text-decoration: none !important;
+        cursor: pointer;
+        padding-inline: 17px;
+        &:not(:first-child) {
+            padding-top: 30px;
+        }
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover,
+        &.hc5-active {
+            text-decoration: underline !important;
+            text-decoration-thickness: 1px !important;
+            text-underline-offset: 4px;
+        }
+    }
+}
+
+@media (max-width: 767px) {
+    .hc5-anchor-nav {
+        display: none;
+    }
+    .hc5-anchor-dropdown {
+        display: block;
+    }
+}

@@ -1,0 +1,210 @@
+.ab-test-010-v1 {
+    #sud-formular {
+        .section--spacing-form {
+            padding: var(--container-gap--base) var(--container-padding-box-inner--sm) var(--spacing--md) var(--container-padding-box-inner--sm);
+        }
+        form {
+            div[identifier="form-row"] {
+                display: flex;
+                flex-wrap: wrap;
+                .test010-row--street {
+                    padding-right: 0 !important;
+                }
+                .test010-row--street > .row.fv-grid {
+                    width: 100% !important;
+                    margin-left: 0 !important;
+                }
+                > .col-12 {
+                    order: 100;
+                }
+                .test010-chat--step1 {
+                    order: 1;
+                }
+                .test010-row--salutation {
+                    order: 2;
+                }
+                .test010-row--names {
+                    order: 3;
+                }
+                .test010-row--email {
+                    order: 4;
+                }
+                .test010-chat--step2 {
+                    order: 5;
+                }
+                .test010-row--street {
+                    order: 6;
+                }
+                .test010-row--location {
+                    order: 7;
+                }
+
+                .test010-row--step2,
+                .test010-chat--step2 {
+                    display: none;
+                }
+                .test010-chat {
+                    width: 100%;
+                    p {
+                        background-color: #fb6f011a;
+                        color: #1a0a00;
+                        border-radius: 10px;
+                        font-family: Noto Sans;
+                        font-weight: 400;
+                        font-size: 16px;
+                        line-height: 24px;
+                        letter-spacing: 0%;
+                        display: inline-block;
+                    }
+                }
+                .test010-chat--step1 {
+                    min-width: 355px;
+                    max-width: 375px;
+                    --bs-gutter-y: 0 !important;
+                    p {
+                        padding: 10px;
+                        margin-bottom: 20px !important;
+                    }
+                }
+                .test010-chat--step2 {
+                    max-width: 590px;
+                    margin: 11px 0 9px 0;
+                    --bs-gutter-y: 0 !important;
+                    p {
+                        padding: 12px;
+                        margin-bottom: 0 !important;
+                    }
+                }
+            }
+        }
+
+        &.test010-step-2 {
+            form div[identifier="form-row"] {
+                .test010-chat--step1 {
+                    display: none;
+                }
+                .test010-row--step2 {
+                    display: flex;
+                }
+                .test010-chat--step2 {
+                    display: block;
+                }
+            }
+        }
+
+        &.test010-step-3 {
+            form div[identifier="form-row"] {
+                .test010-chat--step2 {
+                    display: none;
+                }
+            }
+        }
+    }
+
+    .test010-validation-hidden {
+        &[data-invalid="true"] {
+            .formkit-input,
+            .input__field,
+            .combobox__input {
+                border-color: inherit !important;
+                box-shadow: none !important;
+            }
+        }
+        .formkit-messages,
+        .field__messages {
+            display: none !important;
+        }
+    }
+
+    .test010-list-marker {
+        list-style-type: disc;
+
+        li::marker {
+            color: #000000;
+        }
+    }
+
+    @media (max-width: 768px) {
+        #sud-formular {
+            &.test010-step-2 {
+                form div[identifier="form-row"] {
+                    .test010-row--step2 {
+                        display: grid;
+                    }
+                }
+            }
+        }
+        #sud-formular form div[identifier="form-row"] {
+            .test010-chat--step1 {
+                min-width: 100% !important;
+                max-width: 100% !important;
+            }
+            .test010-chat--step2 {
+                max-width: 100% !important;
+                margin: 15px 0 13px 0;
+            }
+            .test010-row--street {
+                div[identifier="gridrow-1"] {
+                    display: flex;
+                    flex-wrap: nowrap;
+                    column-gap: 20px;
+
+                    > div:has(.field-street) {
+                        flex: 1;
+                        min-width: 0;
+                    }
+
+                    > div:has(.field-streetNumber) {
+                        flex: 0 0 25%;
+                        min-width: 60px;
+                    }
+
+                    input {
+                        width: 100%;
+                        box-sizing: border-box;
+                    }
+                }
+            }
+
+            .test010-row--location {
+                div[identifier="location-row-2"] {
+                    display: flex;
+                    flex-wrap: wrap;
+                    column-gap: 20px;
+                    row-gap: 0;
+
+                    > div:has(.field-zip) {
+                        flex: 0 0 38%;
+                        order: 1;
+                    }
+
+                    > div:has(.field-city) {
+                        flex: 1;
+                        order: 2;
+                    }
+
+                    > div:has(.formkit-outer.field.combobox) {
+                        width: 100%;
+                        margin-top: 10px;
+                        order: 3;
+                    }
+                }
+            }
+        }
+    }
+
+    @media (max-width: 400px) {
+        #sud-formular form div[identifier="form-row"] {
+            .test010-row--street {
+                div[identifier="gridrow-1"] {
+                    gap: 14px;
+                }
+            }
+            .test010-row--location {
+                div[identifier="location-row-2"] {
+                    column-gap: 14px;
+                }
+            }
+        }
+    }
+}

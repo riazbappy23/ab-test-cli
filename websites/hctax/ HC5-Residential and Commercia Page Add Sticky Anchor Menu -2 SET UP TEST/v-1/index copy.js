@@ -24,9 +24,13 @@
         {label: "Pricing & Benefits", id: "hc5-sec-pricing"},
     ];
 
+    const CHEVRON_SVG = `<svg width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M17.135 6.47893L10.0299 13.584C9.74093 13.873 9.28384 13.8908 8.97375 13.6379L8.91359 13.584L1.80859 6.47893L2.92492 5.36261L9.47173 11.9095L16.0186 5.36261L17.135 6.47893Z" fill="white"/>
+</svg>
+`;
+
     const q = (s, r = document) => r.querySelector(s);
 
-    // ── async waiter ──────────────────────────────────────────────────────────
     async function waitForElementAsync(predicate, timeout = 20000, frequency = 150) {
         const startTime = Date.now();
         return new Promise((resolve, reject) => {
@@ -44,7 +48,6 @@
         });
     }
 
-    // ── GA4 ──────────────────────────────────────────────────────────────────
     function fireGA4Event(eventName, eventLabel = "") {
         window.dataLayer = window.dataLayer || [];
         window.dataLayer.push({
@@ -61,7 +64,6 @@
         const path = window.location.pathname.toLowerCase();
         return path.includes("/commercial") || path.includes("/residential");
     }
-    // ── helpers ───────────────────────────────────────────────────────────────
     function getNavHeight() {
         const header = q("header") || q('[class*="header"]') || q("nav");
         return header ? header.getBoundingClientRect().height : 0;
@@ -81,140 +83,11 @@
         };
     }
 
-    // ── styles ────────────────────────────────────────────────────────────────
-    function injectStyles() {
-        const existing = document.getElementById("hc5-styles");
-        if (existing) existing.remove();
-
-        const style = document.createElement("style");
-        style.id = "hc5-styles";
-        style.textContent = `
-            /* ── bar base ── */
-            #hc5-anchor-bar {
-                background: #3B76B7;
-                width: 100%;
-                z-index: 1000;
-                transition: box-shadow 0.25s;
-            }
-            #hc5-anchor-bar.hc5-is-sticky {
-                position: fixed;
-                left: 0;
-                right: 0;
-                box-shadow: 0 3px 14px rgba(0,0,0,0.22);
-            }
-
-            /* ── desktop nav ── */
-            .hc5-anchor-nav {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                list-style: none;
-                margin: 0;
-                padding: 0;
-            }
-            .hc5-anchor-nav a {
-                display: block;
-                color: rgba(255,255,255,0.82) !important;
-                font-family: Roboto Serif, serif;
-                font-size: 15px;
-                font-weight: 500;
-                letter-spacing: 0.01em;
-                padding: 16px 30px;
-                text-decoration: none !important;
-                border-bottom: 3px solid transparent;
-                transition: color 0.18s, border-color 0.18s, background 0.18s;
-                white-space: nowrap;
-                cursor: pointer;
-            }
-            .hc5-anchor-nav a:hover {
-                color: #fff !important;
-                background: rgba(255,255,255,0.06);
-                text-decoration: underline;
-            }
-            .hc5-anchor-nav .hc5-active {
-                text-decoration: underline;
-            }
-
-            /* ── mobile dropdown ── */
-            .hc5-anchor-dropdown {
-                display: none;
-                width: calc(100% - 40px);
-                margin: 10px 20px;
-                position: relative;
-            }
-            .hc5-dropdown-toggle {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 10px;
-                background: rgba(255,255,255,0.08);
-                border: 1px solid rgba(255,255,255,0.22);
-                border-radius: 4px;
-                color: #fff;
-                font-family: Roboto Serif, serif;
-                font-size: 15px;
-                font-weight: 500;
-                padding: 12px 16px;
-                cursor: pointer;
-                width: 100%;
-                text-align: left;
-            }
-            .hc5-dropdown-toggle .hc5-toggle-chevron {
-                transition: transform 0.2s;
-                flex-shrink: 0;
-            }
-            .hc5-dropdown-toggle.hc5-open .hc5-toggle-chevron {
-                transform: rotate(180deg);
-            }
-            .hc5-dropdown-list {
-                display: none;
-                position: absolute;
-                left: 0;
-                right: 0;
-                top: calc(100% + 2px);
-                background: #1e2f56;
-                border: 1px solid rgba(255,255,255,0.15);
-                border-radius: 4px;
-                z-index: 1001;
-                overflow: hidden;
-                box-shadow: 0 6px 20px rgba(0,0,0,0.3);
-            }
-            .hc5-dropdown-list.hc5-open {
-                display: block;
-            }
-            .hc5-dropdown-list a {
-                display: block;
-                color: rgba(255,255,255,0.85) !important;
-                font-family: Roboto Serif, serif;
-                font-size: 15px;
-                padding: 13px 18px;
-                text-decoration: none !important;
-                border-bottom: 1px solid rgba(255,255,255,0.07);
-                transition: background 0.14s;
-                cursor: pointer;
-            }
-            .hc5-dropdown-list a:last-child { border-bottom: none; }
-            .hc5-dropdown-list a:hover,
-            .hc5-dropdown-list a.hc5-active {
-                background: rgba(255,255,255,0.1);
-                color: #fff !important;
-            }
-
-            @media (max-width: 767px) {
-                .hc5-anchor-nav      { display: none;  }
-                .hc5-anchor-dropdown { display: block; }
-            }
-        `;
-        document.head.appendChild(style);
-    }
-
-    // ── HTML builder ─────────────────────────────────────────────────────────
     function buildBarHTML() {
         const desktopLinks = ANCHOR_ITEMS.map((item) => `<a href="#${item.id}" data-hc5-anchor="${item.id}">${item.label}</a>`).join("");
 
         const mobileLinks = ANCHOR_ITEMS.map((item) => `<a href="#${item.id}" data-hc5-anchor="${item.id}">${item.label}</a>`).join("");
 
-        const chevronSVG = `<svg class="hc5-toggle-chevron" width="18" height="18" viewBox="0 0 24 24" fill="#fff"><path d="M7 10l5 5 5-5z"/></svg>`;
 
         return `
             <div id="hc5-anchor-bar">
@@ -224,7 +97,7 @@
                 <div class="hc5-anchor-dropdown">
                     <button class="hc5-dropdown-toggle" aria-expanded="false" aria-haspopup="listbox">
                         <span class="hc5-dropdown-label">Jump to: ${ANCHOR_ITEMS[0].label}</span>
-                        ${chevronSVG}
+                        ${CHEVRON_SVG}
                     </button>
                     <div class="hc5-dropdown-list" role="listbox">
                         ${mobileLinks}
@@ -234,20 +107,46 @@
         `;
     }
 
-    // ── assign IDs to page sections ──────────────────────────────────────────
     function assignSectionIds(mainEl, heroEl) {
-        const sections = [...mainEl.children].filter((el) => el !== heroEl && el.id !== "hc5-anchor-bar" && el.id !== "hc5-bar-placeholder");
-        ANCHOR_ITEMS.forEach((item, i) => {
-            if (sections[i] && !sections[i].id) {
-                sections[i].id = item.id;
-            } else if (sections[i] && sections[i].id !== item.id) {
-                // keep existing id but store mapping if needed
-                ANCHOR_ITEMS[i] = {...item, id: sections[i].id};
+        if (heroEl && !heroEl.id) heroEl.id = "hc5-sec-overview";
+
+        function getMainChild(el) {
+            let node = el;
+            while (node && node.parentElement !== mainEl) {
+                node = node.parentElement;
+            }
+            return node;
+        }
+
+        function findSectionByHeading(...keywords) {
+            const headings = mainEl.querySelectorAll("h2, h3");
+            for (const h of headings) {
+                const text = h.textContent.toLowerCase();
+                if (keywords.some((kw) => text.includes(kw.toLowerCase()))) {
+                    return getMainChild(h);
+                }
+            }
+            return null;
+        }
+
+        const keywordMap = [
+            {id: "hc5-sec-why-appeal", keywords: ["why"]},
+            {id: "hc5-sec-our-process", keywords: ["process"]},
+            {id: "hc5-sec-pricing", keywords: ["pricing", "benefits"]},
+        ];
+
+        keywordMap.forEach(({id, keywords}) => {
+            const el = findSectionByHeading(...keywords);
+            if (!el) return;
+            if (!el.id) {
+                el.id = id;
+            } else if (el.id !== id) {
+                const item = ANCHOR_ITEMS.find((i) => i.id === id);
+                if (item) item.id = el.id;
             }
         });
     }
 
-    // ── active state ──────────────────────────────────────────────────────────
     function updateActiveState(activeId) {
         document.querySelectorAll("[data-hc5-anchor]").forEach((link) => {
             link.classList.toggle("hc5-active", link.dataset.hc5Anchor === activeId);
@@ -259,7 +158,6 @@
         }
     }
 
-    // ── section IntersectionObserver ─────────────────────────────────────────
     function setupSectionObserver() {
         const observer = new IntersectionObserver(
             (entries) => {
@@ -275,11 +173,9 @@
         });
     }
 
-    // ── sticky behaviour ──────────────────────────────────────────────────────
     function setupStickyBehavior(heroEl, barEl) {
         let navH = getNavHeight();
 
-        // keep nav height fresh on resize
         const header = q("header") || q('[class*="header"]') || q("nav");
         if (header) {
             new ResizeObserver(() => {
@@ -290,7 +186,6 @@
             }).observe(header);
         }
 
-        // watch the hero bottom edge
         const sentinel = new IntersectionObserver(
             ([entry]) => {
                 if (!entry.isIntersecting) {
@@ -316,7 +211,6 @@
         sentinel.observe(heroEl);
     }
 
-    // ── dropdown interactions ─────────────────────────────────────────────────
     function bindDropdown(barEl) {
         const toggle = barEl.querySelector(".hc5-dropdown-toggle");
         const list = barEl.querySelector(".hc5-dropdown-list");
@@ -345,7 +239,6 @@
         });
     }
 
-    // ── smooth scroll + GA4 ──────────────────────────────────────────────────
     function bindAnchorClicks(barEl) {
         barEl.querySelectorAll("[data-hc5-anchor]").forEach((a) => {
             a.addEventListener("click", (e) => {
@@ -358,12 +251,36 @@
                 const offset = targetEl.getBoundingClientRect().top + window.scrollY - navH - barH - 4;
                 window.scrollTo({top: offset, behavior: "smooth"});
 
-                fireGA4Event("HC5_AnchorClick", a.textContent.trim());
+                fireGA4Event("HC5_AnchormenuClick", "Copy for the titles");
             });
         });
     }
 
-    // ── apply everything ──────────────────────────────────────────────────────
+    function setupScrollDepthTracking() {
+        const thresholds = [25, 50, 75, 100];
+        const fired = new Set();
+
+        const onScroll = () => {
+            const totalHeight = document.documentElement.scrollHeight;
+            if (totalHeight <= 0) return;
+            const topPct = (window.scrollY / totalHeight) * 100;
+
+            thresholds.forEach((pct) => {
+                if (!fired.has(pct) && topPct >= pct) {
+                    fired.add(pct);
+                    fireGA4Event("HC5_Scrolldepth", String(pct));
+                }
+            });
+
+            if (fired.size === thresholds.length) {
+                window.removeEventListener("scroll", onScroll);
+            }
+        };
+
+        window.addEventListener("scroll", onScroll, {passive: true});
+        onScroll();
+    }
+
     function applyAnchorBar(heroEl, mainEl) {
         document.getElementById("hc5-anchor-bar")?.remove();
         document.getElementById("hc5-bar-placeholder")?.remove();
@@ -378,12 +295,12 @@
         bindAnchorClicks(barEl);
         setupStickyBehavior(heroEl, barEl);
         setupSectionObserver();
+        setupScrollDepthTracking();
         updateActiveState(ANCHOR_ITEMS[0].id);
 
         logInfo("Anchor bar applied");
     }
 
-    // ── readiness check ───────────────────────────────────────────────────────
     function checkForItems() {
         if (!isExpectedPage()) return false;
         if (!q("main > div:first-of-type")) return false;
@@ -391,7 +308,6 @@
         return true;
     }
 
-    // ── init ──────────────────────────────────────────────────────────────────
     async function init_HC5() {
         if (window[page_initials] === true) return;
         if (!isExpectedPage()) return;
@@ -401,8 +317,6 @@
 
             window[page_initials] = true;
             document.body.classList.add(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
-
-            injectStyles();
 
             const mainEl = q("main");
             console.log("mainEl: ", mainEl);
@@ -421,14 +335,12 @@
         }
     }
 
-    // ── SPA location handler ──────────────────────────────────────────────────
     function handleLocationChanges() {
         if (!isExpectedPage()) {
             if (document.getElementById("hc5-anchor-bar")) {
                 document.getElementById("hc5-anchor-bar")?.remove();
                 document.getElementById("hc5-bar-placeholder")?.remove();
-                document.getElementById("hc5-styles")?.remove();
-                document.body.classList.remove(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
+document.body.classList.remove(page_initials, `${page_initials}--v${test_variation}`, `${page_initials}--version-${test_version}`);
                 window[page_initials] = false;
             }
             return;
@@ -441,7 +353,6 @@
         init_HC5();
     }
 
-    // ── SPA observer ──────────────────────────────────────────────────────────
     function urlObserver() {
         const debouncedChanges = debounce(handleLocationChanges, 150);
 
