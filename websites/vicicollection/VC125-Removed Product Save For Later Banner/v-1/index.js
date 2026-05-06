@@ -6,7 +6,7 @@
         console.log(`%cAcadia%c${TEST_ID}-${VARIANT_ID}`, "color:white;background:rgb(0,0,57);font-weight:700;padding:2px 4px;border-radius:2px;", "margin-left:8px;color:white;background:rgb(0,57,57);font-weight:700;padding:2px 4px;border-radius:2px;", message);
     }
 
-    logInfo("fired");
+    logInfo("fired in chrome");
 
     const TEST_CONFIG = {
         client: "Acadia",

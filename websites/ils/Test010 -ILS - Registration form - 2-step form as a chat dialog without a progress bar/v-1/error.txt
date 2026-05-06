@@ -1,6 +1,0 @@
-While the first section shows warning messages, after user validating the fields when the second section appeares it automatically shows the warning messages. it should be be shown any warning messages during appearing.
-
-
-fixed
-In  mobile the ''Gerne stellen wir Ihnen alle Infos zusammen. Wie lauten Ihre Kontaktangaben?'' text is getting out of the box.
-Warming message for the Email does not match with the control.

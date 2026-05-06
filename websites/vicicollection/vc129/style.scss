@@ -1,0 +1,199 @@
+.bag-item__desc.ab--updated-title p.bag-item__title.h4 {
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 0;
+}
+
+
+.bag-item__desc .bag-item__variants {
+    display: none;
+}
+
+
+span.ab--variant-text {
+    font-weight: 400;
+    line-height: 14px;
+    color: #333132;
+    font-family: 'Lato';
+    margin-top: 5px;
+    display: block;
+}
+
+.bag-item__price{
+  margin-bottom: 0;
+}
+
+
+
+@media(max-width: 1024px){
+  span.ab--variant-text {
+    line-height: 100%;
+    font-size: 14px;
+  }
+  .cart-drawer .bag__items .bag-item__info{
+    justify-content: flex-start;
+  }
+  .cart-drawer .bag__items .bag-item__info .bag-item__desc{
+    flex: unset;
+  }
+  .cart-drawer .bag__items .bag-item__info .bag-item__actions{
+    flex: unset;
+  }
+  
+}
+
+
+
+
+
+
+
+
+
+ body.ab--variation-2 .cart-drawer .bag__items .bag-item__photo {
+      width: auto !important;
+      min-width: 200px;
+      max-height: 250px;
+      aspect-ratio: 200 / 250;
+  }
+  
+  body.ab--variation-2 .cart-drawer .bag__items .bag-item__info {
+      width: auto;
+  }
+@media(max-width: 1024px){
+  body.ab--variation-2 .cart-drawer .bag__items .bag-item__photo {
+      min-width: auto;
+      max-height: 185px;
+      aspect-ratio: 148 / 185;
+  }
+
+}
+
+
+
+
+
+body.ab--variation-3 .bag-item__desc.ab--updated-title p.bag-item__title.h4{
+  justify-content: space-between;
+}
+body.ab--variation-3 i.ab--remove-button {
+    display: flex;
+    width: 10px;
+    cursor: pointer;
+    margin-left: 36px;
+}
+body.ab--variation-3 i.ab--remove-button::after {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10' fill='none'%3E%3Cpath d='M5.88381 5L10 0.883812L9.11619 0L5 4.11619L0.883937 0L0 0.883812L4.11619 5L0 9.11619L0.883937 10L5 5.88381L9.11619 10L10 9.11619L5.88381 5Z' fill='black'/%3E%3C/svg%3E");
+    line-height: 1;
+}
+
+
+body.ab--variation-3 .bag-item__inner-actions-wrapper{
+  margin-top: 20px;
+}
+
+body.ab--variation-3 .bag-item__save-for-later-button {
+    position: relative;
+    padding-left: 20px;
+}
+
+body.ab--variation-3 .bag-item__save-for-later-button::before {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='13' height='12' viewBox='0 0 13 12' fill='none'%3E%3Cpath d='M6.00947 10.5216L5.8239 10.3576C5.62578 10.1829 5.38078 9.96491 4.51434 9.22029L4.44831 9.16577C2.13562 7.17324 0.605498 5.8559 0.605498 3.87136C0.579944 3.45674 0.637732 3.04125 0.775386 2.64976C0.913039 2.25827 1.12771 1.89893 1.4065 1.59335C1.68528 1.28777 2.02242 1.04221 2.39762 0.871554C2.77283 0.700896 3.17835 0.608618 3.5898 0.60025C4.1072 0.620828 4.61045 0.776605 5.05033 1.05237C5.4902 1.32813 5.85164 1.71451 6.09928 2.17355C6.34702 1.7146 6.70848 1.32828 7.14834 1.05253C7.58819 0.776781 8.09139 0.620958 8.60876 0.60025C9.0203 0.608618 9.42591 0.700863 9.80119 0.871554C10.1765 1.04225 10.5137 1.28787 10.7925 1.59351C11.0714 1.89915 11.2861 2.25851 11.4238 2.65008C11.5615 3.04166 11.6193 3.45731 11.5937 3.87201C11.5937 5.85655 10.0636 7.17324 7.74827 9.16577L7.68223 9.22029C6.82373 9.95758 6.54174 10.209 6.35419 10.3744L6.18645 10.5223L6.0973 10.6003L6.00947 10.5216Z' stroke='%23CCC3BC' stroke-width='1.2'/%3E%3C/svg%3E");
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    line-height: 0;
+}
+
+
+body.ab--variation-3 .bag-item__remove {
+    display: none;
+}
+
+@media(min-width: 1024.5px){
+  body.ab--variation-3 .cart-drawer .bag__items .bag-item__info{
+    justify-content: flex-start;
+  }
+  body.ab--variation-3 .cart-drawer .bag__items .bag-item__info .bag-item__desc{
+    flex: unset
+  }
+  body.ab--variation-3 .cart-drawer .bag__items .bag-item__info .bag-item__actions{
+    flex: unset;
+  }
+  body.ab--variation-3 .cart-drawer .bag__items .bag-item__info .bag-item__actions .bag-item__price--container.bag-item__price--container-column{
+    margin-bottom: 20px;
+  }
+}
+
+@media(max-width: 1024px){
+  body.ab--variation-3 i.ab--remove-button::after {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8' viewBox='0 0 8 8' fill='none'%3E%3Cpath d='M4.70705 4L8 0.70705L7.29295 0L4 3.29295L0.70715 0L0 0.70705L3.29295 4L0 7.29295L0.70715 8L4 4.70705L7.29295 8L8 7.29295L4.70705 4Z' fill='black'/%3E%3C/svg%3E");
+  }
+  body.ab--variation-3 i.ab--remove-button {
+    width: 8px;
+    margin-left: 34px;
+  }
+  body.ab--variation-3 .cart-drawer .bag__items .bag-item__info .bag-item__actions .bag-item__price--container.bag-item__price--container-column{
+    margin-bottom: 15px;
+  }
+  body.ab--variation-3 .bag-item__inner-actions-wrapper{
+    margin-top: 15px !important;
+  }
+}
+
+
+
+
+
+
+body.ab--variation-4 form#bagForm > header.bag__header {
+    padding: 15px 20px;
+    margin: 0 -20px 20px;
+    background: #F8F7F6;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+body.ab--variation-4 form#bagForm > header.bag__header.hide-mobile{
+  display: flex !important;
+}
+body.ab--variation-4 .ab--close-button {
+    cursor: pointer;
+}
+body.ab--variation-4 .ab--close-button::after {
+    content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M0.767 13.6673L0 12.9003L6.06667 6.83367L0 0.767L0.767 0L6.83367 6.06667L12.9003 0L13.6673 0.767L7.60067 6.83367L13.6673 12.9003L12.9003 13.6673L6.83367 7.60067L0.767 13.6673Z' fill='black'/%3E%3C/svg%3E");
+}
+body.ab--variation-4 button#cart-drawer-close{
+  display: none !important;
+}
+
+body.ab--variation-4 .bag__title{
+  display: none;
+}
+body.ab--variation-4 .ab--bag-title {
+    font-size: 24px;
+    line-height: 24px;
+    font-weight: 400;
+    font-family: 'Tiemann';
+    display: flex;
+    align-items: flex-end;
+}
+
+body.ab--variation-4 .ab--bag-title .ab--bag-count-number {
+    margin: 0;
+    margin-left: 11px;
+    font-size: 16px;
+    line-height: 25.6px;
+    font-family: 'Tiemann';
+}
+
+@media(max-width: 1024px){
+  body.ab--variation-4 .cart-drawer .bag{
+    padding-top: 0;
+  }
+  body.ab--variation-4 header.bag__header.hide-desktop{
+    display: none;
+  }
+}
