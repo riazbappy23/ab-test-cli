@@ -1,0 +1,156 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap");
+
+body:has(main [data-test-id="category-page"]) .test004-vendor-trust-container,
+body:not(:has(main [data-test-id="product-layout"])) .test004-vendor-trust-container {
+    display: none !important;
+}
+
+.test004-vendor-trust main > .tw-l-container {
+    row-gap: 2rem;
+}
+.test004-vendor-trust main > .tw-l-container main > .tw-l-container-form {
+    margin-top: 20px !important;
+}
+@media (max-width: 1279.98px) {
+    .test004-vendor-trust main > .tw-l-container main > .tw-l-container-form {
+        margin-top: 0px !important;
+    }
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container {
+    margin-bottom: 50px;
+}
+@media (max-width: 767.98px) {
+    .test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container {
+        margin-bottom: 42px;
+    }
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-title {
+    font-family: "Roboto", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+    margin-top: 0;
+    color: #000;
+}
+@media (max-width: 767.98px) {
+    .test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-title {
+        text-align: center;
+        font-size: 16.5px;
+        max-width: 200px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 30px;
+}
+@media (max-width: 767.98px) {
+    .test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits {
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        justify-content: flex-start;
+        scrollbar-width: none;
+        margin-bottom: 22px;
+    }
+    .test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits::-webkit-scrollbar {
+        display: none;
+    }
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits .test004-benefit-card {
+    max-width: 250px;
+    border: 2px solid #05477a;
+    border-radius: 10px;
+    padding: 8px 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background: #fdfdfd;
+}
+@media (max-width: 767.98px) {
+    .test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits .test004-benefit-card {
+        flex: 0 0 70%;
+        scroll-snap-align: center;
+    }
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits .test004-benefit-card:first-child .test004-benefit-desc {
+    padding: 0 20px;
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits .test004-benefit-card .test004-benefit-icon {
+    margin-bottom: 10px;
+    width: 25px;
+    height: 25px;
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits .test004-benefit-card .test004-benefit-icon img,
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits .test004-benefit-card .test004-benefit-icon svg {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-trust-benefits .test004-benefit-card .test004-benefit-desc {
+    font-size: 15px;
+    line-height: 15px;
+    color: #212121;
+    margin: 0;
+    margin-bottom: 10px;
+    max-width: 240px;
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-partnership-world .test004-partnership-title {
+    font-family: "Roboto", sans-serif;
+    font-size: 18px;
+    font-weight: 400;
+    margin-bottom: 5px;
+    margin-top: 0;
+    line-height: 24px;
+    color: #000;
+}
+@media (max-width: 767.98px) {
+    .test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-partnership-world .test004-partnership-title {
+        font-size: 11px;
+        text-align: center;
+    }
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-partnership-world .test004-partner-logos {
+    margin-bottom: 15px;
+}
+@media (max-width: 767.98px) {
+    .test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-partnership-world .test004-partner-logos {
+        margin-top: -10px !important;
+    }
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-partnership-world .test004-partner-logos img {
+    object-fit: contain;
+    margin-left: -36px;
+}
+@media (max-width: 767.98px) {
+    .test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-partnership-world .test004-partner-logos img {
+        margin-left: -14px;
+    }
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-partnership-world .test004-rating-badges {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+}
+.test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-partnership-world .test004-rating-badges .test004-rating-badge-card {
+    border: 2px solid #3c5b7b;
+    border-radius: 5px;
+    padding: 7px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+@media (max-width: 767.98px) {
+   .test004-vendor-trust main > .tw-l-container .test004-vendor-trust-container .test004-partnership-world .test004-rating-badges svg {
+        max-width: 150px;
+        height: auto;
+    }
+}

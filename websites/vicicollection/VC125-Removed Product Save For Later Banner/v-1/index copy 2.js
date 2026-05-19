@@ -42,6 +42,7 @@
         removeBtn: ".bag-item__inner-actions-wrapper .bag-item__remove",
         saveBtn: ".bag-item__inner-actions-wrapper .bag-item__save-for-later-button",
         decrementBtn: ".bag-item__qty .increment__subtr[data-action='remove']",
+        itemImage: [".bag-item__photo img", "[class*='bag-item'] img"].join(", "),
         itemTitle: ".bag-item__title",
         itemVariant: ".bag-item__variant",
         qtyInput: ".bag-item__qty .increment__input",
@@ -55,11 +56,16 @@
             padding : 1.125rem 0;
         }
         #vc125-banner-zone {
+            margin-top:10px;
             width    : 100%;
             overflow : visible;
         }
+
         .vc125-banner {
-            margin: 18px 0;
+            display      : flex;
+            align-items  : center;
+            gap          : 12px;
+            padding      : 8px 20px 8px 8px;
             background   : #E8E8E8;
             box-sizing   : border-box;
             width        : 100%;
@@ -69,28 +75,26 @@
             transition   : transform 0.35s cubic-bezier(.22,.68,0,1.15),
                            opacity   0.25s ease;
         }
+
         .vc125-banner.vc125-banner--visible {
             transform : translateX(0);
             opacity   : 1;
         }
+
         .vc125-banner.vc125-banner--exit {
             transform  : translateX(-110%);
             opacity    : 0;
             transition : transform 0.3s ease-in,
                          opacity   0.25s ease;
         }
-        .vc125-banner__inner{
-            display      : flex;
-            align-items  : center;
-            justify-content: space-between;
-            gap          : 12px;
-            padding: 23px 20px 22px 18px;
-        }
 
-       .vc125-saving-lock .bag-item__remove,
-        .vc125-saving-lock .increment__subtr[data-action='remove'] {
-            pointer-events : none !important;
-            opacity        : 0.35 !important;
+        .vc125-banner__img {
+            flex-shrink : 0;
+            width       : 49px;
+            height      : 61.25px;
+            object-fit  : cover;
+            display     : block;
+            background  : #e8e8e8;
         }
 
         .vc125-banner__text {
@@ -100,6 +104,7 @@
             flex           : 1;
             min-width      : 0;
         }
+
         .vc125-banner__title {
             font-size     : 14px;
             font-weight   : 600;
@@ -112,6 +117,7 @@
             margin        : 0;
             font-family   : Lato !important;
         }
+
         .vc125-banner__subtitle {
             font-size     : 13px;
             color         : #838383;
@@ -121,6 +127,7 @@
             margin        : 0;
             font-family   : Lato !important;
         }
+
         .vc125-banner__save-btn {
             flex-shrink          : 0;
             background           : none;
@@ -136,16 +143,20 @@
             text-underline-offset: 3px;
             font-family          : Lato !important;
         }
+
         .vc125-banner__save-btn:hover { opacity: 0.55; }
+
         .vc125-remove-disabled {
             pointer-events : none !important;
             opacity        : 0.35 !important;
         }
+
         @media (max-width: 767px) {
-            .bag__items-wrapper .bag-item {
-                padding : .9rem 0;
+          .bag__items-wrapper .bag-item {
+               padding : .9rem 0;
             }
-            .vc125-banner__inner { padding: 19px 25px 18px 8px; }
+            .vc125-banner { padding: 23px 20px 22px 18px; }
+            .vc125-banner__img { display: none; }
         }
     `;
 
@@ -241,15 +252,17 @@
         removeBtn.click();
     }
 
+    // Holds the current banner + hidden product. Only one can exist at a time.
     let activeState = null;
+
+    // True while the banner's "Save For Later" click is animating out and the
+    // native saveBtn.click() hasn't fired yet. Blocks any new remove/save action
+    // during that window so a fast second click can't cause a page navigation.
     let isSavingActive = false;
 
-    function setSavingLock(locked) {
-        isSavingActive = locked;
-        const root = q(SELECTOR_LIST.cartRoot) || q(SELECTOR_LIST.readyCheck) || document.body;
-        root.classList.toggle("vc125-saving-lock", locked);
-    }
-
+    // Called whenever a new cart action happens while a banner is already showing.
+    // Removes the old banner immediately and triggers the native remove on the
+    // product that was hidden behind it (i.e. actually deletes it from the cart).
     function finalizeActive() {
         if (!activeState) return;
         const {banner, removeBtn, timerId} = activeState;
@@ -262,17 +275,30 @@
         }
     }
 
+    // Two selectors for the saved-for-later list action buttons:
+    // 1. ".saved-for-later-item button/a"  — matches when the site uses that exact class name.
+    // 2. "[class*='saved-for-later'] button/a" — fallback in case the site uses a prefixed/
+    //    suffixed variant of the class (e.g. "js-saved-for-later-item" or "saved-for-later-item--active").
     const SAVED_ITEM_ACTION_SELECTOR = ".saved-for-later-item button, .saved-for-later-item a, [class*='saved-for-later'] button, [class*='saved-for-later'] a";
 
+    // Returns true for clicks that will mutate the cart or saved-for-later list.
+    // These are the only clicks that should trigger finalizeActive().
     function isMutatingClick(target) {
-        if (target.closest(SELECTOR_LIST.removeBtn)) return true;
-        if (target.closest(SELECTOR_LIST.saveBtn)) return true;
-        if (target.closest(SELECTOR_LIST.decrementBtn)) return true;
-        if (target.closest(SAVED_ITEM_ACTION_SELECTOR)) return true;
+        if (target.closest(SELECTOR_LIST.removeBtn)) return true;       // remove from cart
+        if (target.closest(SELECTOR_LIST.saveBtn)) return true;          // save for later (on a cart item)
+        if (target.closest(SELECTOR_LIST.decrementBtn)) return true;     // qty decrement (can also remove at qty 1)
+        if (target.closest(SAVED_ITEM_ACTION_SELECTOR)) return true;     // move to bag / remove from saved list
         return false;
     }
 
+    // Document-level capture listener that watches for any cart-mutating click
+    // while a banner is currently visible.
+    // The vc125 banner's own "Save For Later" button is excluded via the .vc125-banner__save-btn
+    // check so that clicking it follows its own flow (moves item to saved list, does NOT remove).
     function onMutatingClick(e) {
+        // While the banner is animating out after a save click, block all mutating
+        // clicks so a fast second click cannot create a new activeState that would
+        // then get finalized (navigated away) when the programmatic saveBtn.click() fires.
         if (isSavingActive) {
             if (isMutatingClick(e.target) && !e.target.closest(".vc125-banner__save-btn")) {
                 e.preventDefault();
@@ -281,38 +307,26 @@
             return;
         }
         if (!activeState) return;
-        if (e.target.closest(".vc125-banner__save-btn")) return;
+        if (e.target.closest(".vc125-banner__save-btn")) return; // banner's own button — handled separately
         if (!isMutatingClick(e.target)) return;
         finalizeActive();
     }
 
     function getProductInfo(bagItem) {
-        if (!bagItem) return {name: ""};
+        if (!bagItem) return {name: "", imgSrc: "", imgAlt: ""};
         const titleEl = q(SELECTOR_LIST.itemTitle, bagItem);
-        return {name: titleEl ? titleEl.textContent.trim() : ""};
-    }
-
-    // Waits for the bag item to actually leave the DOM (i.e. save-for-later
-    // completed). Falls back to a hard timeout in case the site doesn't remove it.
-    function waitForBagItemRemoved(bagItem, callback, timeout = 5000) {
-        if (!bagItem || !bagItem.isConnected) {
-            callback();
-            return;
+        const imgEl = q(SELECTOR_LIST.itemImage, bagItem);
+        let imgSrc = "";
+        if (imgEl) {
+            imgSrc = imgEl.src || imgEl.dataset.src || imgEl.dataset.lazySrc || "";
+            if (!imgSrc && imgEl.srcset) imgSrc = imgEl.srcset.split(/[\s,]+/)[0];
         }
-        const parent = bagItem.parentNode;
-        let done = false;
-        const finish = () => {
-            if (done) return;
-            done = true;
-            observer.disconnect();
-            clearTimeout(fallbackId);
-            callback();
+        if (imgSrc && imgSrc.startsWith("//")) imgSrc = "https:" + imgSrc;
+        return {
+            name: titleEl ? titleEl.textContent.trim() : "",
+            imgSrc: imgSrc,
+            imgAlt: imgEl ? imgEl.alt || "" : "",
         };
-        const observer = new MutationObserver(() => {
-            if (!bagItem.isConnected) finish();
-        });
-        observer.observe(parent, {childList: true});
-        const fallbackId = setTimeout(finish, timeout);
     }
 
     function getOrCreateBannerZone() {
@@ -328,20 +342,20 @@
         return zone;
     }
 
-    function createBannerElement({name}) {
+    function createBannerElement({name, imgSrc, imgAlt}) {
         const banner = document.createElement("div");
         banner.className = "vc125-banner";
         banner.setAttribute("role", "status");
         banner.setAttribute("aria-live", "polite");
         const safeTitle = name ? escapeHTML(name) : "This item";
+        const imgHTML = imgSrc ? `<img class="vc125-banner__img" src="${escapeHTML(imgSrc)}" alt="${escapeHTML(imgAlt)}" />` : `<div class="vc125-banner__img"></div>`;
         banner.innerHTML = `
-            <div class="vc125-banner__inner">
-                <div class="vc125-banner__text">
-                    <p class="vc125-banner__title">${safeTitle}</p>
-                    <p class="vc125-banner__subtitle">was removed from your cart</p>
-                </div>
-                <button class="vc125-banner__save-btn" type="button">Save For Later</button>
+            ${imgHTML}
+            <div class="vc125-banner__text">
+                <p class="vc125-banner__title">${safeTitle}</p>
+                <p class="vc125-banner__subtitle">was removed from your cart</p>
             </div>
+            <button class="vc125-banner__save-btn" type="button">Save For Later</button>
         `;
         return banner;
     }
@@ -392,15 +406,11 @@
                 activeState = null;
             }
             if (removeBtn && removeBtn.isConnected) removeBtn.classList.remove("vc125-remove-disabled");
-            setSavingLock(true);
+            // Lock out any other cart actions until the native save click fires.
+            isSavingActive = true;
             dismissBanner(banner, () => {
                 isSavingActive = false;
                 if (saveBtn) saveBtn.click();
-                // Keep CSS lock on until the bag item actually leaves the DOM
-                // (= save-for-later completed). Hard fallback after 5s.
-                waitForBagItemRemoved(bagItem, () => {
-                    (q(SELECTOR_LIST.cartRoot) || q(SELECTOR_LIST.readyCheck) || document.body).classList.remove("vc125-saving-lock");
-                });
             });
         }
 

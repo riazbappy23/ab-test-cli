@@ -1,0 +1,13 @@
+{
+  "id": "1778156029534_1698_PLP___Add_Filter_Chips__DTM",
+  "name": "PLP - Add Filter Chips -DTM",
+  "type": "A/B",
+  "website": "brecks",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-05-07T12:13:49.535Z",
+  "createdAtReadable": "5/7/2026, 6:13:49 PM",
+  "lastUpdated": "2026-05-07T12:13:49.655Z"
+}

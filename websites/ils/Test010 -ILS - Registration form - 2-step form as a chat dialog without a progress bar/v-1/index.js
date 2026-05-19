@@ -58,7 +58,7 @@
                 const s = street?.querySelector('[data-complete="true"]') || street?.querySelector(".icon-success");
                 const sn = streetNumber?.querySelector('[data-complete="true"]') || streetNumber?.querySelector(".icon-success");
                 const z = zip?.querySelector('[data-complete="true"]') || zip?.querySelector(".icon-success");
-                const c = city?.querySelector('[data-complete="true"]') || city?.querySelector(".icon-success");
+                const c = city?.querySelector('[data-complete="true"]') || city?.querySelector(".icon-success"); 
 
                 if (s && sn && z && c) {
                     formRoot?.classList.add("test010-step-3");

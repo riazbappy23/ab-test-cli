@@ -1,0 +1,13 @@
+{
+  "id": "1778746488689_6563_Test004__MDM__PDP__Onlineshop___Add_Vendor_Profile_and_Trust",
+  "name": "Test004 -MDM- PDP -Onlineshop - Add Vendor Profile and Trust",
+  "type": "A/B",
+  "website": "mdm",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-05-14T08:14:48.689Z",
+  "createdAtReadable": "5/14/2026, 2:14:48 PM",
+  "lastUpdated": "2026-05-14T08:14:48.789Z"
+}

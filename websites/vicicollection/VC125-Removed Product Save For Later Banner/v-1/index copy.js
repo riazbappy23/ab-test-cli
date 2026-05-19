@@ -17,10 +17,10 @@
         test_version: 0.0002,
         test_variation: 2,
     };
-    const { test_variation } = TEST_CONFIG;
+    const {test_variation} = TEST_CONFIG;
     const REMOVE_DELAY = test_variation === 1 ? 5000 : 10000;
 
-    const { page_initials, test_version } = TEST_CONFIG;
+    const {page_initials, test_version} = TEST_CONFIG;
 
     function fireGA4Event(eventName, eventLabel = "") {
         window.dataLayer = window.dataLayer || [];
@@ -161,7 +161,7 @@
     }
 
     function escapeHTML(str) {
-        return String(str).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+        return String(str).replace(/[&<>"']/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"})[c]);
     }
 
     function waitForElement(predicate, timeout = 20000, interval = 150) {
@@ -237,7 +237,7 @@
     }
 
     function getProductInfo(bagItem) {
-        if (!bagItem) return { name: "", imgSrc: "", imgAlt: "" };
+        if (!bagItem) return {name: "", imgSrc: "", imgAlt: ""};
         const titleEl = q(SELECTOR_LIST.itemTitle, bagItem);
         return {
             name: titleEl ? titleEl.textContent.trim() : "",
@@ -316,11 +316,11 @@
 
         triggerNativeRemove(removeBtn);
 
-        q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, { once: true });
+        q(".vc125-banner__save-btn", banner).addEventListener("click", onSaveClick, {once: true});
         timerId = setTimeout(onTimerExpired, REMOVE_DELAY);
     }
 
-    function createBannerElement({ name }) {
+    function createBannerElement({name}) {
         const banner = document.createElement("div");
         banner.className = "vc125-banner";
         banner.setAttribute("role", "status");
@@ -351,7 +351,7 @@
             bannerEl.remove();
             onComplete && onComplete();
         };
-        bannerEl.addEventListener("transitionend", finish, { once: true });
+        bannerEl.addEventListener("transitionend", finish, {once: true});
         setTimeout(finish, 600);
     }
 

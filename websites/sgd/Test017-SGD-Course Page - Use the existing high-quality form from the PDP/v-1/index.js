@@ -41,14 +41,6 @@
         return o ? s.querySelector(o) : document.querySelector(s);
     }
 
-    document.addEventListener(
-        "click",
-        (e) => {
-            console.log("CLICK FIRED:", e.target);
-        },
-        true
-    );
-
     function initSmoothScroll() {
         const buttons = document.querySelectorAll("button.btn-primary.link-modal-info-package");
         const target = q("#js-card-download");
