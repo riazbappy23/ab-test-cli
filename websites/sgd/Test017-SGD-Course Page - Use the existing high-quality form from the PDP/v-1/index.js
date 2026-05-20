@@ -56,9 +56,13 @@
                         e.preventDefault();
                         e.stopPropagation();
 
-                        target.scrollIntoView({
+                        const offset = 50;
+
+                        const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
+
+                        window.scrollTo({
+                            top: targetPosition,
                             behavior: "smooth",
-                            block: "start",
                         });
                     },
                     true

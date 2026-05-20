@@ -1,0 +1,13 @@
+{
+  "id": "1779269514264_9037_MMI47__SITEWIDE_Test_Eyebrow__Previous_Win_vs_New_Design___Set_Up_Test",
+  "name": "MMI47- SITEWIDE Test Eyebrow -Previous Win vs New Design-  Set Up Test",
+  "type": "A/B",
+  "website": "magicmind",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-05-20T09:31:54.264Z",
+  "createdAtReadable": "5/20/2026, 3:31:54 PM",
+  "lastUpdated": "2026-05-20T09:31:54.395Z"
+}
