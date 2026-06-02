@@ -12,6 +12,9 @@
 }
 
 .MMI47 {
+    .js-marquee-wrapper {
+        display: none;
+    }
     .shopify-section--announce-bar {
         height: 50px;
         min-height: 50px;
@@ -24,7 +27,7 @@
         width: 100%;
         height: 50px;
         overflow: hidden;
-        color: #000000;
+        color: #05060A;
         font-family: "Akkurat-Mono-_1_", " sans-serif";
         font-size: 16px;
         font-weight: 400;

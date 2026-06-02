@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e \"const fs=require\\('fs'\\);let s=fs.readFileSync\\('websites/loopearplugs/ID774 AUS PLP Use case toggle Filter combo regular PLP/v-1/index.js','utf8'\\);require\\('vm'\\).compileFunction\\(s\\);console.log\\('JS parses OK'\\)\")"
+    ]
+  }
+}

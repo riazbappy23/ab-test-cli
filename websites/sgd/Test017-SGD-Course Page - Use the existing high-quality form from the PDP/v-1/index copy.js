@@ -41,10 +41,8 @@
         return o ? s.querySelector(o) : document.querySelector(s);
     }
 
-    const SCROLL_BUTTON_SELECTOR = "button.btn-primary.link-modal-info-package, .action-cta-container button.course-information-btn";
-
     function initSmoothScroll() {
-        const buttons = document.querySelectorAll(SCROLL_BUTTON_SELECTOR);
+        const buttons = document.querySelectorAll("button.btn-primary.link-modal-info-package");
         const target = q("#js-card-download");
 
         if (buttons.length && target) {
@@ -58,7 +56,7 @@
                         e.preventDefault();
                         e.stopPropagation();
 
-                        const offset = window.matchMedia("(max-width: 767px)").matches ? 20 : 50;
+                        const offset = 50;
 
                         const targetPosition = target.getBoundingClientRect().top + window.pageYOffset - offset;
 
@@ -79,7 +77,7 @@
     }
 
     function checkForItems() {
-        return !!(q(`body:not(.${page_initials}):not(.${page_initials}--v${test_variation})`) && document.querySelectorAll(SCROLL_BUTTON_SELECTOR).length && q("#js-card-download"));
+        return !!(q(`body:not(.${page_initials}):not(.${page_initials}--v${test_variation})`) && document.querySelectorAll("button.btn-primary.link-modal-info-package").length && q("#js-card-download"));
     }
 
     try {

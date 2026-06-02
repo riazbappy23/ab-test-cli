@@ -1,0 +1,13 @@
+{
+  "id": "1779364673664_7356_ID774_AUS_PLP_Use_case_toggle_Filter_combo_regular_PLP",
+  "name": "ID774 AUS PLP Use case toggle Filter combo regular PLP",
+  "type": "A/B",
+  "website": "loopearplugs",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-05-21T11:57:53.664Z",
+  "createdAtReadable": "5/21/2026, 5:57:53 PM",
+  "lastUpdated": "2026-05-21T11:57:53.768Z"
+}

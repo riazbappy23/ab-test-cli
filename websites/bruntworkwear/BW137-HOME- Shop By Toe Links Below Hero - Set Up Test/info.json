@@ -1,0 +1,13 @@
+{
+  "id": "1780316775979_7709_BW137_HOME__Shop_By_Toe_Links_Below_Hero___Set_Up_Test",
+  "name": "BW137-HOME- Shop By Toe Links Below Hero - Set Up Test",
+  "type": "A/B",
+  "website": "bruntworkwear",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-06-01T12:26:15.979Z",
+  "createdAtReadable": "6/1/2026, 6:26:15 PM",
+  "lastUpdated": "2026-06-01T12:26:16.336Z"
+}
