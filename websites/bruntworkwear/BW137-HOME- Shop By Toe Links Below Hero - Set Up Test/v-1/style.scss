@@ -1,15 +1,174 @@
-html {
-  position: relative;
+.ab-bw137.ab-bw137--v1 {
+    width: 100%;
+    padding: 65px calc(var(--spacing) * 8);
+    background: #f2f2f2;
+    box-sizing: border-box;
 
-  &::before {
-    content: "AB test pilot CSS";
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 99999999999;
-    background: #ff0000;
-    color: #ffffff;
-    padding: 10px;
-    border: 7px solid #269b11;
-  }
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    .ab-bw137__inner {
+        max-width: 1344px;
+        margin: 0 auto;
+    }
+
+    .ab-bw137__title {
+        font-family: var(--font-brothers);
+        margin: 0 0 50px;
+        color: #333333;
+        font-weight: 700;
+        font-style: Bold;
+        font-size: 40px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .ab-bw137__cards {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: stretch;
+        gap: 50px;
+        width: 100%;
+    }
+
+    .ab-bw137__card {
+        position: relative;
+        display: block;
+        flex: 1 1 0;
+        width: 100%;
+        max-width: 380px;
+        aspect-ratio: 380 / 160;
+        border-radius: 6px;
+        overflow: hidden;
+        text-decoration: none;
+        color: #fff;
+        background: #2a2a2a;
+        transition:
+            transform 0.25s ease,
+            box-shadow 0.25s ease;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .ab-bw137__card-img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        display: block;
+    }
+
+    .ab-bw137__card-overlay {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 55%;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.55) 0%, rgba(0, 0, 0, 0.3) 40%, rgba(0, 0, 0, 0) 70%);
+        pointer-events: none;
+    }
+
+    .ab-bw137__card-label {
+        position: absolute;
+        left: 30px;
+        bottom: 20px;
+        color: #fff;
+        z-index: 2;
+        font-family: Interstate;
+        font-weight: 700;
+        font-style: Bold;
+        font-size: 22px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-transform: uppercase;
+    }
+
+    .ab-bw137__card-arrow {
+        position: absolute;
+        right: 30px;
+        bottom: 20px;
+        width: 24px;
+        height: 24px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        z-index: 2;
+        svg {
+            width: 7.5px;
+            height: 15px;
+        }
+    }
+
+    @media (max-width: 767px) {
+        padding: 40px calc(var(--spacing) * 3);
+
+        .ab-bw137__title {
+            font-size: 28px;
+            margin-bottom: 25px;
+        }
+
+        .ab-bw137__cards {
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .ab-bw137__card {
+            flex: 0 0 auto;
+            width: 100%;
+            height: auto;
+            aspect-ratio: 351 / 100;
+        }
+
+        .ab-bw137__card:nth-child(1) .ab-bw137__card-img {
+            transform: scale(1.5);
+            object-position: center 33%;
+        }
+
+        .ab-bw137__card:nth-child(2) .ab-bw137__card-img {
+            transform: scale(1.33);
+            object-position: center 25%;
+        }
+        .ab-bw137__card:nth-child(3) .ab-bw137__card-img {
+            object-position: center 12%;
+        }
+
+        .ab-bw137__card-label {
+            font-size: 14px;
+            left: 20px;
+            bottom: 20px;
+        }
+
+        .ab-bw137__card-arrow {
+            right: 17px;
+            bottom: 20px;
+            width: 18px;
+            height: 18px;
+            svg {
+                width: 6px;
+                height: 10px;
+            }
+        }
+
+        .ab-bw137__card-overlay {
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.35) 0%, rgba(0, 0, 0, 0.15) 40%, rgba(0, 0, 0, 0) 70%);
+        }
+    }
+}
+
+.ab-bw137__tabbed-inner {
+    padding-top: 21px !important;
+    padding-bottom: 21px !important;
+
+    @media (max-width: 767px) {
+        padding-top: 26px !important;
+        padding-bottom: 26px !important;
+    }
 }

@@ -1,0 +1,13 @@
+{
+  "id": "1780390557488_2123_PDP___Add_Positive_Reinforce_Message__DTM",
+  "name": "PDP - Add Positive Reinforce Message -DTM",
+  "type": "A/B",
+  "website": "gurneys",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-06-02T08:55:57.488Z",
+  "createdAtReadable": "6/2/2026, 2:55:57 PM",
+  "lastUpdated": "2026-06-02T08:55:57.594Z"
+}

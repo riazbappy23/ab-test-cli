@@ -1,0 +1,108 @@
+.ab-bw137.ab-bw137--v2 {
+    width: 100%;
+    padding: 48px calc(var(--spacing) * 8);
+    background: #f2f2f2;
+    box-sizing: border-box;
+
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box;
+    }
+
+    .ab-bw137__inner {
+        max-width: 1344px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .ab-bw137__title {
+        font-family: var(--font-brothers);
+        margin: 0 0 43px;
+        color: #333333;
+        font-weight: 700;
+        font-style: Bold;
+        font-size: 40px;
+        line-height: 100%;
+        letter-spacing: 0%;
+        text-align: center;
+        text-transform: uppercase;
+    }
+
+    .ab-bw137__pills {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .ab-bw137__pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 186px;
+        height: 35px;
+        padding: 0 12px;
+        background: #ffffff;
+        border: 1px solid #e1e1d9;
+        text-decoration: none;
+        color: #111;
+        transition:
+            background 0.2s ease,
+            border-color 0.2s ease,
+            box-shadow 0.2s ease;
+        box-sizing: border-box;
+    }
+
+    .ab-bw137__pill-label {
+        font-family: Interstate;
+        font-weight: 300;
+        font-style: Light;
+        font-size: 16px;
+        line-height: 1;
+        letter-spacing: 0%;
+        color: #1e1b1c;
+        white-space: nowrap;
+    }
+
+    @media (max-width: 767px) {
+        padding: 29px calc(var(--spacing) * 3);
+
+        .ab-bw137__title {
+            font-size: 28px;
+            margin-bottom: 26px;
+        }
+
+        .ab-bw137__pills {
+            gap: 8px;
+        }
+
+        .ab-bw137__pill {
+            width: 110px;
+            height: 34px;
+        }
+
+        .ab-bw137__pill-label {
+            font-size: 14px;
+        }
+    }
+    @media (max-width: 374px) {
+        .ab-bw137__pill {
+            width: 100px;
+        }
+    }
+}
+
+.ab-bw137__tabbed-inner {
+    padding-top: 41px !important;
+    padding-bottom: 41px !important;
+
+    @media (max-width: 767px) {
+        padding-top: 22px !important;
+        padding-bottom: 22px !important;
+    }
+}

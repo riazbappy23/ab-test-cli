@@ -1,8 +1,8 @@
 (() => {
-    window.__ab_variant = "v1_BW137";
+    window.__ab_variant = "v2_BW137";
 
     const TEST_ID = "BW137";
-    const VARIANT_ID = "V1";
+    const VARIANT_ID = "V2";
 
     function logInfo(message) {
         console.log(`%cAcadia%c${TEST_ID}-${VARIANT_ID}`, "color: white; background: rgb(0, 0, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", "margin-left: 8px; color: white; background: rgb(0, 57, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", message);
@@ -28,45 +28,35 @@
         });
     }
 
-    const CARDS = [
+    const PILLS = [
         {
-            label: "SOFT TOE",
+            label: "Soft Toe",
             gaLabel: "Soft_Toe",
-            image: "https://sb.monetate.net/img/1/1555/6125519.png",
             url: "https://bruntworkwear.com/collections/boots?filter.p.m.custom.toe_type=Soft+Toe",
         },
         {
-            label: "COMP TOE",
+            label: "Comp Toe",
             gaLabel: "Comp_Toe",
-            image: "https://sb.monetate.net/img/1/1555/6125518.png",
             url: "https://bruntworkwear.com/collections/boots?filter.p.m.custom.toe_type=Comp+Toe",
         },
         {
-            label: "BRUNT TOE",
+            label: "Brunt Toe",
             gaLabel: "BRUNT_Toe",
-            image: "https://sb.monetate.net/img/1/1555/6125517.png",
             url: "https://bruntworkwear.com/collections/boots?filter.p.m.custom.toe_type=BRUNT+Toe",
         },
     ];
 
     function buildSection() {
         const wrapper = document.createElement("section");
-        wrapper.className = "ab-bw137 ab-bw137--v1";
+        wrapper.className = "ab-bw137 ab-bw137--v2";
         wrapper.innerHTML = `
       <div class="ab-bw137__inner">
         <h2 class="ab-bw137__title">SHOP BY TOE</h2>
-        <div class="ab-bw137__cards">
-          ${CARDS.map(
-              (c) => `
-            <a class="ab-bw137__card" href="${c.url}" data-ab-ga-label="${c.gaLabel}">
-              <img class="ab-bw137__card-img" src="${c.image}" alt="${c.label}" loading="lazy" />
-              <span class="ab-bw137__card-overlay"></span>
-              <span class="ab-bw137__card-label">${c.label}</span>
-              <span class="ab-bw137__card-arrow" aria-hidden="true">
-                <svg viewBox="0 0 10 17" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
-                   <path d="M0.707031 0.707153L8.20703 8.20715L0.707031 15.7072" stroke="white" stroke-width="2"/>
-                </svg>
-              </span>
+        <div class="ab-bw137__pills">
+          ${PILLS.map(
+              (p) => `
+            <a class="ab-bw137__pill" href="${p.url}" data-ab-ga-label="${p.gaLabel}">
+              <span class="ab-bw137__pill-label">${p.label}</span>
             </a>`
           ).join("")}
         </div>
@@ -77,9 +67,9 @@
 
     function attachClicks() {
         document.body.addEventListener("click", (e) => {
-            const card = e.target.closest(".ab-bw137__card");
-            if (card) {
-                fireGA4Event("BW137_ShopByToeClick", card.dataset.abGaLabel || "");
+            const pill = e.target.closest(".ab-bw137__pill");
+            if (pill) {
+                fireGA4Event("BW137_ShopByToeClick", pill.dataset.abGaLabel || "");
             }
         });
     }
@@ -103,7 +93,7 @@
     }
 
     function mainJs() {
-        document.body.classList.add("ab-bw137--variation-1");
+        document.body.classList.add("ab-bw137--variation-2");
         patchTabbedSection();
         injectSection();
         attachClicks();

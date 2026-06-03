@@ -1,0 +1,28 @@
+body.ab--pdp-reinforce-badge {
+    .ab--customer-fav-badge {
+        display: flex;
+        align-items: center;
+        width: 383px;
+        height: 52px;
+        background-color: #badced;
+        border-left: 10px solid #004665;
+        padding: 0 18px;
+        margin-bottom: 25px;
+        margin-top: 20px;
+        box-sizing: border-box;
+
+        span {
+            color: #000000;
+            font-family: "acumin-pro";
+            font-weight: 700;
+            font-size: 16px;
+            line-height: 100%;
+            letter-spacing: 0%;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            width: 100%;
+        }
+    }
+}
