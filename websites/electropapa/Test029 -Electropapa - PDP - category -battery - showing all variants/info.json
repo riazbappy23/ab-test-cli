@@ -1,0 +1,13 @@
+{
+  "id": "1780573573538_6989_Test029__Electropapa___PDP___category__battery___showing_all_variants",
+  "name": "Test029 -Electropapa - PDP - category -battery - showing all variants",
+  "type": "A/B",
+  "website": "electropapa",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-06-04T11:46:13.538Z",
+  "createdAtReadable": "6/4/2026, 5:46:13 PM",
+  "lastUpdated": "2026-06-04T11:46:13.663Z"
+}
