@@ -1,0 +1,13 @@
+{
+  "id": "1780928136319_5414_PLP___Minimize_Product_Description_Copy_M",
+  "name": "PLP - Minimize Product Description Copy M",
+  "type": "A/B",
+  "website": "domyown",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-06-08T14:15:36.319Z",
+  "createdAtReadable": "6/8/2026, 8:15:36 PM",
+  "lastUpdated": "2026-06-08T14:15:36.422Z"
+}

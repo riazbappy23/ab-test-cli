@@ -1,0 +1,44 @@
+.AB-minimize-pd-desc-text {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+    overflow: hidden;
+    transition: all 0.3s ease;
+
+    &.AB-minimize-pd-desc-expanded {
+        -webkit-line-clamp: unset;
+        line-clamp: unset;
+        display: block;
+        overflow: visible;
+    }
+}
+
+.AB-minimize-pd-chevron-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    margin: 6px auto 0;
+    background: #f0f0f0;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+
+    svg {
+        display: block;
+        transition: transform 0.3s ease;
+    }
+
+    &.AB-minimize-pd-chevron-expanded svg {
+        transform: rotate(180deg);
+    }
+}
+
+.AB-minimize-pd-chevron-btn:focus {
+    outline: none;
+    border: none;
+    box-shadow: none;
+}

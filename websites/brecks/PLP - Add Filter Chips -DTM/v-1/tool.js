@@ -9,8 +9,6 @@
         test_version: 0.0007,
     };
 
-    console.log("TEST ADD CHIP fired")
-
     const { page_initials, test_variation, test_version } = TEST_CONFIG;
 
     const LAYOUT_CONFIG = {
@@ -53,7 +51,6 @@
     };
 
     let CURRENT_LAYOUT_CONFIG = null;
-    let selectionOrder = [];
 
     function getLayoutConfig() {
         const currentPath = window.location.pathname;
@@ -146,29 +143,6 @@
         return "ontouchstart" in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
     }
 
-    function getSortedFilterData(filterData) {
-        const selected = selectionOrder
-            .map((selector) => filterData.find((d) => d.controlNodeSelector === selector))
-            .filter(Boolean);
-
-        const unselected = filterData.filter((d) => !selectionOrder.includes(d.controlNodeSelector));
-
-        return [...selected, ...unselected];
-    }
-
-    function sortChipsInDOM() {
-        const container = q(".ab--filter-chips");
-        if (!container) return;
-
-        const sorted = getSortedFilterData(getFilterData());
-        const buttons = qq(".ab--filter-chip", container);
-
-        sorted.forEach(({ controlNodeSelector }) => {
-            const btn = buttons.find((b) => decodeURIComponent(b.dataset.selector) === controlNodeSelector);
-            if (btn) container.appendChild(btn);
-        });
-    }
-
     function getFilterData() {
         const { zoneSelector, shippingSeasonSelector, usageSelector } = CURRENT_LAYOUT_CONFIG;
         const PlantingZone = getCookie("PlantingZone");
@@ -205,11 +179,6 @@
         const filterData = getFilterData();
         if (!filterData.length) return;
 
-        // Seed order from chips already checked on load (reflected from URL)
-        selectionOrder = filterData
-            .filter(({ controlNodeSelector }) => q(controlNodeSelector)?.checked && !q(controlNodeSelector)?.disabled)
-            .map(({ controlNodeSelector }) => controlNodeSelector);
-
         const { insertElementSelector, insertPosition } = CURRENT_LAYOUT_CONFIG;
 
         q(insertElementSelector).insertAdjacentHTML(
@@ -217,7 +186,7 @@
             /* HTML */ `
                 <div class="ab--filter-chips-wrap">
                     <div class="ab--filter-chips">
-                        ${getSortedFilterData(filterData)
+                        ${filterData
                             .map(
                                 ({ label, controlNodeSelector }) => /* HTML */ `
                                     <button
@@ -249,7 +218,7 @@
 
         if (!filterData.length) return;
 
-        q(".ab--filter-chips").innerHTML = /* HTML */ getSortedFilterData(filterData)
+        q(".ab--filter-chips").innerHTML = /* HTML */ filterData
             .map(
                 ({ label, controlNodeSelector }) => /* HTML */ `
                     <button
@@ -559,15 +528,13 @@
     function clickFunction() {
         q(".ab--filter-chips").addEventListener("click", (e) => {
             const button = e.target.closest(".ab--filter-chip");
-            if (!button) return;
 
-            const isActive = button.classList.toggle("ab--chip-active");
-            const controlNodeSelector = decodeURIComponent(button.dataset.selector);
-
-            selectionOrder = selectionOrder.filter((s) => s !== controlNodeSelector);
-            if (isActive) selectionOrder.push(controlNodeSelector);
-
-            q(controlNodeSelector)?.click();
+            if (button) {
+                button.classList.toggle("ab--chip-active");
+                const controlNodeSelector = decodeURIComponent(button.dataset.selector);
+                const targetNode = q(controlNodeSelector);
+                targetNode?.click();
+            }
         });
     }
 
