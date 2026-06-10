@@ -20,7 +20,7 @@
     justify-content: center;
     width: 24px;
     height: 24px;
-    margin: 6px auto 0;
+    margin: 12px auto 0;
     background: #f0f0f0;
     border: none;
     border-radius: 50%;
@@ -29,11 +29,15 @@
 
     svg {
         display: block;
+        width: 12px;
+        height: 6px;
+        margin-top: 1px;
         transition: transform 0.3s ease;
     }
 
     &.AB-minimize-pd-chevron-expanded svg {
         transform: rotate(180deg);
+        margin-bottom: 1px;
     }
 }
 

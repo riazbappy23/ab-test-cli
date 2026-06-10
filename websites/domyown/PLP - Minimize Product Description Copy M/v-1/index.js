@@ -3,6 +3,7 @@
         id: "minimize-pd",
         name: "PLP - Minimize Product Description Copy[M]",
         variation: 1,
+        version: "002",
     };
 
     const TEST_ID = "minimize-pd";
@@ -46,19 +47,28 @@
             chevronBtn.className = "AB-minimize-pd-chevron-btn";
             chevronBtn.setAttribute("aria-label", "Toggle description");
             chevronBtn.setAttribute("aria-expanded", "false");
-            chevronBtn.innerHTML = `<svg width="12" height="6" viewBox="0 0 12 6" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M12.5 6.70715L6.5 0.707153L0.5 6.70715" stroke="black" stroke-linecap="round"/>
+            chevronBtn.innerHTML = `<svg width="13" height="8" viewBox="0 0 13 8" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M0.5 1L6.5 7L12.5 1" stroke="black" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 `;
 
             descEl.after(chevronBtn);
 
-            chevronBtn.addEventListener("click", () => {
+            descEl.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+            });
+
+            chevronBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
                 const willExpand = !descEl.classList.contains("AB-minimize-pd-desc-expanded");
                 collapseAll(willExpand ? descEl : null);
                 descEl.classList.toggle("AB-minimize-pd-desc-expanded", willExpand);
                 chevronBtn.classList.toggle("AB-minimize-pd-chevron-expanded", willExpand);
                 chevronBtn.setAttribute("aria-expanded", willExpand);
+                window._conv_q = window._conv_q || [];
+                _conv_q.push(["triggerConversion", "100155250"]);
             });
         });
     }
