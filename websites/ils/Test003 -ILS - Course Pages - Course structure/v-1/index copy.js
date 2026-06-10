@@ -122,13 +122,13 @@
                 <div class="test003-container">
                     <h2 class="test003-title">Starten Sie Ihre Karriere als "${jobTitle}"</h2>
                     <div class="test003-outer">
-                        <button class="test003-arrow test003-arrow--left" aria-label="Vorherige">${ArrowLeftSvg}</button>
+                        <button class="test003-arrow test003-arrow--left" aria-label="Vorherige" style="display:none">${ArrowLeftSvg}</button>
                         <div class="test003-scroll">
                             <div class="test003-track">
                                 ${stepsHTML}
                             </div>
                         </div>
-                        <button class="test003-arrow test003-arrow--right" aria-label="Nächste">${ArrowRightSvg}</button>
+                        <button class="test003-arrow test003-arrow--right" aria-label="Nächste" style="display:none">${ArrowRightSvg}</button>
                     </div>
                 </div>
             </section>
@@ -157,54 +157,36 @@
             return;
         }
 
-        function getCardPositions() {
-            const cards = Array.from(scrollEl.querySelectorAll(".test003-step"));
-            const scrollRect = scrollEl.getBoundingClientRect();
-            return cards.map((card) => {
-                const r = card.getBoundingClientRect();
-                return Math.round(r.left - scrollRect.left + scrollEl.scrollLeft);
-            });
-        }
-
-        function getCurrentCardIndex(positions) {
-            let idx = 0;
-            const scrollLeft = scrollEl.scrollLeft;
-            for (let i = 0; i < positions.length; i++) {
-                if (positions[i] <= scrollLeft + 5) idx = i;
-                else break;
-            }
-            return idx;
+        function getStepDistance() {
+            const step = scrollEl.querySelector(".test003-step");
+            const sep = scrollEl.querySelector(".test003-step-sep");
+            const stepWidth = step ? step.offsetWidth : 140;
+            const sepWidth = sep ? sep.offsetWidth : 44;
+            return stepWidth + sepWidth;
         }
 
         function updateArrows() {
             if (!isMobile()) {
                 leftBtn.style.display = "none";
                 rightBtn.style.display = "none";
+                q(".test003-outer").classList.remove("test003-outer--at-end");
                 return;
             }
-            leftBtn.style.display = "";
-            rightBtn.style.display = "";
+            const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
             const atStart = scrollEl.scrollLeft <= 10;
-            const atEnd = scrollEl.scrollLeft + scrollEl.clientWidth >= scrollEl.scrollWidth - 10;
-            leftBtn.disabled = atStart;
-            rightBtn.disabled = atEnd;
+            const atEnd = maxScroll > 10 && scrollEl.scrollLeft >= maxScroll - 10;
+            leftBtn.style.display = atStart ? "none" : "";
+            rightBtn.style.display = atEnd ? "none" : "";
             q(".test003-outer").classList.toggle("test003-outer--at-end", atEnd);
         }
 
         leftBtn.addEventListener("click", () => {
-            const positions = getCardPositions();
-            const current = getCurrentCardIndex(positions);
-            const targetIdx = Math.max(0, current - 1);
-            scrollEl.scrollTo({left: positions[targetIdx], behavior: "smooth"});
+            const target = Math.max(0, scrollEl.scrollLeft - getStepDistance());
+            scrollEl.scrollTo({left: target, behavior: "smooth"});
         });
 
         rightBtn.addEventListener("click", () => {
-            const positions = getCardPositions();
-            const current = getCurrentCardIndex(positions);
-            const targetIdx = Math.min(positions.length - 1, current + 1);
-            const maxScroll = scrollEl.scrollWidth - scrollEl.clientWidth;
-            const targetScroll = Math.min(positions[targetIdx], maxScroll);
-            scrollEl.scrollTo({left: targetScroll, behavior: "smooth"});
+            scrollEl.scrollBy({left: getStepDistance(), behavior: "smooth"});
         });
 
         scrollEl.addEventListener("scroll", updateArrows);
@@ -215,7 +197,15 @@
             resizeTimeout = setTimeout(updateArrows, 150);
         });
 
-        updateArrows();
+        if (typeof ResizeObserver !== "undefined") {
+            const track = scrollEl.querySelector(".test003-track");
+            const ro = new ResizeObserver(updateArrows);
+            if (track) ro.observe(track);
+            ro.observe(scrollEl);
+        }
+
+        requestAnimationFrame(updateArrows);
+        setTimeout(updateArrows, 300);
         logInfo("Course steps initialized");
     }
 

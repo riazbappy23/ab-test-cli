@@ -81,16 +81,7 @@
     const ArrowRightSvg = `<svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 1L9 8L1 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
     const ArrowLeftSvg = `<svg width="10" height="16" viewBox="0 0 10 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 1L1 8L9 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-    function getJobTitle() {
-        const h1 = document.querySelector(".stage-course-details h1");
-        if (!h1) return "BERUFSBEZEICHNUNG";
-        const clone = h1.cloneNode(true);
-        clone.querySelectorAll("span").forEach((s) => s.remove());
-        return clone.textContent.trim() || "BERUFSBEZEICHNUNG";
-    }
-
     function createStepsHTML() {
-        const jobTitle = getJobTitle();
         let stepsHTML = "";
         stepsData.forEach((step, i) => {
             stepsHTML += `
@@ -120,7 +111,7 @@
         return `
             <section class="test003-section">
                 <div class="test003-container">
-                    <h2 class="test003-title">Starten Sie Ihre Karriere als "${jobTitle}"</h2>
+                    <h2 class="test003-title">So erreichen Sie den Job, den Sie sich wünschen</h2>
                     <div class="test003-outer">
                         <button class="test003-arrow test003-arrow--left" aria-label="Vorherige" style="display:none">${ArrowLeftSvg}</button>
                         <div class="test003-scroll">

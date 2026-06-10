@@ -15,6 +15,6 @@ https://www.ils.de/fernkurse/abitur-nachholen/?varify-force=35104-52582
 TEST010
 https://www.ils.de/fernkurse/raumgestaltung-innenarchitektur/?varify-force=35555-53258
 
-TEST017
+TEST017[SGD]
 https://www.sgd.de/kursseite/realschulabschluss.html?varify-force=35586-53303
 
