@@ -1,0 +1,13 @@
+{
+  "id": "1781514584457_3323_VC134__CART__Show_Hide_Klarna_Shop_pay_Afterpay___Set_Up_Test",
+  "name": "VC134 -CART- Show Hide Klarna Shop pay Afterpay - Set Up Test",
+  "type": "A/B",
+  "website": "vicicollection",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-06-15T09:09:44.457Z",
+  "createdAtReadable": "6/15/2026, 3:09:44 PM",
+  "lastUpdated": "2026-06-15T09:09:44.689Z"
+}

@@ -1,0 +1,13 @@
+{
+  "id": "1781787486915_6295_Test014_ILS___global___Button_hierarchy",
+  "name": "Test014 ILS - global - Button hierarchy",
+  "type": "A/B",
+  "website": "ils",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-06-18T12:58:06.915Z",
+  "createdAtReadable": "6/18/2026, 6:58:06 PM",
+  "lastUpdated": "2026-06-18T12:58:07.141Z"
+}

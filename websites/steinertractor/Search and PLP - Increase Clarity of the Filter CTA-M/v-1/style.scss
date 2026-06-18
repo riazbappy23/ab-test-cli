@@ -1,0 +1,32 @@
+body.AB--SEARCH_AND_PLP--v-01 {
+  .AB--SEARCH-AND_PLP--filter-btn {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    background-color: #008000 !important;
+    color: #fff !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0% !important;
+    border-radius: 5px !important;
+    padding: 10px !important;
+    width: 100% !important;
+
+    .AB--SEARCH-AND_PLP--icon {
+      width: 24px;
+      height: 24px;
+      flex-shrink: 0;
+      color: #fff;
+    }
+
+    .AB--SEARCH-AND_PLP--label {
+      color: #fff;
+      line-height: 1;
+    }
+
+    i {
+      display: none !important;
+    }
+  }
+}

@@ -11,6 +11,8 @@
 
     const {page_initials, test_variation, test_version} = TEST_CONFIG;
 
+    console.log("fired", TEST_CONFIG);
+
     async function waitForElementAsync(predicate, timeout = 10000, frequency = 150) {
         const startTime = Date.now();
 
@@ -37,10 +39,6 @@
 
     function q(s, o) {
         return o ? s.querySelector(o) : document.querySelector(s);
-    }
-
-    function qq(s, o) {
-        return o ? [...s.querySelectorAll(o)] : [...document.querySelectorAll(s)];
     }
 
     function init() {

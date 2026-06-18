@@ -1,0 +1,13 @@
+{
+  "id": "1781255361204_6024_MMI50__LANDING_PAGE___5RW__Validate_Copy_in_Sticky_CTA___Set_Up_Test",
+  "name": "MMI50 -LANDING PAGE - 5RW- Validate Copy in Sticky CTA - Set Up Test",
+  "type": "A/B",
+  "website": "magicmind",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-06-12T09:09:21.204Z",
+  "createdAtReadable": "6/12/2026, 3:09:21 PM",
+  "lastUpdated": "2026-06-12T09:09:21.367Z"
+}
