@@ -1,15 +1,173 @@
-html {
-  position: relative;
+$orange: #fa6400;
+$card-bg: #f6f5f3;
+$card-width: 456px;
+$gap: 72px;
 
-  &::before {
-    content: "AB test pilot CSS";
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 99999999999;
-    background: #ff0000;
-    color: #ffffff;
-    padding: 10px;
-    border: 7px solid #269b11;
-  }
+.ab-test014 {
+    .ck-editor {
+        max-width: unset !important;
+    }
+    .ab-test014-host {
+        position: relative;
+        > p,
+        > .headline {
+            max-width: calc(100% - #{$card-width + $gap});
+        }
+    }
+
+    .ab-test014-preise.btn--secondary {
+        background: transparent;
+        background-color: transparent;
+    }
+
+    .ab-test014-preise.btn--secondary:hover {
+        background: var(--color-primitives-blue-sky-86);
+    }
+    .ab-test014-preise.btn--secondary:active {
+        background: none !important;
+        outline: none !important;
+        border: none !important;
+    }
+    .ab-test014-preise.btn--secondary:focus {
+        background: none !important;
+        outline: none !important;
+        border: none !important;
+    }
+    .ab-test014-orig-signup {
+        display: none !important;
+    }
+
+    .ab-test014-caption {
+        margin: 2px 0 0;
+        font-weight: 600;
+        font-size: 12px;
+        line-height: 150%;
+        color: #5d697a;
+    }
+
+    .ab-test014-card {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: $card-width;
+        box-sizing: border-box;
+        padding: 32px;
+        background: $card-bg;
+        border: 4px solid $orange;
+        border-radius: 0 45px 45px 45px;
+
+        &__title {
+            margin: 0 0 4px;
+            color: $orange;
+            font-weight: 700;
+            font-size: 25px;
+            line-height: 130%;
+        }
+
+        &__list {
+            list-style: none;
+            margin: 8px 0 0;
+            padding: 0;
+        }
+
+        &__item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 6px 0;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 150%;
+        }
+
+        &__check {
+            flex: 0 0 auto;
+        }
+
+        &__cta {
+            .ab-test014-card__btn {
+                margin-top: 22px;
+                display: inline-flex;
+                box-sizing: border-box;
+                justify-content: center;
+            }
+        }
+    }
+
+    .ab-test014-preise,
+    .ab-test014-card__btn {
+        .icon--button-circle {
+            height: 28px !important;
+            width: 28px !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            svg {
+                height: 18px !important;
+                width: 18px !important;
+            }
+        }
+        .btn__label {
+            font-size: 18px;
+            font-weight: 700;
+            line-height: 150%;
+            letter-spacing: 0%;
+        }
+    }
+
+    .ab-test014-preise {
+        padding-left: 0px !important;
+        .icon--button-circle {
+            background: #166adb;
+        }
+        .btn__label {
+            color: #166adb;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .ab-test014-host {
+            > p,
+            > .headline {
+                max-width: 100%;
+            }
+        }
+        .ab-test014-card {
+            margin-top: 20px;
+            position: static;
+            width: 100%;
+            padding: 24px;
+            border-radius: 0 25px 25px 25px;
+            &__title {
+                font-size: 20px;
+            }
+            &__item {
+                font-size: 16px;
+            }
+        }
+        .ab-test014-preise,
+        .ab-test014-card__btn {
+            .icon--button-circle {
+                height: 26px !important;
+                width: 26px !important;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                svg {
+                    height: 16px !important;
+                    width: 16px !important;
+                }
+            }
+            .btn__label {
+                font-size: 16px;
+            }
+        }
+    }
+    @media (max-width: 375px) {
+        .ab-test014-card__btn {
+            .btn__label {
+                font-size: 14px;
+            }
+        }
+    }
 }

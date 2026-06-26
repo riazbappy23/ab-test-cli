@@ -56,21 +56,21 @@
 
   const ARROW_SVG = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M4 12H20M14 6L20 12L14 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 
-  const CONTAINER_SELECTOR =
-    ".container:has(> .ck-editor):has(> .btn-group)";
+const SECTION_SELECTOR =
+  "section:has(.container > :is(h2.headline, div.pre-headline)):has(.container > .ck-editor):has(.container > .btn-group)";
 
   function getTargetSection() {
-    const container = document.querySelector(CONTAINER_SELECTOR);
-    if (!container) return null;
-    const btnGroup = container.querySelector(":scope > .btn-group");
+    const section = document.querySelector(SECTION_SELECTOR);
+    if (!section) return null;
+    const btnGroup = section.querySelector(".btn-group");
     const signup =
-      container.querySelector('a.btn--primary[href*="onlineanmeldung"]') ||
+      section.querySelector('a.btn--primary[href*="onlineanmeldung"]') ||
       (btnGroup && btnGroup.querySelector("a.btn--primary"));
     if (!btnGroup || !signup) return null;
-    return { container, btnGroup, signup };
+    return { section, btnGroup, signup };
   }
 
-  function getCourseName(root) {
+  function getCourseName(section) {
     const h1 =
       document.querySelector(".stage-course-details h1.headline") ||
       document.querySelector("h1.headline") ||
@@ -81,8 +81,8 @@
       const text = clone.textContent.replace(/\s+/g, " ").trim();
       if (text) return text;
     }
-    const heading = root.querySelector(".headline");
-    return (heading && heading.textContent.trim()) || "";
+    const h2 = section.querySelector(".headline");
+    return (h2 && h2.textContent.trim()) || "";
   }
 
   function buildCard(courseName, signupBtn) {
@@ -121,14 +121,15 @@
     const target = getTargetSection();
     if (!target) return;
 
-    const { container, signup, btnGroup } = target;
-    const ckEditor = container.querySelector(":scope > .ck-editor");
+    const { section, signup, btnGroup } = target;
+    const container = section.querySelector(".container") || section;
+    const ckEditor = section.querySelector(".ck-editor");
 
     body.classList.add(BODY_CLASS);
 
     if (ckEditor) ckEditor.classList.add(`${NS}-host`);
     signup.classList.add(`${NS}-orig-signup`);
-    const preise = btnGroup.querySelector(".btn--secondary");
+    const preise = section.querySelector(".btn-group .btn--secondary");
     if (preise) {
       preise.classList.add(`${NS}-preise`);
       const preiseSvg =
@@ -142,7 +143,7 @@
       "Alle Preise, Einblick in Studienmaterial, Förderungen";
     btnGroup.insertAdjacentElement("afterend", caption);
 
-    const courseName = getCourseName(container);
+    const courseName = getCourseName(section);
     const card = buildCard(courseName, signup);
     const sync = () => {
       placeCard(card, { ckEditor, caption });
@@ -183,5 +184,5 @@
     }
   }
 
-  waitForElem(`${CONTAINER_SELECTOR} .btn--primary`, mainJs);
+  waitForElem(`${SECTION_SELECTOR} .btn--primary`, mainJs);
 })();
