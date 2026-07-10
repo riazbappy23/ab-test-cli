@@ -1,0 +1,14 @@
+{
+  "id": "1783502140733_3997_PLP___Remove_Category_Image_Banners_DTM",
+  "name": "PLP - Remove Category Image Banners_DTM",
+  "type": "A/B",
+  "website": "gardeners",
+  "variations": [
+    "control",
+    "v-1",
+    "v-2"
+  ],
+  "createdAt": "2026-07-08T09:15:40.733Z",
+  "createdAtReadable": "7/8/2026, 3:15:40 PM",
+  "lastUpdated": "2026-07-08T09:29:27.201Z"
+}

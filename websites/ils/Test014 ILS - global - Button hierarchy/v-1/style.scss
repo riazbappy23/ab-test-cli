@@ -86,7 +86,7 @@ $gap: 72px;
 
         &__cta {
             .ab-test014-card__btn {
-                margin-top: 22px;
+                margin-top: 18px;
                 display: inline-flex;
                 box-sizing: border-box;
                 justify-content: center;
@@ -133,7 +133,7 @@ $gap: 72px;
             }
         }
         .ab-test014-card {
-            margin-top: 20px;
+            margin-top: 24px;
             position: static;
             width: 100%;
             padding: 24px;
@@ -143,6 +143,11 @@ $gap: 72px;
             }
             &__item {
                 font-size: 16px;
+            }
+            &__cta {
+                .ab-test014-card__btn {
+                    margin-top: 12px;
+                }
             }
         }
         .ab-test014-preise,
