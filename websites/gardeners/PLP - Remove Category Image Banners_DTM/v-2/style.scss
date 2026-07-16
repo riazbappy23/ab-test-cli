@@ -1,37 +1,48 @@
 .ab-plp-banner {
-  .collection-banner__text-container-wrapper {
-    .collectionimagesection {
-      position: relative;
-
-      .collectionimagecontainer {
-        img {
-          display: block;
-          width: 100% !important;
-          height: 100px !important;
-          object-fit: cover;
-          object-position: center;
-        }
-      }
-      
-      .collection-banner__text-container-heading {
-        background-size: 55% 56px !important;
-      }
-    }
-  }
-
-  @media (max-width: 768px) {
     .collection-banner__text-container-wrapper {
-      .collectionimagesection {
-        .collectionimagecontainer {
-          img {
-            height: 75px !important;
-          }
-        }
+        .collectionimagesection {
+            position: relative;
 
-        .collection-banner__text-container-heading {
-          background-size: 55% 42px !important;
+            .collectionimagecontainer {
+                img {
+                    display: block;
+                    width: 100% !important;
+                    height: 100px !important;
+                    object-fit: cover;
+                    object-position: center;
+                }
+            }
+
+            .collection-banner__text-container-heading {
+                background-size: 65% 75px !important;
+                padding-bottom: 5px;
+            }
         }
-      }
     }
-  }
+
+    @media (max-width: 768px) {
+        .collection-banner__text-container-wrapper {
+            .collectionimagesection {
+                .collectionimagecontainer {
+                    img {
+                        height: 75px !important;
+                    }
+                }
+
+                .collection-banner__text-container-heading {
+                    background-size: 75% 42px !important;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 400px) {
+        .collection-banner__text-container-wrapper {
+            .collectionimagesection {
+                .collection-banner__text-container-heading {
+                    background-size: 85% 42px !important;
+                }
+            }
+        }
+    }
 }
