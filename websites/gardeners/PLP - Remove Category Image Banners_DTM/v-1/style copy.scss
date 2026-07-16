@@ -1,0 +1,37 @@
+.ab-plp-banner {
+    .collection-banner__text-container-wrapper {
+        .collectionimagesection {
+            position: relative;
+
+            .collectionimagecontainer {
+                display: none !important;
+            }
+
+            .collection-banner__text-container-heading {
+                position: static !important;
+                color: white;
+                min-height: 80px;
+                background: url("https://www.gardeners.com/cdn/shop/files/title-swash.webp") center 51% no-repeat !important;
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .collection-banner__text-container-wrapper {
+            .collectionimagesection {
+                .collection-banner__text-container-heading {
+                    background-size: 80% 60px !important;
+                }
+            }
+        }
+    }
+    @media (max-width: 400px) {
+        .collection-banner__text-container-wrapper {
+            .collectionimagesection {
+                .collection-banner__text-container-heading {
+                    background-size: 100% 60px !important;
+                }
+            }
+        }
+    }
+}

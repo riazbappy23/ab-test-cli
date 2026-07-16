@@ -1,0 +1,13 @@
+{
+  "id": "1784093194159_2280_PDP___Redesign_Delivery_Options_D",
+  "name": "PDP - Redesign Delivery Options-D",
+  "type": "A/B",
+  "website": "steinertractor",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-07-15T05:26:34.160Z",
+  "createdAtReadable": "7/15/2026, 11:26:34 AM",
+  "lastUpdated": "2026-07-15T05:26:34.500Z"
+}
