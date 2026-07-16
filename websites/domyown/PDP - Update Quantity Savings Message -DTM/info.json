@@ -1,0 +1,13 @@
+{
+  "id": "1784184790568_3029_PDP___Update_Quantity_Savings_Message__DTM",
+  "name": "PDP - Update Quantity Savings Message -DTM",
+  "type": "A/B",
+  "website": "domyown",
+  "variations": [
+    "control",
+    "v-1"
+  ],
+  "createdAt": "2026-07-16T06:53:10.568Z",
+  "createdAtReadable": "7/16/2026, 12:53:10 PM",
+  "lastUpdated": "2026-07-16T06:53:10.937Z"
+}

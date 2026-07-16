@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(node -e \"const fs=require\\('fs'\\);let s=fs.readFileSync\\('websites/loopearplugs/ID774 AUS PLP Use case toggle Filter combo regular PLP/v-1/index.js','utf8'\\);require\\('vm'\\).compileFunction\\(s\\);console.log\\('JS parses OK'\\)\")"
+      "Bash(node -e \"const fs=require\\('fs'\\);let s=fs.readFileSync\\('websites/loopearplugs/ID774 AUS PLP Use case toggle Filter combo regular PLP/v-1/index.js','utf8'\\);require\\('vm'\\).compileFunction\\(s\\);console.log\\('JS parses OK'\\)\")",
+      "Bash(sed '1d' \"d:/practice/echo-tranpiler-sandbox/websites/loopearplugs/ID931 _ EU _ BYOB _ Flagship BYOB - Add Use-case filters -Noise sensitivity _ Sleep _ Music and events etc/v-1/index.js\")",
+      "Bash(sed -i 's/testInfo\\\\.id/1/; s/testInfo\\\\.name/1/' check.js)",
+      "Bash(node --check check.js)",
+      "Bash(grep -n -o 'Icon[^\"?]*\\\\.svg\\\\|Icons[^\"?]*\\\\.svg\\\\|>[A-Z][a-z &;a-z]*$\\\\|class=\"byob[^\"]*\"')",
+      "Bash(node -e ' *)"
     ]
   }
 }
