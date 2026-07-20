@@ -1,19 +1,5 @@
 (() => {
-  const TEST_ID = "GRD-PLP-Banner";
-  const VARIANT_ID = "V2";
-  const NS = "ab-plp-banner";
-  const BODY_CLASS = NS;
-
-  function logInfo(message) {
-    console.log(
-      `%cAcadia%c${TEST_ID}-${VARIANT_ID}`,
-      "color: white; background: rgb(0, 0, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;",
-      "margin-left: 8px; color: white; background: rgb(0, 57, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;",
-      message
-    );
-  }
-
-  logInfo("fired");
+  const BODY_CLASS = "ab-plp-banner";
 
   function waitForElem(
     waitFor,
@@ -48,7 +34,6 @@
     if (body.classList.contains(BODY_CLASS)) return;
 
     body.classList.add(BODY_CLASS);
-    logInfo("applied");
   }
 
   waitForElem(

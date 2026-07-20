@@ -11,12 +11,6 @@
     const BODY_CLASS = "AB-pdp-qty-savings";
     const BUY_MORE_RE = /Buy\s+\d+\s+or more/i;
 
-    function logInfo(message) {
-        console.log(`%cROI%c${TEST_ID}-${VARIANT_ID}`, "color: white; background: rgb(0, 0, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", "margin-left: 8px; color: white; background: rgb(0, 57, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", message);
-    }
-
-    logInfo("fired");
-
     let contentObserver = null;
 
     function debounce(fn, wait) {
@@ -53,8 +47,6 @@
         }
     }
 
-    // The actual test: only touches the DOM when a "Buy N or more" break exists for the
-    // currently selected product; otherwise it is a no-op.
     function applySavings() {
         const container = getPriceContainer();
         const baseEl = container && (container.querySelector("#price-block .current-price") || container.querySelector(".current-price"));
@@ -62,14 +54,11 @@
         const basePrice = baseEl ? parsePrice(baseEl.textContent) : 0;
 
         if (basePrice && breaks.length) {
-            // Prices change when a different size is selected, so always recompute from scratch.
             container.querySelectorAll(".AB-savings-text").forEach((el) => el.remove());
             breaks.forEach((p) => addSavingsNote(p, basePrice));
         }
     }
 
-    // Detach the content observer while we mutate the DOM so our own inserts don't
-    // retrigger it (which would loop), then re-attach.
     function safeApply(root) {
         if (contentObserver) contentObserver.disconnect();
         applySavings();
@@ -86,7 +75,6 @@
 
             const run = debounce(() => safeApply(offers), 60);
 
-            // 1) React when the shopper selects a different size / description.
             const grid = document.querySelector("#products-grid");
             if (grid) {
                 new MutationObserver(run).observe(grid, {
@@ -95,12 +83,9 @@
                 });
             }
 
-            // 2) The "Buy N or more" price-breaks are injected asynchronously (not present on
-            //    first paint), so also watch the offers subtree for that content appearing.
             contentObserver = new MutationObserver(run);
             contentObserver.observe(offers, { childList: true, subtree: true, characterData: true });
 
-            // Initial pass in case a matching product is already selected.
             safeApply(offers);
         }
     }

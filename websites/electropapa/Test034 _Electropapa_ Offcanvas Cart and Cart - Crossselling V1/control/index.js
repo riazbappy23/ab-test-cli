@@ -1,6 +1,6 @@
-(() => {
-  const BODY_CLASS = "ab-plp-banner";
+import testInfo from "./info.json" assert { type: "json" };
 
+(() => {
   function waitForElem(
     waitFor,
     callback,
@@ -29,15 +29,15 @@
         );
   }
 
-  function mainJs() {
-    const body = document.body;
-    if (body.classList.contains(BODY_CLASS)) return;
+  function mainJs([body]) {
+    console.table({ ID: testInfo.id, Variation: testInfo.name });
 
-    body.classList.add(BODY_CLASS);
+    console.log(
+      "%cname: v-01",
+      "background: black;border: 2px solid green;color: white;display: block;text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);text-align: center;font-weight: bold;padding : 10px;margin : 10px"
+    );
+    console.log("name: v-01");
   }
 
-  waitForElem(
-    ".collection-banner__text-container-wrapper .collectionimagesection .collection-banner__text-container-heading",
-    mainJs
-  );
+  waitForElem("body", mainJs);
 })();

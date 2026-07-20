@@ -6,7 +6,8 @@
       "Bash(sed -i 's/testInfo\\\\.id/1/; s/testInfo\\\\.name/1/' check.js)",
       "Bash(node --check check.js)",
       "Bash(grep -n -o 'Icon[^\"?]*\\\\.svg\\\\|Icons[^\"?]*\\\\.svg\\\\|>[A-Z][a-z &;a-z]*$\\\\|class=\"byob[^\"]*\"')",
-      "Bash(node -e ' *)"
+      "Bash(node -e ' *)",
+      "Bash(curl -s -u access_dev:HRNGbfj4m9IBtArK \"https://electropapa-stage.scalecommerce.cloud/de/widgets/elio-data-discovery/cart-recommendations\" -H \"Accept: application/json\")"
     ]
   }
 }

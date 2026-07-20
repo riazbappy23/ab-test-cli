@@ -9,12 +9,7 @@
     const TEST_ID = "pdp-qty-savings";
     const VARIANT_ID = "V1";
     const BODY_CLASS = "AB-pdp-qty-savings";
-
-    function logInfo(message) {
-        console.log(`%cROI%c${TEST_ID}-${VARIANT_ID}`, "color: white; background: rgb(0, 0, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", "margin-left: 8px; color: white; background: rgb(0, 57, 57); font-weight: 700; padding: 2px 4px; border-radius: 2px;", message);
-    }
-
-    logInfo("fired");
+    const BUY_MORE_RE = /Buy\s+\d+\s+or more/i;
 
     let contentObserver = null;
 
@@ -31,88 +26,66 @@
         return isNaN(num) ? 0 : num;
     }
 
-    // Locate the price block by its "Price/Ea." title (no nth-child, no tailwind-only lookup),
-    // then work within that container using the custom price classes.
     function getPriceContainer() {
         const offers = document.querySelector("#product-page-offers");
-        if (!offers) return null;
-
-        const titles = offers.querySelectorAll("div");
-        for (const el of titles) {
-            if (el.children.length === 0 && el.textContent.trim().replace(/\.$/, "") === "Price/Ea") {
-                return el.parentElement;
-            }
-        }
-        return null;
+        const titleEl = offers ? [...offers.querySelectorAll("div")].find((el) => el.children.length === 0 && el.textContent.trim().replace(/\.$/, "") === "Price/Ea") : null;
+        return titleEl ? titleEl.parentElement : null;
     }
 
-    // The actual test: only touch / bucket when a "Buy N or more" break exists for the
-    // currently selected product; otherwise it is a no-op.
-    function applySavings() {
-        const container = getPriceContainer();
-        if (!container) return;
+    function addSavingsNote(p, basePrice) {
+        const priceEl = BUY_MORE_RE.test(p.textContent) ? p.querySelector("span:not(.AB-savings-text)") : null;
+        const breakPrice = priceEl ? parsePrice(priceEl.textContent) : 0;
+        const savings = basePrice - breakPrice;
 
-        const baseEl = container.querySelector("#price-block .current-price") || container.querySelector(".current-price");
-        const breaks = container.querySelectorAll(".price-breaks p");
-        if (!baseEl || !breaks.length) return;
-
-        const basePrice = parsePrice(baseEl.textContent);
-        if (!basePrice) return;
-
-        // Prices change when a different size is selected, so always recompute from scratch.
-        container.querySelectorAll(".AB-savings-text").forEach((el) => el.remove());
-
-        breaks.forEach((p) => {
-            if (!/Buy\s+\d+\s+or more/i.test(p.textContent)) return;
-
-            const priceEl = p.querySelector("span:not(.AB-savings-text)");
-            if (!priceEl) return;
-
-            const breakPrice = parsePrice(priceEl.textContent);
-            if (!breakPrice) return;
-
-            const savings = basePrice - breakPrice;
-            if (savings <= 0) return;
-
-
+        if (breakPrice && savings > 0) {
             const savingsEl = document.createElement("span");
             savingsEl.className = "AB-savings-text";
             savingsEl.textContent = ` (save $${savings.toFixed(2)} per unit)`;
             priceEl.insertAdjacentElement("afterend", savingsEl);
-        });
-
+        }
     }
 
-    // Detach the content observer while we mutate the DOM so our own inserts don't
-    // retrigger it (which would loop), then re-attach.
+    function applySavings() {
+        const container = getPriceContainer();
+        const baseEl = container && (container.querySelector("#price-block .current-price") || container.querySelector(".current-price"));
+        const breaks = container ? container.querySelectorAll(".price-breaks p") : [];
+        const basePrice = baseEl ? parsePrice(baseEl.textContent) : 0;
+
+        if (basePrice && breaks.length) {
+            container.querySelectorAll(".AB-savings-text").forEach((el) => el.remove());
+            breaks.forEach((p) => addSavingsNote(p, basePrice));
+        }
+    }
+
     function safeApply(root) {
         if (contentObserver) contentObserver.disconnect();
         applySavings();
         if (contentObserver && root) {
-            contentObserver.observe(root, { childList: true, subtree: true, characterData: true });
+            contentObserver.observe(root, {childList: true, subtree: true, characterData: true});
         }
     }
 
     function init() {
         const offers = document.querySelector("#product-page-offers");
-        if (!offers) return;
 
-        document.body.classList.contains(BODY_CLASS) || document.body.classList.add(BODY_CLASS);
+        if (offers) {
+            document.body.classList.contains(BODY_CLASS) || document.body.classList.add(BODY_CLASS);
 
-        const run = debounce(() => safeApply(offers), 60);
+            const run = debounce(() => safeApply(offers), 60);
 
-        const grid = document.querySelector("#products-grid");
-        if (grid) {
-            new MutationObserver(run).observe(grid, {
-                attributes: true,
-                attributeFilter: ["data-selected-products-id"],
-            });
+            const grid = document.querySelector("#products-grid");
+            if (grid) {
+                new MutationObserver(run).observe(grid, {
+                    attributes: true,
+                    attributeFilter: ["data-selected-products-id"],
+                });
+            }
+
+            contentObserver = new MutationObserver(run);
+            contentObserver.observe(offers, {childList: true, subtree: true, characterData: true});
+
+            safeApply(offers);
         }
-
-        contentObserver = new MutationObserver(run);
-        contentObserver.observe(offers, { childList: true, subtree: true, characterData: true });
-
-        safeApply(offers);
     }
 
     if (document.readyState === "complete") {
